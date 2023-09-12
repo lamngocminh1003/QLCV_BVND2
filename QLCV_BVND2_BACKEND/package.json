@@ -15,7 +15,7 @@
     "jwt-backend"
   ],
   "author": "Amie",
-  "license": "ISC",
+  "license": "ISC", 
   "bugs": {
     "url": "https://github.com/lamngocminh1003/JWT-Backend/issues"
   },
