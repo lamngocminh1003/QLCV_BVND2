@@ -23,7 +23,7 @@ const customizeConfig = {
   // query: { raw: true },
   timezone: "+07:00",
   define: {
-    timestamps: true,
+    timestamps: false,
     freezeTableName: true,
   },
 };
