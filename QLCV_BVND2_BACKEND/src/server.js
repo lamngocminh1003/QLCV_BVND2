@@ -1,6 +1,6 @@
 import express from "express";
 import configViewEngine from "./config/viewEngine";
-import initWebRoutes from "./routes/web";
+import initUserWebRoutes from "./routes/user_route";
 import initApiRoutes from "./routes/api";
 import cors from "./config/cors";
 import "dotenv/config";
@@ -20,7 +20,7 @@ configViewEngine(app);
 //test connection
 connection();
 //init web routes
-initWebRoutes(app);
+initUserWebRoutes(app);
 initApiRoutes(app);
 app.listen(PORT, () => {
   console.log("JWT - Backend is running on the port = ", PORT);
