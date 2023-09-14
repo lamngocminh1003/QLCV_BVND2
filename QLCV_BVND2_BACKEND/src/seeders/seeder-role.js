@@ -12,12 +12,13 @@ module.exports = {
      * }], {});
      */
     await queryInterface.bulkInsert(
-      "user",
+      "role",
       [
         {
-          email: "John@gmail.com",
-          password: "123",
-          userName: "John Doe",
+          roleName: "Owner",
+        },
+        {
+          roleName: "Admin",
         },
       ],
       {}

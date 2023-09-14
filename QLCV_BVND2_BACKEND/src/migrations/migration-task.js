@@ -1,55 +1,46 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("user", {
+    await queryInterface.createTable("task", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      fullName: {
+      title: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      userName: {
+      content: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      phone: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      roleId: {
+      categoryId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      positionId: {
+      dateSend: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"), // Giá trị mặc định là `CURRENT_TIMESTAMP`
+      },
+      dateEnd: {
+        type: Sequelize.DATE,
+      },
+      personalSendId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      departmentId: {
+      personalReceiveId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      image: {
-        type: Sequelize.BLOB("long"),
-      },
-      isActive: {
+      state: {
         type: Sequelize.INTEGER,
         defaultValue: 1,
-      }
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("user");
+    await queryInterface.dropTable("task");
   },
 };
