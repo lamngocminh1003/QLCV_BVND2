@@ -2,6 +2,7 @@ import express from "express";
 import initWebRoutes from "./routes/departmentRoutes";
 import configViewEngine from "./config/viewEngine";
 import initApiRoutes from "./routes/api";
+import initTaskApi from "./routes/taskApi";
 import cors from "./config/cors";
 import "dotenv/config";
 import bodyParser from "body-parser";
@@ -23,6 +24,9 @@ connection();
 initWebRoutes(app);
 initApiRoutes(app);
 
+// initWebRoutes(app);
+// initApiRoutes(app);
+initTaskApi(app);
 app.listen(PORT, () => {
   console.log("JWT - Backend is running on the port = ", PORT);
 });
