@@ -1,4 +1,5 @@
 import express from "express";
+import departmentController from '.../controller/departmentController';
 import {
   handleHome,
   handleUserPage,
@@ -8,8 +9,15 @@ import {
   handleUpdateUser,
 } from "../controllers/homeController";
 import { testAPI } from "../controllers/apiController";
+import { handleHelloWord } from "../controllers/departmentController";
 const router = express.Router();
 const initWebRoutes = (app) => {
+  //path, handler
+  router.get("/d", departmentController.handleHelloWord);
+  router.get("/about", (req, res) => {
+    return res.send("Tui la Department");
+  }
+  )
   router.get("/", handleHome);
   router.get("/user", handleUserPage);
   router.post("/user/create-user", handleCreateUser);
