@@ -1,7 +1,7 @@
 import express from "express";
 import configViewEngine from "./config/viewEngine";
 import initWebRoutes from "./routes/web";
-import initApiRoutes from "./routes/api";
+import initApiRoutes, { initPermRoutes, initRoleRoutes } from "./routes/api";
 import cors from "./config/cors";
 import "dotenv/config";
 import bodyParser from "body-parser";
@@ -22,6 +22,8 @@ connection();
 //init web routes
 initWebRoutes(app);
 initApiRoutes(app);
+initPermRoutes(app);
+initRoleRoutes(app);
 app.listen(PORT, () => {
   console.log("JWT - Backend is running on the port = ", PORT);
 });
