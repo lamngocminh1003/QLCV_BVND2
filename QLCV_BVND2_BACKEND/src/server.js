@@ -22,6 +22,8 @@ configViewEngine(app);
 connection();
 //init web routes
 initUserWebRoutes(app);
+
+// initWebRoutes(app);
 initApiRoutes(app);
 initTaskApi(app);
 app.listen(PORT, () => {

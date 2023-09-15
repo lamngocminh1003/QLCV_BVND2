@@ -20,9 +20,8 @@ const handleRegister = async (req, res) => {
 };
 const handleLogin = async (req, res) => {
   try {
-    let { email, password } = req.body;
-    if (!email || !password) {
-      console.log("email", email, "password", password);
+    let { userName, password } = req.body;
+    if (!userName || !password) {
       return res
         .status(200)
         .json({ EM: "Missing required parameters", EC: "1", DT: "" });

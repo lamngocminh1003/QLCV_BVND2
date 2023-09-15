@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       role.hasMany(models.user);
-      role.belongsToMany(models.permissionRole, {
-        through: "permission",
+      role.belongsToMany(models.permission, {
+        through: "permissionRole",
       });
     }
   }
