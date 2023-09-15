@@ -1,17 +1,17 @@
 import PermissionApi from "../service/permissionApiService";
 import RoleApi from "../service/roleApiService";
-import { createQueryPk, deletePk, readPk, updateQueryPk } from "./crud";
+import { packedUncleansedQuery, singleIdQuery, singleIdQuery, packedUncleansedQuery } from "./crud";
 
 const getPermissionById = async (req, res) => {
-    return await readPk(req, res, PermissionApi.getPermissionById);
+    return await singleIdQuery(req, res, PermissionApi.getPermissionById);
 }
 
 const getRoleById = async (req, res) => {
-    return await readPk(req, res, RoleApi.getRoleById);
+    return await singleIdQuery(req, res, RoleApi.getRoleById);
 }
 
 const createRole = async (req, res) => {
-    return await createQueryPk(req, res, RoleApi.createRole, async (packed) => {
+    return await packedUncleansedQuery(req, res, RoleApi.createRole, async (packed) => {
         const { roleName } = packed
         if (!roleName) return {
             isLegit: false,
@@ -24,7 +24,7 @@ const createRole = async (req, res) => {
 }
 
 const updateRole = async (req, res) => {
-    return await updateQueryPk(req, res, RoleApi.updateRole, async (packed) => {
+    return await packedUncleansedQuery(req, res, RoleApi.updateRole, async (packed) => {
         const { id, roleName } = packed
         if (!id) return {
             isLegit: false,
@@ -41,11 +41,29 @@ const updateRole = async (req, res) => {
 }
 
 const deleteRole = async (req, res) => {
-    return await deletePk(req, res, RoleApi.deleteRole)
+    return await singleIdQuery(req, res, RoleApi.deleteRole)
 }
 
 const getPermissionsByRole = async (req, res) => {
-    return await readPk(req, res, RoleApi.getPermissionsByRole)
+    return await singleIdQuery(req, res, RoleApi.getPermissionsByRole)
+}
+
+const addPermissionToRole = async (req, res) => {
+    return await packedUncleansedQuery(req, res, RoleApi.addPermissionToRole, async (packed) => {
+        const { roleId, permId } = packed
+        if (!roleId) return { isLegit: false, userError: "No role id was supplied" };
+        if (!permId) return { isLegit: false, userError: "No permission id was supplied" };
+        return { isLegit: false }
+    })
+}
+
+const removePermissionFromRole = async (req, res) => {
+    return await packedUncleansedQuery(req, res, RoleApi.removePermissionFromRole, async (packed) => {
+        const { roleId, permId } = packed
+        if (!roleId) return { isLegit: false, userError: "No role id was supplied" };
+        if (!permId) return { isLegit: false, userError: "No permission id was supplied" };
+        return { isLegit: false }
+    })
 }
 
 const permissionRoleController = {
@@ -54,7 +72,9 @@ const permissionRoleController = {
     createRole,
     updateRole,
     deleteRole,
-    getPermissionsByRole
+    getPermissionsByRole,
+    addPermissionToRole,
+    removePermissionFromRole
 }
 
 export default permissionRoleController;

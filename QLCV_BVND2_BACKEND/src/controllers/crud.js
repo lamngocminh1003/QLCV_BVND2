@@ -12,50 +12,25 @@ const generalExceptionHandler = (res, e) => {
     })
 }
 
-export const createQueryPk = async (req, res, creator, validator) => {
+export const packedUncleansedQuery = async (req, res, callback, validator) => {
     try {
         const { isLegit, ...validationResult } = await validator(req.query)
         if (!isLegit) return res.status(400).json({ ...validationResult })
-        const data = await creator(req.query)
+        const data = await callback(req.query)
         return res.status(200).json(data);
     } catch (e) {
         return generalExceptionHandler(res, e)
     }
 }
 
-export const readPk = async (req, res, reader) => {
+export const singleIdQuery = async (req, res, callback) => {
     try {
         const { id } = req.query;
         if (!id) return res.status(400).json({
             returnedStatusCode: 400,
             userError: "Missing id query parameter"
         });
-        const data = await reader(id);
-        return res.status(200).json(data);
-    } catch (e) {
-        return generalExceptionHandler(res, e)
-    }
-}
-
-export const updateQueryPk = async (req, res, updater, validator) => {
-    try {
-        const { isLegit, ...validationResult } = await validator(req.query)
-        if (!isLegit) return res.status(400).json({ ...validationResult })
-        const data = await updater(req.query)
-        return res.status(200).json(data);
-    } catch (e) {
-        return generalExceptionHandler(res, e)
-    }
-}
-
-export const deletePk = async (req, res, deleter) => {
-    try {
-        const { id } = req.query;
-        if (!id) return res.status(400).json({
-            returnedStatusCode: 400,
-            userError: "Missing id query parameter"
-        });
-        const data = await deleter(id);
+        const data = await callback(id);
         return res.status(200).json(data);
     } catch (e){
         return generalExceptionHandler(e)

@@ -34,8 +34,11 @@ export const initRoleRoutes = (app) => {
 
 export const initPermissionRoleRoutes = (app) => {
   router.get("/permissionRole/byRoleId", permissionRoleController.getPermissionsByRole);
+  router.put("/permissionRole/byRoleId", permissionRoleController.addPermissionToRole);
+  router.delete("/permissionRole/byRoleId", permissionRoleController.removePermissionFromRole);
 
   return app.use("/api/v1", router)
 }
 
 export default initApiRoutes;
+
