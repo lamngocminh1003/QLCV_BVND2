@@ -22,7 +22,7 @@ configViewEngine(app);
 connection();
 //init web routes
 // initWebRoutes(app);
-// initApiRoutes(app);
+initApiRoutes(app);
 initTaskApi(app);
 app.listen(PORT, () => {
   console.log("JWT - Backend is running on the port = ", PORT);

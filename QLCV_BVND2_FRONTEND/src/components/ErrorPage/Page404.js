@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import "../ErrorPage/Page500.scss";
 const Page404 = () => {
+  let history = useHistory();
   const handleBack = () => {
-    alert("hello");
+    history.push("/");
   };
   return (
     <div>
