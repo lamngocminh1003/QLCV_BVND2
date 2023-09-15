@@ -9,7 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      user.hasMany(models.task);
+      user.hasMany(models.task, {
+        foreignKey: "personalSendId",
+        as: "sentTasks", // Đặt một biệt danh cho mối quan hệ này
+      });
+
+      user.hasMany(models.task, {
+        foreignKey: "personalReceiveId",
+        as: "receivedTasks", // Đặt một biệt danh cho mối quan hệ này
+      });
       user.belongsTo(models.department);
       user.belongsTo(models.role);
       user.belongsTo(models.position);

@@ -9,9 +9,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      task.belongsTo(models.user);
-      task.belongsTo(models.category);
+      task.belongsTo(models.user, {
+        foreignKey: "personalSendId",
+        as: "sender", // Đặt một biệt danh cho mối quan hệ này
+      });
 
+      task.belongsTo(models.user, {
+        foreignKey: "personalReceiveId",
+        as: "receiver", // Đặt một biệt danh cho mối quan hệ này
+      });
+      task.belongsTo(models.category);
     }
   }
   task.init(
@@ -19,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       title: DataTypes.STRING,
       content: DataTypes.STRING,
       categoryId: DataTypes.INTEGER,
-      dateSend: DataTypes.DATE, ///
+      dateSend: DataTypes.DATE,
       dateEnd: DataTypes.DATE,
       personalSendId: DataTypes.INTEGER,
       personalReceiveId: DataTypes.INTEGER,

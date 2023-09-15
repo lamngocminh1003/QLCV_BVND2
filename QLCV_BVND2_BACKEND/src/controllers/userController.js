@@ -1,4 +1,9 @@
 import userApiService from "../service/userApiService";
+
+const handleHomePage = (req, res) => {
+  return res.render("user.ejs");
+}
+
 const show = async (req, res) => {
   try {
     let data = await userApiService.getAllUser();
