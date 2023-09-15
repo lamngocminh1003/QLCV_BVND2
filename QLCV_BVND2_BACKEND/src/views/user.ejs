@@ -23,7 +23,7 @@
   <body>
     <div class="user-info-container">
       <form method="POST" action="/user/create-user">
-        <div class="container mt-5">
+        <div class="container mt-4">
           
           <div class="text-center">
             <h2 class="text-primary text-uppercase">Thêm người dùng</h2>
@@ -86,15 +86,15 @@
               <label for="userPosition" class="form-label">Khoa Phòng</label>
               <select name="userDepartment" id="userDepartment" class="form-select">
                 <option selected hidden>Hãy chọn khoa phòng</option>
-                <option value="" class="text-capitalize">Tổ chức cán bộ</option>
-                <option value="" class="text-capitalize">Tài chính kế toán</option>
-                <option value="" class="text-capitalize">Hành chính quản trị</option>
-                <option value="" class="text-capitalize">Điều dưỡng</option>
-                <option value="" class="text-capitalize">CDT</option>
-                <option value="" class="text-capitalize">Vật tư, trang thiết bị y tế</option>
-                <option value="" class="text-capitalize">Quản lý chất lượng</option>
-                <option value="" class="text-capitalize">Công tác xã hội</option>
-                <option value="" class="text-capitalize">Công nghệ thông tin</option>
+                <option value="1" class="text-capitalize">Tổ chức cán bộ</option>
+                <option value="2" class="text-capitalize">Tài chính kế toán</option>
+                <option value="3" class="text-capitalize">Hành chính quản trị</option>
+                <option value="4" class="text-capitalize">Điều dưỡng</option>
+                <option value="5" class="text-capitalize">CDT</option>
+                <option value="6" class="text-capitalize">Vật tư, trang thiết bị y tế</option>
+                <option value="7" class="text-capitalize">Quản lý chất lượng</option>
+                <option value="8" class="text-capitalize">Công tác xã hội</option>
+                <option value="9" class="text-capitalize">Công nghệ thông tin</option>
               </select>
             </div>
             <div class="mb-3 col-3">
@@ -112,5 +112,43 @@
       </form>
     </div>
     <hr />
+
+    <div class="mt-4">
+      <div class="container">
+        <h3 class="row text-primary text-uppercase mb-3">Danh sách người dùng</h3>
+        <div class="row">
+          <table class="table table-hover table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Họ tên</th>
+                <th scope="col">Tên người dùng</th>
+                <th scope="col">Số điện thoại</th>
+                <th scope="col">Email</th>
+                <th scope="col">Vai trò</th>
+                <th scope="col">Vị trí</th>
+                <th scope="col">Khoa phòng</th>
+                <th scope="col">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>A</td>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+                <td>a</td>
+                <td>b</td>
+                <td>c</td>
+                <td>
+                  <button class="btn btn-warning"> <i class="fa-solid fa-pen-to-square text-white"></i></button>
+                  <button class="btn btn-danger"> <i class="fa-solid fa-trash"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>
