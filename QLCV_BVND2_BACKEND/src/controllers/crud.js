@@ -6,7 +6,10 @@ const generalExceptionHandler = (res, e) => {
     }
     if (userError) return res.status(returnedStatusCode).json(e)
     if (serverError) return res.status(returnedStatusCode).json(serverError)
-    else return res.status(returnedStatusCode).send("Internal Server error")
+    else return res.status(returnedStatusCode).json({
+        returnedStatusCode: returnedStatusCode,
+        serverError: 'Internal Server error'
+    })
 }
 
 export const createQueryPk = async (req, res, creator, validator) => {

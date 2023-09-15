@@ -1,6 +1,6 @@
 import PermissionApi from "../service/permissionApiService";
 import RoleApi from "../service/roleApiService";
-import {createQueryPk, deletePk, readPk, updateQueryPk} from "./crud";
+import { createQueryPk, deletePk, readPk, updateQueryPk } from "./crud";
 
 const getPermissionById = async (req, res) => {
     return await readPk(req, res, PermissionApi.getPermissionById);
