@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // import userApiService from "../service/userApiService";
 
 import user from "../models/user";
