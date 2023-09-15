@@ -3,24 +3,36 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import logo from "../../assets/image/logo512.png";
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Switch,
-  NavLink,
-} from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
+import {
+  handleLoginRedux,
+  handleLogoutRedux,
+} from "../redux/actions/userAction";
 import { useEffect, useState } from "react";
-import { NavItem } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+
 const Header = (props) => {
-  const [isShowNav, setIsShowNav] = useState(false);
+  let history = useHistory();
+
+  const [isShowNav, setIsShowNav] = useState(true);
+  const user = useSelector((state) => state.user.user);
+  const auth = localStorage.getItem("auth");
+  console.log("auth", auth);
+  const userNameUser = localStorage.getItem("userName");
   useEffect(() => {
-    let session = sessionStorage.getItem("account");
-    if (session) {
-      setIsShowNav(!isShowNav);
+    if (user && user.auth === false && window.location.pathname !== "/login") {
+      history.push("/");
+      toast.success("Logout successfully");
     }
-  }, []);
+  }, [user]);
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(handleLogoutRedux());
+  };
   return (
     <>
       {isShowNav === true && (
@@ -48,20 +60,37 @@ const Header = (props) => {
                 <NavLink to="/" className="nav-link">
                   Home
                 </NavLink>
-                <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                  <NavDropdown.Item as={Link} to="/users">
+                {user && user.userName && user.auth === true && (
+                  <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+                    {/* <NavDropdown.Item as={Link} to="/users">
                     Manage Users
                   </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/projects">
                     Manage Projects
-                  </NavDropdown.Item>
-                </NavDropdown>
+                  </NavDropdown.Item> */}
+                    <NavDropdown.Item as={Link} to="/tasks">
+                      Manage Task
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                )}
               </Nav>
               <Nav>
-                <Navbar.Text>Signed in as: Amie</Navbar.Text>{" "}
-                <NavLink to="/login" className="nav-link">
-                  Login
-                </NavLink>
+                {user && user.userName && (
+                  <Navbar.Text className="me-3">
+                    Welcome {user.userName}
+                  </Navbar.Text>
+                )}
+                <NavDropdown title="Setting" id="basic-nav-dropdown">
+                  {user && user.userName ? (
+                    <NavDropdown.Item onClick={() => handleLogout()}>
+                      Logout
+                    </NavDropdown.Item>
+                  ) : (
+                    <NavLink to="/login" className="dropdown-item">
+                      Login
+                    </NavLink>
+                  )}
+                </NavDropdown>
               </Nav>
             </Navbar.Collapse>
           </Container>
