@@ -5,14 +5,18 @@ import Header from "./components/Nav/Header";
 import { BrowserRouter as Router } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import AppRoutes from "./routes/AppRoutes";
+import { useDispatch, useSelector } from "react-redux";
+import { handleRefresh } from "./components/redux/actions/userAction";
 function App() {
-  const [account, setAccount] = useState({});
+  // const [account, setAccount] = useState({});
   useEffect(() => {
-    let session = sessionStorage.getItem("account");
+    let session = localStorage.getItem("userName");
     if (session) {
-      setAccount(JSON.parse(session));
+      dispatch(handleRefresh());
     }
   }, []);
+  const dispatch = useDispatch();
+  const dataUserRedux = useSelector((state) => state.user.user);
   return (
     <>
       <Router>

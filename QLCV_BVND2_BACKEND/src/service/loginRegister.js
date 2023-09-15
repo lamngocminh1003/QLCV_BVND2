@@ -14,7 +14,14 @@ const checkEmailUser = async (email) => {
     return false;
   }
 };
-
+const checkUserName = async (userName) => {
+  const userNameUser = await db.user.findOne({ where: { userName: userName } });
+  if (userNameUser) {
+    return true;
+  } else {
+    return false;
+  }
+};
 const checkPhoneUser = async (phone) => {
   const phoneUser = await db.user.findOne({ where: { phone: phone } });
   if (phoneUser) {
@@ -78,39 +85,39 @@ const checkPassword = (inputPassword, hashPassword) => {
 };
 const loginService = async (data) => {
   try {
-    let { email, password } = data;
-    // check email are exist
-    let isEmailExist = await checkEmailUser(email);
-    if (isEmailExist === false) {
+    let { userName, password } = data;
+    // check userName are exist
+    let isUserNameExist = await checkUserName(userName);
+    if (isUserNameExist === false) {
       return {
-        EM: "The email or password isn't exist",
+        EM: "The userName or password isn't exist",
         EC: 1,
         DT: "",
       };
     }
     let userLogin = await db.user.findOne({
-      where: { email: email },
+      where: { userName: userName },
     });
     if (userLogin) {
       let checkPasswordLogin = checkPassword(password, userLogin.password);
       if (checkPasswordLogin === true) {
         return {
-          EM: "ok",
+          EM: "Login successfully",
           EC: 2,
-          DT: "",
+          DT: userLogin,
         };
       }
       if (checkPasswordLogin === false) {
         return {
-          EM: "The email or password isn't correct",
+          EM: "The userName or password isn't correct",
           EC: 1,
           DT: "",
         };
       }
     } else {
-      console.log("Not found email", userLogin.email);
+      console.log("Not found userName", userLogin.userName);
       return {
-        EM: "The email or password isn't correct",
+        EM: "The userName or password isn't correct",
         EC: 1,
         DT: "",
       };

@@ -7,11 +7,11 @@ const initApiRoutes = (app) => {
   router.post("/register", apiController.handleRegister);
   router.post("/login", apiController.handleLogin);
 
-  router.get("/user/read", userController.show);
-  router.get("/user", userController.getUserByIdController);
-  router.post("/user/create", userController.create);
-  router.put("/user/update", userController.update);
-  router.delete("/user/delete", userController.deleteUserApi);
+  // router.get("/user/read", userController.show);
+  // router.get("/user", userController.getUserByIdController);
+  // router.post("/user/create", userController.create);
+  // router.put("/user/update", userController.update);
+  // router.delete("/user/delete", userController.deleteUserApi);
 
   return app.use("/api/v1", router);
 };
