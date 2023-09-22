@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Latest compiled and minified CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+  <title>Phòng Khoa</title>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="row">
+      <div class="department-thongtin-container">
+        <!-- Nhảy qua tab sau khi hoàn thành điền dữ liệu -->
+        <form method="POST" action="/department/create">
+          <h1>
+            <p class="text-center">Phòng Khoa</p>
+          </h1>
+          <div class="d-flex align-items-center justify-content-center">
+            <div class="col-6 mb-3">
+              <label for="iddepartment" class="form-label">Mã phòng khoa</label>
+              <input type="text" class="form-control" id="iddepartment" name="iddepartment" value="">
+            </div>
+          </div>
+      </div>
+      <div class="d-flex align-items-center justify-content-center">
+        <div class="col-6 mb-3">
+          <label for="namedepartment" class="form-label">Tên phòng khoa</label>
+          <input type="text" class="form-control" id="namedepartment" name="namedepartment" value="" required>
+        </div>
+      </div>
+      <div class=" d-flex align-items-center justify-content-end">
+        <button class="btn btn-primary mb-3" type="submit" style="width: 100px">Tạo</button>
+        </form>
+      </div>
+      <div class="department-danhsach">
+
+        <body>
+          <div class="container-center">
+            <h2>Danh sách Phòng Khoa</h2>
+            <table class="table table-hover table-bordered">
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Mã phòng khoa</th>
+                  <th>Tên phòng khoa</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% listDepartment.forEach(function(item,index){ %>
+                  <tr>
+                    <th scope="row">
+                      <%= index + 1 %>
+                    </th>
+                    <td>
+                      <%= item.id %>
+                    </td>
+                    <td>
+                      <%= item.departmentName %>
+                    </td>
+                    <td>
+                      <a class="btn btn-info" href="/department-upload/<%= item.id%>" method="GET">
+                        Sửa
+                      </a>
+                      <form style="display: inline;" action="/department-delete/<%= item.id %>" method="POST">
+                        <button class="btn btn-danger" type="submit">
+                          Xoá</button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% }) %>
+
+              </tbody>
+            </table>
+          </div>
+        </body>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

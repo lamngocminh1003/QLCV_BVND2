@@ -5,18 +5,23 @@ import initApiRoutes from "./routes/api";
 import initTaskApi from "./routes/taskApi";
 import cors from "./config/cors";
 import "dotenv/config";
-import bodyParser from "body-parser";
+import bodyParser from 'body-parser';
+
 import connection from "./config/connectDB";
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-cors(app);
-//config body-parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+cors(app);
 
 //config view engine
 configViewEngine(app);
+
+//config body-parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //test connection
 connection();

@@ -17,8 +17,7 @@ module.exports = {
     define: {
       timestamps: false,
       freezeTableName: true,
-    },
-    logging: false,
+    }
   },
   test: {
     username: "root",

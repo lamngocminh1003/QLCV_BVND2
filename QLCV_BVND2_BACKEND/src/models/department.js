@@ -1,4 +1,5 @@
 "use strict";
+require('dotenv').config();
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class department extends Model {

@@ -5,8 +5,11 @@ import { handleHelloWord } from "../controllers/departmentController";
 const router = express.Router();
 const initWebRoutes = (app) => {
     //path, handler
-    router.get("/", departmentController.handleHelloWord);
-    router.get("/department", departmentController.handleUserPage);
+    router.get("/department", departmentController.DepartmentPage);
+    router.post("/department/create", departmentController.DepartmentCreate);
+    router.get("/department-upload/:id", departmentController.DepartmentUpload);
+    router.post("/department-uploaded/", departmentController.DepartmentUploaded);
+    router.post("/department-delete/:id", departmentController.DepartmentDelete);
 
     router.get("/testAPI", testAPI);
 
