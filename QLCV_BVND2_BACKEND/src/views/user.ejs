@@ -57,8 +57,9 @@
               <label for="userRole" class="form-label">Vai trò</label>
               <select name="userRole" id="userRole" class="form-select">
                 <option selected hidden>Hãy chọn vai trò</option>
-                <option value="1">Owner</option>
-                <option value="2">Admin</option>   
+                <% roleList.forEach(function(itemRole,index){ %>
+                  <option value="<%= itemRole.id %>"><%= itemRole.roleName%></option>
+                <% }) %>
               </select>
             </div>
           </div>
@@ -68,38 +69,23 @@
               <label for="userPosition" class="form-label">Vị trí</label>
               <select name="userPosition" id="userPosition" class="form-select">
                 <option selected hidden>Hãy chọn vị trí</option>
-                <option value="1">Admin</option>
-                <option value="2">IT</option>
-                <option value="3">Lễ tân</option>
-                <option value="4">Bác sĩ</option>
-                <option value="5">Dược sĩ</option>
-                <option value="6">Điều dưỡng</option>
-                <option value="7">Kỹ thuật viên</option>
-                <option value="8">Kết nối xét nghiệm</option>
-                <option value="9">Kế toán</option>
-                <option value="10">Thủ kho</option>
-                <option value="11">Bảo vệ</option>
-                <option value="12">Khác</option>
+                <% positionList.forEach(function(itemPosition,index){ %>
+                    <option value="<%= itemPosition.id %>"><%= itemPosition.positionName%></option>
+                <% }) %>
               </select>
             </div>
             <div class="mb-3 col-3">
               <label for="userPosition" class="form-label">Khoa Phòng</label>
               <select name="userDepartment" id="userDepartment" class="form-select">
                 <option selected hidden>Hãy chọn khoa phòng</option>
-                <option value="1" class="text-capitalize">Tổ chức cán bộ</option>
-                <option value="2" class="text-capitalize">Tài chính kế toán</option>
-                <option value="3" class="text-capitalize">Hành chính quản trị</option>
-                <option value="4" class="text-capitalize">Điều dưỡng</option>
-                <option value="5" class="text-capitalize">CDT</option>
-                <option value="6" class="text-capitalize">Vật tư, trang thiết bị y tế</option>
-                <option value="7" class="text-capitalize">Quản lý chất lượng</option>
-                <option value="8" class="text-capitalize">Công tác xã hội</option>
-                <option value="9" class="text-capitalize">Công nghệ thông tin</option>
+                <% departmentList.forEach(function(itemDepartment,index){ %>
+                    <option value="<%= itemDepartment.id %>"><%= itemDepartment.departmentName%></option>
+                <% }) %>
               </select>
             </div>
             <div class="mb-3 col-3">
               <label for="userImage" class="form-label">Ảnh chân dung</label>
-              <input type="file" class="form-control" id="userImage">
+              <input type="file" class="form-control" id="userImage" name="userImage">
             </div>
           </div>
       
@@ -131,19 +117,25 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>A</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-                <td>a</td>
-                <td>b</td>
-                <td>c</td>
-                <td>
-                  <button class="btn btn-warning"> <i class="fa-solid fa-pen-to-square text-white"></i></button>
-                  <button class="btn btn-danger"> <i class="fa-solid fa-trash"></i></button>
-                </td>
-              </tr>
+              <% userList.forEach(function(item,index){ %>
+                <tr>
+                  <td><%= item.fullName %></td>
+                  <td><%= item.userName %></td>
+                  <td><%= item.phone %></td>
+                  <td><%= item.email %></td>
+                  <td><%= item.role.roleName %></td>
+                  <td><%= item.position.positionName %></td>
+                  <td><%= item.department.departmentName %></td>
+                  <td>
+                    <form action="/user/update-user/<%= item.id %>" method="GET" style="display: inline;">
+                      <button class="btn btn-warning"> <i class="fa-solid fa-pen-to-square text-white"></i></button>
+                    </form>
+                    <form action="/user/delete-user/<%= item.id %>" method="GET" style="display: inline;">
+                      <button class="btn btn-danger"> <i class="fa-solid fa-trash"></i></button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
             </tbody>
           </table>
         </div>

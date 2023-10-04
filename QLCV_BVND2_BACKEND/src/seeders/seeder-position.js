@@ -15,10 +15,37 @@ module.exports = {
       "position",
       [
         {
-          positionName: "Giám đốc",
+          positionName: "IT",
         },
         {
-          positionName: "Developer",
+          positionName: "Lễ tân",
+        },
+        {
+          positionName: "Bác sĩ"
+        },
+        {
+          positionName: "Dược sĩ",
+        },
+        {
+          positionName: "Điều dưỡng",
+        },
+        {
+          positionName: "Kỹ thuật viên",
+        },
+        {
+          positionName: "Kết nối xét nghiệm",
+        },
+        {
+          positionName: "Kế toán",
+        },
+        {
+          positionName: "Thủ kho",
+        },
+        {
+          positionName: "Bảo vệ",
+        },
+        {
+          positionName: "Khác",
         },
       ],
       {}
