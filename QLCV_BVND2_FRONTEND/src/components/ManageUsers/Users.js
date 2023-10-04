@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { fetchAllUsers } from "../../services/userService";
 const Users = (props) => {
   const [listUsers, setListUsers] = useState([]);
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-  const fetchUsers = async () => {
-    let res = await fetchAllUsers();
-    if (res && res.data && res.data.EC === 1) {
-      setListUsers(res.data.DT);
-    }
-  };
+  // useEffect(() => {
+  //   fetchUsers();
+  // }, []);
+  // const fetchUsers = async () => {
+  //   let res = await fetchAllUsers();
+  //   if (res && res.data && res.data.EC === 1) {
+  //     setListUsers(res.data.DT);
+  //   }
+  // };
   return (
     <>
       <div className="user-header">
@@ -55,7 +54,7 @@ const Users = (props) => {
                 <tbody>
                   {listUsers && listUsers.length > 0 ? (
                     <>
-                    
+
                       <tr>
                         <th scope="row">1</th>
                         <td>Mark</td>

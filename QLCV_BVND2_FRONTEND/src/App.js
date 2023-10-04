@@ -1,28 +1,40 @@
 import "./App.scss";
 import { ToastContainer } from "react-toastify";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Header from "./components/Nav/Header";
 import { BrowserRouter as Router } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import AppRoutes from "./routes/AppRoutes";
 import { useDispatch, useSelector } from "react-redux";
 import { handleRefresh } from "./components/redux/actions/userAction";
+import { Route } from "react-router-dom/cjs/react-router-dom.min";
+import { UserContext } from './context/UserContext';
+import SyncLoader from "react-spinners/ClipLoader";
+
 function App() {
-  // const [account, setAccount] = useState({});
-  useEffect(() => {
-    let session = localStorage.getItem("userName");
-    if (session) {
-      dispatch(handleRefresh());
-    }
-  }, []);
+  const { user } = useContext(UserContext);
+
   const dispatch = useDispatch();
   const dataUserRedux = useSelector((state) => state.user.user);
   return (
     <>
       <Router>
-        <div className="app-container">
-          <AppRoutes />
-        </div>
+        {user && user.isLoading ?
+          <div className="loading-container">
+            <SyncLoader
+              color='rgba(54, 215, 183, 1)'
+              size={150}
+            />
+            <div className="mt-1 ml-3">Đang tải, hãy kiên nhẫn...</div>
+          </div>
+          :
+          <>
+            <div className="app-container">
+              <AppRoutes />
+            </div>
+          </>
+        }
+
         <ToastContainer
           position="top-right"
           autoClose={4000}
@@ -35,6 +47,7 @@ function App() {
           pauseOnHover
           theme="light"
         />
+
       </Router>
     </>
   );

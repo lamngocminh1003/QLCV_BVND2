@@ -5,12 +5,17 @@ import reportWebVitals from "./reportWebVitals";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import 'font-awesome/css/font-awesome.min.css';
 import store from "./components/redux/store";
 import { Provider } from "react-redux";
+import { UserProvider } from './context/UserContext';
+
 ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
-      <App />
+      <UserProvider>
+        <App />
+      </UserProvider>
     </React.StrictMode>
   </Provider>,
 
