@@ -190,7 +190,6 @@ const ModalUser = (props) => {
             }
             return check;
         }
-
     }
 
     const handleBtnSubmit = async () => {

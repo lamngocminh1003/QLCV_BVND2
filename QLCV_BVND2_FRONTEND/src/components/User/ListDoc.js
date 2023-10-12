@@ -1,12 +1,70 @@
 import React, { useState, useContext } from 'react'
 import { UserContext } from '../../context/UserContext';
+import ReactPaginate from 'react-paginate';
 import "./ListDoc.scss";
 import ModalDocument from '../ManageDocument/ModalDocument';
 
-function Index() {
+function ListDoc() {
     const { user } = useContext(UserContext);
+    //set ẩn hiện cho modal
     const [isShowModalDoc, setIsShowModalDoc] = useState(false);
+    //set phương thức thực hiện cho modal
     const [actionModalDoc, setActionModalDoc] = useState("CREATE");
+    //set paginate 
+    const [currentPage, setCurrentPage] = useState(1);
+    //lấy data trong table row để edit
+    const [dataDocEdit, setDataDocEdit] = useState({});
+
+
+    const listDoc = [
+        {
+            idDoc: 1,
+            docName: "Khoa nội",
+            docFile: "khoanoi.pdf",
+            docDes: "Mô tả văn bản 1",
+            docExpire: "10/10/2023 - 01/01/2024",
+            docHandOver: "",
+            docStatus: 0
+        },
+        {
+            idDoc: 2,
+            docName: "Khoa ngoại tổng hợp",
+            docFile: "khoangoaitonghop.pdf",
+            docDes: "Mô tả văn bản 2",
+            docExpire: "20/11/2023 - 05/07/2024",
+            docHandOver: "",
+            docStatus: 1
+        },
+        {
+            idDoc: 3,
+            docName: "Khoa tiêu hóa",
+            docFile: "khoatieuhoa.pdf",
+            docDes: "Mô tả văn bản 3",
+            docExpire: "10/12/2023 - 31/01/2024",
+            docHandOver: "Khoa tiêu hóa",
+            docStatus: 2
+        },
+        {
+            idDoc: 4,
+            docName: "Phòng chống trộm cắp",
+            docFile: "phongchongtromcap.pdf",
+            docDes: "Mô tả văn bản 4",
+            docExpire: "02/02/2024 - 05/07/2024",
+            docHandOver: "Phòng bảo vệ",
+            docStatus: 3
+        },
+        {
+            idDoc: 5,
+            docName: "Phòng cháy chữa cháy",
+            docFile: "phongchaychuachay.pdf",
+            docDes: "Mô tả văn bản 5",
+            docExpire: "02/02/2024 - 05/07/2024",
+            docHandOver: "",
+            docStatus: 0
+        }
+    ]
+
+    const totalPages = 5;
 
     const btnActiveModalAddDoc = () => {
         setActionModalDoc("CREATE");
@@ -14,11 +72,14 @@ function Index() {
     }
 
     const btnInActiveModalAddDoc = () => {
+        setActionModalDoc("CREATE");
+        setDataDocEdit({});
         setIsShowModalDoc(false);
     }
 
-    const btnEdit = () => {
+    const btnEdit = (itemListDoc) => {
         setActionModalDoc("EDIT");
+        setDataDocEdit(itemListDoc)
         setIsShowModalDoc(true);
     }
 
@@ -26,6 +87,11 @@ function Index() {
         setActionModalDoc("HANDOVER");
         setIsShowModalDoc(true);
     }
+
+    const handlePageClick = (event) => {
+        setCurrentPage(+event.selected + 1)
+    };
+
 
     return (
         <>
@@ -60,81 +126,119 @@ function Index() {
                                         </thead>
 
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td><button className="title-doc">Khoa nội</button></td>
-                                                <td>Mô tả văn bản 1</td>
-                                                <td>10/10/2023 - 01/01/2024</td>
-                                                <td></td>
-                                                <td><span className="status rounded-pill wait">Chờ duyệt</span></td>
-                                                <td className='text-center'>
-                                                    <button className="btn btn-warning" onClick={() => btnEdit()}> <i className="fa-solid fa-pen-to-square text-white"></i></button>
-                                                    <button className="btn btn-danger mx-2"> <i className="fa-solid fa-trash"></i></button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td><button className='title-doc'>Khoa ngoại tổng hợp</button></td>
-                                                <td>Mô tả văn bản 2</td>
-                                                <td>20/11/2023 - 05/07/2024</td>
-                                                <td></td>
-                                                <td><span className="status rounded-pill checked">Đã duyệt</span></td>
-                                                <td className='text-center'>
-                                                    <button className="btn btn-warning" onClick={() => btnHandOver()}> <i className="fa-solid fa fa-arrow-right text-white"></i></button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td><button className='title-doc'>Khoa ngoại tiêu hóa</button></td>
-                                                <td>Mô tả văn bản 3</td>
-                                                <td>10/12/2023 - 31/01/2024</td>
-                                                <td>Khoa tiêu hóa</td>
-                                                <td><span className="status rounded-pill ahead">Bàn giao</span></td>
-                                                {/* <td className='text-center'>
-                                                <button className="btn btn-warning"> <i className="fa-solid fa-pen-to-square text-white"></i></button>
-                                            </td> */}
-                                            </tr>
-                                            <tr>
-                                                <td>4</td>
-                                                <td><button className='title-doc'>Phòng cháy chữa cháy</button></td>
-                                                <td>Mô tả văn bản 4</td>
-                                                <td>29/12/2023 - 14/02/2024</td>
-                                                <td></td>
-                                                <td><span className="status rounded-pill wait">Chờ duyệt</span></td>
-                                                <td className='text-center'>
-                                                    <button className="btn btn-warning"> <i className="fa-solid fa-pen-to-square text-white"></i></button>
-                                                    <button className="btn btn-danger mx-2"> <i className="fa-solid fa-trash"></i></button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>5</td>
-                                                <td><button className='title-doc'>Phòng chống cướp giật</button></td>
-                                                <td>Mô tả văn bản 5</td>
-                                                <td>02/02/2024 - 05/07/2024</td>
-                                                <td>Phòng bảo vệ</td>
-                                                <td><span className="status rounded-pill success">Hoàn thành</span></td>
-                                                <td className='text-center'>
-                                                    {/* <button className="btn btn-warning"> <i className="fa-solid fa-pen-to-square text-white"></i></button>
-                                                <button className="btn btn-danger mx-2"> <i className="fa-solid fa-trash"></i></button> */}
-                                                </td>
-                                            </tr>
 
+                                            {listDoc.map((itemListDoc, indexListDoc) => {
+                                                return (
+                                                    <tr key={`row-${indexListDoc}`}>
+                                                        <td>{indexListDoc + 1}</td>
+                                                        <td><button className='title-doc'>{itemListDoc.docName}</button></td>
+                                                        <td>{itemListDoc.docDes}</td>
+                                                        <td>{itemListDoc.docExpire}</td>
+                                                        <td>{itemListDoc.docHandOver.length !== 0 ? itemListDoc.docHandOver : ''}</td>
+                                                        <td>
+                                                            {(() => {
+                                                                if (itemListDoc.docStatus === 0) {
+                                                                    return (
+                                                                        <>
+                                                                            <span className="status rounded-pill wait">Chờ duyệt</span>
+                                                                        </>
+                                                                    )
+                                                                }
+                                                                else if (itemListDoc.docStatus === 1) {
+                                                                    return (
+                                                                        <>
+                                                                            <span className="status rounded-pill checked">Đã duyệt</span>
+                                                                        </>
+                                                                    )
+                                                                }
+                                                                else if (itemListDoc.docStatus === 2) {
+                                                                    return (
+                                                                        <>
+                                                                            <span className="status rounded-pill ahead">Bàn giao</span>
+                                                                        </>
+                                                                    )
+                                                                }
+                                                                else {
+                                                                    return (
+                                                                        <>
+                                                                            <span className="status rounded-pill success">Hoàn thành</span>
+                                                                        </>
+                                                                    )
+                                                                }
+                                                            })()}
+                                                        </td>
+
+
+                                                        <td className='text-center'>
+                                                            {(() => {
+                                                                if (itemListDoc.docStatus === 0) {
+                                                                    return (
+                                                                        <>
+                                                                            <button className="btn btn-warning" onClick={() => btnEdit(itemListDoc)}> <i className="fa-solid fa-pen-to-square text-white"></i></button>
+                                                                            <button className="btn btn-danger mx-2"> <i className="fa-solid fa-trash text-white"></i></button>
+                                                                        </>
+                                                                    )
+                                                                } else if (itemListDoc.docStatus === 1) {
+                                                                    return (
+                                                                        <>
+                                                                            <button className="btn btn-share" style={{ backgroundColor: "#d63384" }} onClick={() => btnHandOver()}> <i className="fa-solid fa fa fa-share text-white"></i></button>
+                                                                        </>
+                                                                    )
+                                                                } else {
+                                                                    return (
+                                                                        <></>
+                                                                    )
+                                                                }
+                                                            })()}
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
+                        {totalPages > 0 &&
+                            <div className='table-footer'>
+                                <ReactPaginate
+                                    nextLabel="next >"
+                                    onPageChange={handlePageClick}
+                                    pageRangeDisplayed={3}
+                                    marginPagesDisplayed={4}
+                                    pageCount={totalPages}
+                                    previousLabel="< previous"
+                                    pageClassName="page-item"
+                                    pageLinkClassName="page-link"
+                                    previousClassName="page-item"
+                                    previousLinkClassName="page-link"
+                                    nextClassName="page-item"
+                                    nextLinkClassName="page-link"
+                                    breakLabel="..."
+                                    breakClassName="page-item"
+                                    breakLinkClassName="page-link"
+                                    containerClassName="pagination"
+                                    activeClassName="active"
+                                    renderOnZeroPageCount={null}
+                                />
+                            </div>
+                        }
                     </div>
                 </div>
+
             </div>
+
+
 
             <ModalDocument
                 active={isShowModalDoc}
                 inactive={btnInActiveModalAddDoc}
                 setActionModalDoc={actionModalDoc}
+                assignDataDocEdit={dataDocEdit}
             />
         </>
     )
 }
 
-export default Index
+export default ListDoc

@@ -89,7 +89,7 @@ const LoginUser = () => {
             //cập nhật lại giá trị của biến context global, biến data sẽ ghi đè lên biến user đang dùng state trong file UserContext
             loginContext(data);
 
-            history.push('/list_doc');
+            history.push('/');
         }
         else {
             toast.error(response.EM)
