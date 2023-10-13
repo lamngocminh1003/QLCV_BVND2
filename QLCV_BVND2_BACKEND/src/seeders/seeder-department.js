@@ -20,6 +20,21 @@ module.exports = {
         {
           departmentName: "Phòng It",
         },
+        {
+          departmentName: "Tiêu Hoá 3",
+        },
+        {
+          departmentName: "Dinh Dưỡng 2",
+        },
+        {
+          departmentName: "Nhiễm",
+        },
+        {
+          departmentName: "Tiêu Hoá 2",
+        },
+        {
+          departmentName: "Sơ Sinh",
+        },
       ],
       {}
     );

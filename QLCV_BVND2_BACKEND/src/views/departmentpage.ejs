@@ -17,37 +17,37 @@
 
 <body>
 
-  <div class="container">
-    <div class="row">
-      <div class="department-thongtin-container">
+  <div className="container">
+    <div className="row">
+      <div className="department-thongtin-container">
         <!-- Nhảy qua tab sau khi hoàn thành điền dữ liệu -->
         <form method="POST" action="/department/create">
           <h1>
-            <p class="text-center">Phòng Khoa</p>
+            <p className="text-center">Phòng Khoa</p>
           </h1>
-          <div class="d-flex align-items-center justify-content-center">
-            <div class="col-6 mb-3">
-              <label for="iddepartment" class="form-label">Mã phòng khoa</label>
-              <input type="text" class="form-control" id="iddepartment" name="iddepartment" value="">
+          <div className="d-flex align-items-center justify-content-center">
+            <div className="col-6 mb-3">
+              <label for="iddepartment" className="form-label">Mã phòng khoa</label>
+              <input type="text" className="form-control" id="iddepartment" name="iddepartment" value="">
             </div>
           </div>
       </div>
-      <div class="d-flex align-items-center justify-content-center">
-        <div class="col-6 mb-3">
-          <label for="namedepartment" class="form-label">Tên phòng khoa</label>
-          <input type="text" class="form-control" id="namedepartment" name="namedepartment" value="" required>
+      <div className="d-flex align-items-center justify-content-center">
+        <div className="col-6 mb-3">
+          <label for="namedepartment" className="form-label">Tên phòng khoa</label>
+          <input type="text" className="form-control" id="namedepartment" name="namedepartment" value="" required>
         </div>
       </div>
-      <div class=" d-flex align-items-center justify-content-end">
-        <button class="btn btn-primary mb-3" type="submit" style="width: 100px">Tạo</button>
+      <div className=" d-flex align-items-center justify-content-end">
+        <button className="btn btn-primary mb-3" type="submit" style="width: 100px">Tạo</button>
         </form>
       </div>
-      <div class="department-danhsach">
+      <div className="department-danhsach">
 
         <body>
-          <div class="container-center">
+          <div className="container-center">
             <h2>Danh sách Phòng Khoa</h2>
-            <table class="table table-hover table-bordered">
+            <table className="table table-hover table-bordered">
               <thead>
                 <tr>
                   <th>STT</th>
@@ -69,11 +69,11 @@
                       <%= item.departmentName %>
                     </td>
                     <td>
-                      <a class="btn btn-info" href="/department-upload/<%= item.id%>" method="GET">
+                      <a className="btn btn-info" href="/department-upload/<%= item.id%>" method="GET">
                         Sửa
                       </a>
                       <form style="display: inline;" action="/department-delete/<%= item.id %>" method="POST">
-                        <button class="btn btn-danger" type="submit">
+                        <button className="btn btn-danger" type="submit">
                           Xoá</button>
                       </form>
                     </td>

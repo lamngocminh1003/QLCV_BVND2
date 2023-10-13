@@ -1,18 +1,20 @@
 import express from "express";
 import departmentController from '../controllers/departmentController';
-import { testAPI } from "../controllers/apiController";
+import apiController from "../controllers/apiController";
+
 import { handleHelloWord } from "../controllers/departmentController";
 const router = express.Router();
 const initWebRoutes = (app) => {
     //path, handler
     router.get("/department", departmentController.DepartmentPage);
     router.post("/department/create", departmentController.DepartmentCreate);
-    router.get("/department-upload/:id", departmentController.DepartmentUpload);
+    router.put("/department-upload", departmentController.DepartmentUpload);
     router.post("/department-uploaded/", departmentController.DepartmentUploaded);
-    router.post("/department-delete/:id", departmentController.DepartmentDelete);
+    router.delete("/department-delete", departmentController.DepartmentDelete);
 
-    router.get("/testAPI", testAPI);
+    //rest api: GET - read, POST - create, PUT - upload, DELETE - delete (CRUD)
+    router.get("/testAPI", apiController.testAPI);
 
-    return app.use("/", router);
+    return app.use("/api/v1", router);
 }
 export default initWebRoutes;

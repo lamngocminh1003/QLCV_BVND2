@@ -1,6 +1,11 @@
 import loginRegister from "../service/loginRegister";
+
 const testAPI = (req, res) => {
-  return res.status(200).json({ message: "ok", data: "test api" });
+  return res.status(200).json
+    ({
+      message: "ok",
+      data: "test api"
+    });
 };
 const handleRegister = async (req, res) => {
   try {

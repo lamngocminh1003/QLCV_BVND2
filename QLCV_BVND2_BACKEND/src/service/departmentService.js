@@ -19,9 +19,33 @@ const taoDepartment = async (id_department, name_department) => {
 }
 //lấy danh sách từ database
 const danhsachDepartment = async () => {
-    let departments = [];
-    departments = await db.department.findAll({ raw: true })
-    return departments;
+    //test relationships
+    try {
+        let departments = await db.department.findAll({
+            //where: { id: 1 },
+            attributes: ["id", "departmentName"],
+            include: [{ model: db.user, attributes: ["fullName", "userName", "phone", "email", 'roleId', 'positionId', 'departmentId'] },
+            ], raw: true,
+            nest: true
+        })
+        // let roles = await db.user.findAll({
+        //     //where: { id: 1 },
+        //     include: {
+        //         model: db.role, attributes: ["roleName"]
+        //     },
+        //     raw: true, 
+        //     nest: true,
+        //     //logging: true
+        // })
+        console.log("check cái department: ", departments)
+
+        //console.log("check cái role: ", roles)
+
+        return departments
+    } catch (error) {
+        console.log(error)
+    }
+
 
     // const connection = await mysql.createConnection({ host: 'localhost', user: 'root', database: 'qlcv_bvnd2', Promise: bluebird });
     // try {
@@ -71,4 +95,10 @@ const dacapnhatDepartment = async (tendepartment, madepartment) => {
 }
 
 //xuất các const ra
-module.exports = { taoDepartment, danhsachDepartment, xoaDepartment, suaDepartment, dacapnhatDepartment }
+module.exports = {
+    taoDepartment,
+    danhsachDepartment,
+    xoaDepartment,
+    suaDepartment,
+    dacapnhatDepartment
+}
