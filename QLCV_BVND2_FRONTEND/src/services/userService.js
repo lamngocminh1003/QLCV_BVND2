@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const registerNewUser = (data) => {
   let { email, userName, phone, password } = data;
   return axios.post("http://localhost:8080/api/v1/register", {
@@ -18,4 +19,9 @@ const userLogin = (data) => {
 const fetchAllUsers = () => {
   return axios.get("http://localhost:8080/api/v1/user/read");
 };
-export { registerNewUser, userLogin, fetchAllUsers };
+
+export {
+  registerNewUser,
+  userLogin,
+  fetchAllUsers,
+};
