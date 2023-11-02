@@ -2,6 +2,13 @@ import React, { useState, useContext } from 'react'
 import moment from 'moment';
 import 'moment/locale/vi';
 import { UserContext } from '../../context/UserContext';
+
+//import progress spinner
+import PropTypes from 'prop-types';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+
 import ReactPaginate from 'react-paginate';
 import ModalDocumentOfDepartment from '../ManageDocument/ModalDocumentOfDepartment';
 
@@ -58,7 +65,7 @@ const ListDocOfDepartment = () => {
             docFile: "vanban5.pdf",
             docDes: "Mô tả e",
             docExpireStart: "2023-04-20",
-            docExpireEnd: "2024-09-11",
+            docExpireEnd: "2023-09-11",
             docHandOver: "Khoa tiêu hóa",
             docStatus: 4
         },
@@ -113,7 +120,8 @@ const ListDocOfDepartment = () => {
                                     <th scope="col">Mô tả văn bản</th>
                                     <th scope="col">Thời hạn xử lý</th>
                                     <th scope="col">Trạng thái</th>
-                                    <><th scope="col">Thao tác</th></>
+                                    <th scope="col">Tiến trình</th>
+                                    <th scope="col">Thao tác</th>
                                 </tr>
                             </thead>
 
@@ -127,6 +135,7 @@ const ListDocOfDepartment = () => {
                                             <td><button className='title-doc' onClick={() => btnInfo(itemListDocDepartment)}>{itemListDocDepartment.docName}</button></td>
                                             <td>{itemListDocDepartment.docDes}</td>
                                             <td>{`${moment(itemListDocDepartment.docExpireStart).format('L')} - ${moment(itemListDocDepartment.docExpireEnd).format('L')}`}</td>
+                                            <td></td>
                                             <td>
                                                 {itemListDocDepartment.docStatus === 3 ?
                                                     <>
