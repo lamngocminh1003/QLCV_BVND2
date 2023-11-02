@@ -31,3 +31,12 @@
         background-color: #0dcaf0;
     }
 }
+
+.btn-primary {
+    &.add-doc{
+        &.btn:focus {
+            outline: none;
+            box-shadow: none;
+          }
+    }
+}

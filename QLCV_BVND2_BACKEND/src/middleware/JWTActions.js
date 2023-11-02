@@ -41,7 +41,7 @@ const extractBearerToken = (req) => {
 
 
 const checkUserJWT = (req, res, next) => {
-    //nếu path hiện tại trùng với đã khai báo thì sẽ kịp không check function này nữa
+    //nếu path hiện tại trùng với đã khai báo thì sẽ không check function này nữa
     if (noneSecurePaths.includes(req.path)) {
         return next();
     }

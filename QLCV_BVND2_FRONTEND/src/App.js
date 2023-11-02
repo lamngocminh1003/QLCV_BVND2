@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleRefresh } from "./components/redux/actions/userAction";
 import { Route } from "react-router-dom/cjs/react-router-dom.min";
 import { UserContext } from './context/UserContext';
-import SyncLoader from "react-spinners/ClipLoader";
+import ClipLoader from "react-spinners/ClipLoader";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -21,7 +21,7 @@ function App() {
       <Router>
         {user && user.isLoading ?
           <div className="loading-container">
-            <SyncLoader
+            <ClipLoader
               color='rgba(54, 215, 183, 1)'
               size={150}
             />

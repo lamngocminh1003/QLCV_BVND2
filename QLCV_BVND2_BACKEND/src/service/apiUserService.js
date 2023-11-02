@@ -251,9 +251,13 @@ const userLogin = async (data) => {
             where: {
                 userName: data.valueUserName,
             },
+            include: [{ model: db.department, attributes: ["departmentName"] }],
+            nest: true,
+            raw: true
         })
 
         if (user) {
+            console.log(user);
             let isUserNameExit = await checkUsername(data.valueUserName);
             let isPasswordCorrect = checkPassword(data.valuePassWord, user.password);
 
@@ -264,6 +268,7 @@ const userLogin = async (data) => {
                     fullName: user.fullName,
                     email: user.email,
                     department: user.departmentId,
+                    departmentName: user.department.departmentName,
                     permissionWithRole,
                 }
 
@@ -276,6 +281,7 @@ const userLogin = async (data) => {
                         access_token: token,
                         permissionWithRole: permissionWithRole,
                         department: user.departmentId,
+                        departmentName: user.department.departmentName,
                         userName: user.userName,
                         fullName: user.fullName,
                         email: user.email

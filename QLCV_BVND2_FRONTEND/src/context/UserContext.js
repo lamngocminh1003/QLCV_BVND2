@@ -28,6 +28,7 @@ const UserProvider = ({ children }) => {
             let userToken = response.DT.access_token
             let permission = response.DT.permissionWithRole;
             let departmentId = response.DT.department;
+            let departmentName = response.DT.departmentName;
             let userName = response.DT.userName;
             let fullName = response.DT.fullName;
             let email = response.DT.email;
@@ -35,12 +36,12 @@ const UserProvider = ({ children }) => {
             let data = {
                 isAuthenticated: true,
                 token: userToken,
-                account: { permission, departmentId, userName, fullName, email },
+                account: { permission, departmentId, departmentName, userName, fullName, email },
                 isLoading: false
             }
             setTimeout(() => {
                 setUser(data);
-            }, 2 * 1000)
+            }, 1 * 1000)
         }
 
         else {

@@ -42,6 +42,10 @@ const updateUserById = (userData) => {
   return axios.put(`/api/user/update`, { userData });
 }
 
+const createDocAPI = (data) => {
+  return axios.post(`http://localhost:8282/api/file/file2/addDocumentIncomming/documentIncomming1`, { data })
+}
+
 const fetchRoleList = () => {
   return axios.get(`/api/user/role/read`);
 }
@@ -56,5 +60,6 @@ const fetchDepartmentList = () => {
 
 export {
   registerNewUser, userLogin, userLogout, fetchUserList, deleteUserById, updateUserById, createNewUser, getUserAccount,
-  fetchRoleList, fetchPositionList, fetchDepartmentList
+  fetchRoleList, fetchPositionList, fetchDepartmentList,
+  createDocAPI
 };

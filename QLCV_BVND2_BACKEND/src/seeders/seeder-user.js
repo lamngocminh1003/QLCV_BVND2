@@ -25,7 +25,7 @@ module.exports = {
           departmentId: 1,
         },
         {
-          userName: "Minh",
+          userName: "Phú",
           fullName: "Lâm Phú",
           password: "123",
           phone: "0708079400",

@@ -54,7 +54,7 @@ const Header = (props) => {
                   <></>
                 }
 
-                {user && user.isAuthenticated === true && user.account.departmentId === 3 ?
+                {user && user.isAuthenticated === true && user.account.departmentId === 5 ?
                   <>
                     <NavLink to="/list_doc" className="nav-link">Văn bản</NavLink>
                   </>
@@ -62,6 +62,20 @@ const Header = (props) => {
                   <></>
                 }
 
+                {(() => {
+                  if (user && user.isAuthenticated === true && user.account.departmentId === 1 || user && user.isAuthenticated === true && user.account.departmentId === 5) {
+                    return (
+                      <></>
+                    )
+                  }
+                  else {
+                    return (
+                      <>
+                        <NavLink to="/list_doc_Department" className="nav-link">Văn bản</NavLink>
+                      </>
+                    )
+                  }
+                })()}
               </Nav>
 
               <Nav>

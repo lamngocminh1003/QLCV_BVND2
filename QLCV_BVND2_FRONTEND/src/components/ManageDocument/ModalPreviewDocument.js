@@ -3,9 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 //import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
-import FileViewer from 'react-file-viewer';
-// Import the main PDF viewer component
-import { Worker, Viewer } from '@react-pdf-viewer/core';
+import FileViewer from 'react-file-viewer'
 // Import the styles
 import '@react-pdf-viewer/core/lib/styles/index.css';
 

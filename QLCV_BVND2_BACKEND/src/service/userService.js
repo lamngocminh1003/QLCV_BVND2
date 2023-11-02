@@ -30,6 +30,7 @@ const getUserList = async () => {
     raw: true,
     nest: true,
   });
+  console.log(users);
   return users;
 }
 

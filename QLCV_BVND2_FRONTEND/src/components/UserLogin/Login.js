@@ -74,7 +74,8 @@ const LoginUser = () => {
 
             let userToken = response.DT.access_token
             let permission = response.DT.permissionWithRole;
-            let departmentId = response.DT.department
+            let departmentId = response.DT.department;
+            let departmentName = response.DT.departmentName;
             let userName = response.DT.userName;
             let fullName = response.DT.fullName;
             let email = response.DT.email;
@@ -82,7 +83,7 @@ const LoginUser = () => {
             let data = {
                 isAuthenticated: true,
                 token: userToken,
-                account: { permission, departmentId, userName, fullName, email }
+                account: { permission, departmentId, departmentName, userName, fullName, email }
             }
 
             localStorage.setItem('jwt', data.token);
@@ -98,24 +99,24 @@ const LoginUser = () => {
 
     return (
         <div className='container-login-form' id='login-form'>
-            <div class="limiter">
-                <div class="container-login100">
-                    <div class="wrap-login100">
-                        <form class="login100-form validate-form">
-                            <span class="login100-form-title p-b-26 text-uppercase text-primary">
+            <div className="limiter">
+                <div className="container-login100">
+                    <div className="wrap-login100">
+                        <form className="login100-form validate-form">
+                            <span className="login100-form-title p-b-26 text-uppercase text-primary">
                                 Đăng nhập
                             </span>
-                            <span class="login100-form-title p-b-48">
+                            <span className="login100-form-title p-b-48">
                                 <img src={image} className="rounded" style={{ width: "10rem" }} />
                             </span>
 
-                            <div class="wrap-input100">
+                            <div className="wrap-input100">
                                 <input className={objValidInput.isValidUserName ? 'form-control' : 'is-invalid form-control'} type="text" name="userName" placeholder='Tên người dùng' value={valueUserName} onChange={(event) => { setValueUserName(event.target.value) }} />
                             </div>
 
-                            <div class="wrap-input100 ">
-                                <span class="btn-show-pass" onClick={() => showPassword()}>
-                                    <i class={isChange}></i>
+                            <div className="wrap-input100 ">
+                                <span className="btn-show-pass" onClick={() => showPassword()}>
+                                    <i className={isChange}></i>
                                 </span>
                                 <input
                                     type={inputType}
@@ -128,21 +129,21 @@ const LoginUser = () => {
                                 />
                             </div>
 
-                            <div class="container-login100-form-btn">
-                                <div class="wrap-login100-form-btn">
-                                    <div class="login100-form-bgbtn"></div>
-                                    <button type='button' class="login100-form-btn btn btn-primary" onClick={() => btnDangNhap()}>
+                            <div className="container-login100-form-btn">
+                                <div className="wrap-login100-form-btn">
+                                    <div className="login100-form-bgbtn"></div>
+                                    <button type='button' className="login100-form-btn btn btn-primary" onClick={() => btnDangNhap()}>
                                         Đăng nhập
                                     </button>
                                 </div>
                             </div>
 
-                            <div class="text-center p-t-40">
-                                <span class="fw-normal mr-1">
+                            <div className="text-center p-t-40">
+                                <span className="fw-normal mr-1">
                                     Chưa có tài khoản?
                                 </span>
 
-                                <a class="fw-bolder" href="#" style={{ textDecoration: "none", fontSize: "16px" }}>
+                                <a className="fw-bolder" href="#" style={{ textDecoration: "none", fontSize: "16px" }}>
                                     Đăng ký
                                 </a>
                             </div>

@@ -8,6 +8,7 @@ import Project from "../components/Project/Project";
 import LoginUser from '../components/UserLogin/Login';
 import ListUser from "../components/User/ListUser";
 import ListDoc from "../components/User/ListDoc";
+import ListDocOfDepartment from "../components/User/ListDocOfDepartment";
 import Header from "../components/Nav/Header";
 
 const AppRoutes = (props) => {
@@ -24,6 +25,7 @@ const AppRoutes = (props) => {
           <PrivateRoutes path="/projects" component={Project} />
           <PrivateRoutes path="/list_user" component={ListUser}> </PrivateRoutes>
           <PrivateRoutes path="/list_doc" component={ListDoc}></PrivateRoutes>
+          <PrivateRoutes path="/list_doc_Department" component={ListDocOfDepartment}></PrivateRoutes>
           <Route path="/login_user"> <LoginUser /></Route>
           <Route path="*">
             <Page404 />{" "}

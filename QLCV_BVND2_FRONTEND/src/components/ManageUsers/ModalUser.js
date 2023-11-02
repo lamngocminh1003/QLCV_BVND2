@@ -240,99 +240,107 @@ const ModalUser = (props) => {
                 </Modal.Header>
 
                 <Modal.Body>
-                    <div className="user-info-container col-xs-12">
-                        <form method="POST" action="/user/create-user">
-                            <div className="container">
-                                <div className="row d-flex justify-content-center form-group">
-                                    <div className="mb-3 col-sm-4 form-group">
-                                        <label htmlFor="fullName" className="form-label">Họ tên</label>
-                                        <input type="text" className={validInput.fullName ? 'form-control' : 'form-control is-invalid'} id="fullName" name="fullName" value={userDataDefault.fullName} required
-                                            onChange={(event) => handleOnchangeForm(event.target.value, "fullName")}
-                                        />
-                                    </div>
-                                    <div className="mb-3 col-sm-4 form-group">
-                                        <label htmlFor="userName" className="form-label">Tên người dùng</label>
-                                        <input disabled={setActionModalUser === 'CREATE' ? false : true} type="text" className={validInput.userName ? 'form-control' : 'form-control is-invalid'} id="userName" name="userName" value={userDataDefault.userName} required
-                                            onChange={(event) => handleOnchangeForm(event.target.value, "userName")}
-                                        />
-                                    </div>
-                                    <div className="mb-3 col-sm-4 form-group">
-                                        {setActionModalUser === 'CREATE' &&
-                                            <>
-                                                <label htmlFor="userPassword" className="form-label">Password</label>
-                                                <input type="password" className={validInput.password ? 'form-control' : 'form-control is-invalid'} id="userPassword" name="userPassword" autoComplete="on" value={userDataDefault.password} required
-                                                    onChange={(event) => handleOnchangeForm(event.target.value, "password")}
-                                                />
-                                            </>
-                                        }
-                                    </div>
-                                </div>
+                    {(() => {
+                        if (props.setActionModalUser === 'CREATE' || props.setActionModalUser === 'UPDATE') {
+                            return (
+                                <>
+                                    <div className="user-info-container col-xs-12">
+                                        <form method="POST" action="/user/create-user">
+                                            <div className="container">
+                                                <div className="row d-flex justify-content-center form-group">
+                                                    <div className="mb-3 col-sm-4 form-group">
+                                                        <label htmlFor="fullName" className="form-label">Họ tên</label>
+                                                        <input type="text" className={validInput.fullName ? 'form-control' : 'form-control is-invalid'} id="fullName" name="fullName" value={userDataDefault.fullName} required
+                                                            onChange={(event) => handleOnchangeForm(event.target.value, "fullName")}
+                                                        />
+                                                    </div>
+                                                    <div className="mb-3 col-sm-4 form-group">
+                                                        <label htmlFor="userName" className="form-label">Tên người dùng</label>
+                                                        <input disabled={setActionModalUser === 'CREATE' ? false : true} type="text" className={validInput.userName ? 'form-control' : 'form-control is-invalid'} id="userName" name="userName" value={userDataDefault.userName} required
+                                                            onChange={(event) => handleOnchangeForm(event.target.value, "userName")}
+                                                        />
+                                                    </div>
+                                                    <div className="mb-3 col-sm-4 form-group">
+                                                        {setActionModalUser === 'CREATE' &&
+                                                            <>
+                                                                <label htmlFor="userPassword" className="form-label">Password</label>
+                                                                <input type="password" className={validInput.password ? 'form-control' : 'form-control is-invalid'} id="userPassword" name="userPassword" autoComplete="on" value={userDataDefault.password} required
+                                                                    onChange={(event) => handleOnchangeForm(event.target.value, "password")}
+                                                                />
+                                                            </>
+                                                        }
+                                                    </div>
+                                                </div>
 
-                                <div className="row mt-3 row mt-3 d-flex justify-content-center">
-                                    <div className="mb-3 col-sm-4 form-group">
-                                        <label htmlFor="userPhone" className="form-label">Số điện thoại</label>
-                                        <input type="tel" className={validInput.phone ? 'form-control' : 'form-control is-invalid'} id="userPhone" name="userPhone" value={userDataDefault.phone} required
-                                            onChange={(event) => handleOnchangeForm(event.target.value, "phone")}
-                                        />
-                                    </div>
+                                                <div className="row mt-3 row mt-3 d-flex justify-content-center">
+                                                    <div className="mb-3 col-sm-4 form-group">
+                                                        <label htmlFor="userPhone" className="form-label">Số điện thoại</label>
+                                                        <input type="tel" className={validInput.phone ? 'form-control' : 'form-control is-invalid'} id="userPhone" name="userPhone" value={userDataDefault.phone} required
+                                                            onChange={(event) => handleOnchangeForm(event.target.value, "phone")}
+                                                        />
+                                                    </div>
 
-                                    <div className="mb-3 col-sm-4 form-group">
-                                        <label htmlFor="userEmail" className="form-label">Email</label>
-                                        <input type="email" className={validInput.email ? 'form-control' : 'form-control is-invalid'} id="userEmail" name="userEmail" value={userDataDefault.email} required
-                                            onChange={(event) => handleOnchangeForm(event.target.value, "email")}
-                                        />
-                                    </div>
+                                                    <div className="mb-3 col-sm-4 form-group">
+                                                        <label htmlFor="userEmail" className="form-label">Email</label>
+                                                        <input type="email" className={validInput.email ? 'form-control' : 'form-control is-invalid'} id="userEmail" name="userEmail" value={userDataDefault.email} required
+                                                            onChange={(event) => handleOnchangeForm(event.target.value, "email")}
+                                                        />
+                                                    </div>
 
-                                    <div className="mb-3 col-sm-4 form-group">
-                                        <label htmlFor="userRole" className="form-label">Vai trò</label>
-                                        <select name="userRole" id="userRole" className={validInput.role ? 'form-control' : 'form-control is-invalid'} onChange={(event) => handleOnchangeForm(event.target.value, "role")} value={userDataDefault.role}>
-                                            <option defaultValue="" hidden>Hãy chọn vai trò</option>
-                                            {listRole.length > 0 &&
-                                                listRole.map((itemRoleList, indexRoleList) => {
-                                                    return (
-                                                        <option key={`role-${indexRoleList}`} value={itemRoleList.id}>{itemRoleList.roleName}</option>
-                                                    )
-                                                })
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
+                                                    <div className="mb-3 col-sm-4 form-group">
+                                                        <label htmlFor="userRole" className="form-label">Vai trò</label>
+                                                        <select name="userRole" id="userRole" className={validInput.role ? 'form-control' : 'form-control is-invalid'} onChange={(event) => handleOnchangeForm(event.target.value, "role")} value={userDataDefault.role}>
+                                                            <option defaultValue="" hidden>Hãy chọn vai trò</option>
+                                                            {listRole.length > 0 &&
+                                                                listRole.map((itemRoleList, indexRoleList) => {
+                                                                    return (
+                                                                        <option key={`role-${indexRoleList}`} value={itemRoleList.id}>{itemRoleList.roleName}</option>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
 
-                                <div className="row mt-3 row mt-3 d-flex justify-content-center">
-                                    <div className="mb-3 col-sm-4 form-group">
-                                        <label htmlFor="userPosition" className="form-label">Vị trí</label>
-                                        <select name="userPosition" id="userPosition" className={validInput.position ? 'form-control' : 'form-control is-invalid'} onChange={(event) => handleOnchangeForm(event.target.value, "position")} value={userDataDefault.position}>
-                                            <option defaultValue="" hidden>Hãy chọn vị trí</option>
-                                            {listPosition.length > 0 && listPosition.map((itemPositionList, indexPositionList) => {
-                                                return (
-                                                    <option key={`position-${indexPositionList}`} value={itemPositionList.id}>{itemPositionList.positionName}</option>
-                                                )
-                                            })
-                                            }
-                                        </select>
-                                    </div>
+                                                <div className="row mt-3 row mt-3 d-flex justify-content-center">
+                                                    <div className="mb-3 col-sm-4 form-group">
+                                                        <label htmlFor="userPosition" className="form-label">Vị trí</label>
+                                                        <select name="userPosition" id="userPosition" className={validInput.position ? 'form-control' : 'form-control is-invalid'} onChange={(event) => handleOnchangeForm(event.target.value, "position")} value={userDataDefault.position}>
+                                                            <option defaultValue="" hidden>Hãy chọn vị trí</option>
+                                                            {listPosition.length > 0 && listPosition.map((itemPositionList, indexPositionList) => {
+                                                                return (
+                                                                    <option key={`position-${indexPositionList}`} value={itemPositionList.id}>{itemPositionList.positionName}</option>
+                                                                )
+                                                            })
+                                                            }
+                                                        </select>
+                                                    </div>
 
-                                    <div className="mb-3 col-sm-4 form-group">
-                                        <label htmlFor="userDepartment" className="form-label">Khoa Phòng</label>
-                                        <select name="userDepartment" id="userDepartment" className={validInput.department ? 'form-control' : 'form-control is-invalid'} onChange={(event) => handleOnchangeForm(event.target.value, "department")} value={userDataDefault.department}>
-                                            <option defaultValue="" hidden>Hãy chọn khoa phòng</option>
-                                            {listDepartment.length > 0 && listDepartment.map((itemDepartmentList, indexDepartmentList) => {
-                                                return (
-                                                    <option key={`department-${indexDepartmentList}`} value={itemDepartmentList.id}>{itemDepartmentList.departmentName}</option>
-                                                )
-                                            })
-                                            }
-                                        </select>
-                                    </div>
+                                                    <div className="mb-3 col-sm-4 form-group">
+                                                        <label htmlFor="userDepartment" className="form-label">Khoa Phòng</label>
+                                                        <select name="userDepartment" id="userDepartment" className={validInput.department ? 'form-control' : 'form-control is-invalid'} onChange={(event) => handleOnchangeForm(event.target.value, "department")} value={userDataDefault.department}>
+                                                            <option defaultValue="" hidden>Hãy chọn khoa phòng</option>
+                                                            {listDepartment.length > 0 && listDepartment.map((itemDepartmentList, indexDepartmentList) => {
+                                                                return (
+                                                                    <option key={`department-${indexDepartmentList}`} value={itemDepartmentList.id}>{itemDepartmentList.departmentName}</option>
+                                                                )
+                                                            })
+                                                            }
+                                                        </select>
+                                                    </div>
 
-                                    <div className="mb-3 col-sm-4">
-                                        <label htmlFor="userImage" className="form-label">Ảnh chân dung</label>
-                                        <input type="file" className="form-control" id="userImage" name="userImage" />
+                                                    <div className="mb-3 col-sm-4">
+                                                        <label htmlFor="userImage" className="form-label">Ảnh chân dung</label>
+                                                        <input type="file" className="form-control" id="userImage" name="userImage" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                                </>
+                            )
+                        }
+                    })()}
                 </Modal.Body>
 
                 <Modal.Footer>

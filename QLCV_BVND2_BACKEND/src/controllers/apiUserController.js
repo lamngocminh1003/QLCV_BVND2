@@ -246,6 +246,7 @@ const handleGetUserAccount = async (req, res) => {
             access_token: req.token,
             permissionWithRole: req.user.permissionWithRole,
             department: req.user.department,
+            departmentName: req.user.departmentName,
             userName: req.user.userName,
             fullName: req.user.fullName,
             email: req.user.email
