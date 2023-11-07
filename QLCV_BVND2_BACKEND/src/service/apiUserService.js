@@ -257,7 +257,6 @@ const userLogin = async (data) => {
         })
 
         if (user) {
-            console.log(user);
             let isUserNameExit = await checkUsername(data.valueUserName);
             let isPasswordCorrect = checkPassword(data.valuePassWord, user.password);
 
