@@ -33,7 +33,7 @@ instance.interceptors.response.use(function (response) {
     switch (status) {
         // authentication (token related issues)
         case 401: {
-            toast.error('Hãy đăng nhập để sử dụng chức năng này!');
+            // toast.error('Hãy đăng nhập để sử dụng chức năng này!');
             return err.response.data;
         }
 

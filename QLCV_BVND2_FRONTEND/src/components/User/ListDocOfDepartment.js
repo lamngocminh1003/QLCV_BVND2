@@ -2,12 +2,10 @@ import React, { useState, useContext } from 'react'
 import moment from 'moment';
 import 'moment/locale/vi';
 import { UserContext } from '../../context/UserContext';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 
-//import progress spinner
-import PropTypes from 'prop-types';
-import CircularProgress from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+//import progressbar
+import CircularProgress from "../ProgressBar/CircularProgressWithLabel";
 
 import ReactPaginate from 'react-paginate';
 import ModalDocumentOfDepartment from '../ManageDocument/ModalDocumentOfDepartment';
@@ -16,7 +14,10 @@ const ListDocOfDepartment = () => {
     const { user } = useContext(UserContext);
 
     const [searchValue, setSearchValue] = useState('');
+
     const keys = ["docName", "docDes", "docExpireStart", "docExpireEnd", "docHandOver"];
+
+    const today = moment();
 
     const listDocDepartment = [
         {
@@ -27,7 +28,8 @@ const ListDocOfDepartment = () => {
             docExpireStart: "2023-07-05",
             docExpireEnd: "2024-01-01",
             docHandOver: "Tiêu hóa",
-            docStatus: 3
+            docStatus: 3,
+            docProgress: 0
         },
         {
             idDoc: 2,
@@ -37,7 +39,8 @@ const ListDocOfDepartment = () => {
             docExpireStart: "2023-11-20",
             docExpireEnd: "2024-07-05",
             docHandOver: "Tiêu hóa",
-            docStatus: 4
+            docStatus: 4,
+            docProgress: 100
         },
         {
             idDoc: 3,
@@ -47,7 +50,8 @@ const ListDocOfDepartment = () => {
             docExpireStart: "2023-12-10",
             docExpireEnd: "2024-01-31",
             docHandOver: "Khoa tiêu hóa",
-            docStatus: 3
+            docStatus: 3,
+            docProgress: 22
         },
         {
             idDoc: 4,
@@ -55,9 +59,10 @@ const ListDocOfDepartment = () => {
             docFile: "vanban4.pdf",
             docDes: "Mô tả d",
             docExpireStart: "2024-02-02",
-            docExpireEnd: "2024-07-05",
+            docExpireEnd: "2023-07-05",
             docHandOver: "Khoa tiêu hóa",
-            docStatus: 4
+            docStatus: 4,
+            docProgress: 100
         },
         {
             idDoc: 5,
@@ -67,19 +72,20 @@ const ListDocOfDepartment = () => {
             docExpireStart: "2023-04-20",
             docExpireEnd: "2023-09-11",
             docHandOver: "Khoa tiêu hóa",
-            docStatus: 4
+            docStatus: 4,
+            docProgress: 67
         },
     ]
-
-    const btnInfo = () => {
-
-    }
 
     const btnEdit = () => {
 
     }
 
     const btnDel = () => {
+
+    }
+
+    const btnInfo = () => {
 
     }
 
@@ -98,7 +104,7 @@ const ListDocOfDepartment = () => {
 
                         <div className='row px-0 d-flex mt-2'>
                             <div className='col-2'>
-                                <button type="button" class="btn btn-primary">Chua biet nut nay lam gi</button>
+                                <button type="button" className="btn btn-primary">Chua biet nut nay lam gi</button>
                             </div>
 
                             <div className='col-4'>
@@ -112,7 +118,7 @@ const ListDocOfDepartment = () => {
                         </div>
                     </div>
                     <div className='row table-doc mt-4'>
-                        <table className="table table-hover table-bordered ">
+                        <table className="table table-hover table-bordered text-center">
                             <thead>
                                 <tr>
                                     <th scope='col'>STT</th>
@@ -135,7 +141,6 @@ const ListDocOfDepartment = () => {
                                             <td><button className='title-doc' onClick={() => btnInfo(itemListDocDepartment)}>{itemListDocDepartment.docName}</button></td>
                                             <td>{itemListDocDepartment.docDes}</td>
                                             <td>{`${moment(itemListDocDepartment.docExpireStart).format('L')} - ${moment(itemListDocDepartment.docExpireEnd).format('L')}`}</td>
-                                            <td></td>
                                             <td>
                                                 {itemListDocDepartment.docStatus === 3 ?
                                                     <>
@@ -143,18 +148,24 @@ const ListDocOfDepartment = () => {
                                                     </>
                                                     :
                                                     <>
-                                                        <span className="status rounded-pill success">Hoàn thành</span>
+                                                        {today > moment(itemListDocDepartment.docExpireEnd) && itemListDocDepartment.docProgress < 100 ?
+                                                            <span className="status rounded-pill expired">Hết hạn</span>
+                                                            :
+                                                            <span className="status rounded-pill success">Hoàn thành</span>
+                                                        }
                                                     </>
                                                 }
                                             </td>
+                                            <td>
+                                                <CircularProgress progressValue={itemListDocDepartment.docProgress} />
+                                            </td>
 
-                                            <td className='text-center'>
+                                            <td>
                                                 {(() => {
                                                     if (itemListDocDepartment.docStatus === 3) {
                                                         return (
                                                             <>
-                                                                <button className="btn btn-warning" onClick={() => btnEdit(itemListDocDepartment)}> <i className="fa-solid fa-pen-to-square text-white"></i></button>
-                                                                <button className="btn btn-danger mx-2" onClick={() => btnDel(itemListDocDepartment)} > <i className="fa-solid fa-trash text-white"></i></button>
+                                                                <button className="btn btn-warning" onClick={() => btnEdit(itemListDocDepartment)}> <AssignmentOutlinedIcon /></button>
                                                             </>
                                                         )
                                                     } else {

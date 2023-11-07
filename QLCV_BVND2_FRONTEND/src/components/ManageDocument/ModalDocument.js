@@ -425,6 +425,7 @@ function ModalAddDoc(props) {
                 reader.readAsDataURL(selectedFile);
                 reader.onload = (e) => {
                     setDataFile(e.target.result);
+                    // setPdfFile(e.target.result)
                 }
             }
 
@@ -518,7 +519,7 @@ function ModalAddDoc(props) {
     return (
         <>
             <div>
-                <Modal size='lg' show={props.active} onHide={() => handleOnCloseModal()} >
+                <Modal show={props.active} onHide={() => handleOnCloseModal()} size="lg">
                     <Modal.Header closeButton>
                         <Modal.Title>
                             {(() => {

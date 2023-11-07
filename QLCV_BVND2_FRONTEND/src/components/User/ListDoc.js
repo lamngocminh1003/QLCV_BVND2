@@ -176,7 +176,7 @@ function ListDoc() {
                                 <div className='col-4 mt-1'>
                                     <form method='GET' autoComplete='off'>
                                         <div className='d-flex'>
-                                            <input type="text" className="form-control fa" placeholder="&#xF002; Tìm văn bản..." name="keyDoc" onChange={(e) => setSearchValue(e.target.value)} style={{ fontFamily: "Arial, FontAwesome" }} />
+                                            <input type="text" className="form-control fa py-2" placeholder="&#xF002; Tìm văn bản..." name="keyDoc" onChange={(e) => setSearchValue(e.target.value)} style={{ fontFamily: "Arial, FontAwesome" }} />
                                             {/* <button type="button" className="btn btn-warning ml-2 py-2 "><i className="fa fa-search text-white"></i></button> */}
                                         </div>
                                     </form>

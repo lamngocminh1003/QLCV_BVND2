@@ -43,12 +43,12 @@ const Header = (props) => {
             <Navbar.Collapse id="navbarScroll">
               <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
 
-                <NavLink to="/s" className="nav-link">Trang chủ</NavLink>
+                <NavLink exact to="/" className="nav-link">Trang chủ</NavLink>
                 {user && user.isAuthenticated === true && user.account.departmentId === 1 ?
                   <>
-                    <NavLink to="/list_user" className="nav-link">Người dùng</NavLink>
-                    <NavLink to="/list_doc" className="nav-link">Văn bản</NavLink>
-                    <NavLink to="/project_user" className="nav-link">Dự án</NavLink>
+                    <NavLink exact to="/list_user" className="nav-link">Người dùng</NavLink>
+                    <NavLink exact to="/list_doc" className="nav-link">Văn bản</NavLink>
+                    <NavLink exact to="/project_user" className="nav-link">Dự án</NavLink>
                   </>
                   :
                   <></>
@@ -56,7 +56,7 @@ const Header = (props) => {
 
                 {user && user.isAuthenticated === true && user.account.departmentId === 5 ?
                   <>
-                    <NavLink to="/list_doc" className="nav-link">Văn bản</NavLink>
+                    <NavLink exact to="/list_doc" className="nav-link">Văn bản</NavLink>
                   </>
                   :
                   <></>
@@ -68,10 +68,15 @@ const Header = (props) => {
                       <></>
                     )
                   }
+                  else if (user && user.isAuthenticated === false) {
+                    return (
+                      <></>
+                    )
+                  }
                   else {
                     return (
                       <>
-                        <NavLink to="/list_doc_Department" className="nav-link">Văn bản</NavLink>
+                        <NavLink exact to="/list_doc_department" className="nav-link">Văn bản</NavLink>
                       </>
                     )
                   }

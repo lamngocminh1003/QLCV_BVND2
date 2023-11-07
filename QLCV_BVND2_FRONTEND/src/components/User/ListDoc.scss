@@ -30,6 +30,9 @@
     &.checked{
         background-color: #0dcaf0;
     }
+    &.expired{
+        background-color: #6c757d;
+    }
 }
 
 .btn-primary {
