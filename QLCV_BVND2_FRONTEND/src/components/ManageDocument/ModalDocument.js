@@ -1,5 +1,7 @@
 import "./Document.scss";
 
+import { Buffer } from "buffer";
+
 import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import _, { set } from 'lodash';
@@ -404,6 +406,20 @@ function ModalAddDoc(props) {
         return check;
     }
 
+    const b64toBlob = (b64Data) => {
+        var binary = atob(b64Data.replace(/\s/g, ''));
+        var len = binary.length;
+        var buffer = new ArrayBuffer(len);
+        var view = new Uint8Array(buffer);
+        for (var i = 0; i < len; i++) {
+            view[i] = binary.charCodeAt(i);
+        }
+
+        const blob = new Blob( [view], { type: "application/pdf" });
+
+        return blob;
+      }
+
     //xử lý file, đọc file để preview file
     const handlePdfFile = (event) => {
         let selectedFile = event.target.files[0];
@@ -424,8 +440,17 @@ function ModalAddDoc(props) {
                 let reader = new FileReader();
                 reader.readAsDataURL(selectedFile);
                 reader.onload = (e) => {
-                    setDataFile(e.target.result);
-                    // setPdfFile(e.target.result)
+                    let result = e.target.result;
+                    let result_split = result.split(",");
+                    let base64Data = result_split[1];
+                    let blob_file = b64toBlob(base64Data);
+                    var file = new File([blob_file], "my_image.png",{type:"application/pdf", lastModified:new Date().getTime()})
+                    
+                    // console.log(blob_file);
+                    // console.log('objfile: ', file);
+
+                    setDataFile(base64Data);
+                    setPdfFile(file)
                 }
             }
 

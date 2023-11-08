@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-//import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+//import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import FileViewer from 'react-file-viewer'
 
 import "./Document.scss";
@@ -15,11 +15,17 @@ const ModalPreviewDocument = (props) => {
 
     const { dataModalPreviewDoc, setExt } = props
 
+    const [uri, setUri] = useState();
+
     const handleCloseModalDocPreview = () => {
         props.close(false)
         props.resetdataModalPreviewDoc();
         props.resetExt();
     }
+
+    useEffect(() => {
+        setUri(dataModalPreviewDoc);        
+    }, [dataModalPreviewDoc])
 
     if (dataModalPreviewDoc && dataModalPreviewDoc.length !== 0 && setExt && setExt.length !== 0) {
         return (
@@ -43,23 +49,24 @@ const ModalPreviewDocument = (props) => {
     }
 
     else if (dataModalPreviewDoc && dataModalPreviewDoc.length !== 0) {
+        console.log(dataModalPreviewDoc);
         return (
             <>
-                <Modal size='xl' show={props.open} dialogClassName="modal-90w">
+                <Modal show={props.open} dialogClassName="modal-80mw mt-0">
                     <Modal.Header closeButton onClick={() => props.close(false)}></Modal.Header>
                     <Modal.Body>
                         <div className='preview'>
                             <DocViewer
                                 documents={dataModalPreviewDoc.map((file) => ({
                                     uri: window.URL.createObjectURL(file),
-                                    fileType: file.type,
-                                    fileName: file.name,
+                                    // fileType: "application/pdf",
+                                    // fileName: file.name,
                                 }))}
                                 pluginRenderers={DocViewerRenderers}
                                 style={{ height: "100rem" }}
                             />
                             {/* <Worker workerUrl='https://unpkg.com/pdfjs-dist@2.4.456/build/pdf.worker.min.js'>
-                                <Viewer fileUrl={dataModalPreviewDoc} plugins={[newplugin]} />;
+                                <Viewer fileUrl={dataModalPreviewDoc} />;
                             </Worker> */}
                         </div>
                     </Modal.Body>

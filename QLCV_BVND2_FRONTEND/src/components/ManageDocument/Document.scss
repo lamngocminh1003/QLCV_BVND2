@@ -39,9 +39,24 @@
     }
 }
 
-.main-modal {
-    min-width: 100%;
+//modal preview doc
+.fade{
+    &.modal{
+        &.show{
+            overflow: hidden;
+        }
+    }
 }
+
+.modal-80mw {
+    min-width:80%;
+}
+
+//react doc viewer
+#header-bar{
+    display: none;
+}
+
 
 
 
