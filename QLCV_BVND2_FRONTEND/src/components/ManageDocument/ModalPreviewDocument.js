@@ -15,17 +15,19 @@ const ModalPreviewDocument = (props) => {
 
     const { dataModalPreviewDoc, setExt } = props
 
-    const [uri, setUri] = useState();
-
     const handleCloseModalDocPreview = () => {
         props.close(false)
         props.resetdataModalPreviewDoc();
         props.resetExt();
     }
 
-    useEffect(() => {
-        setUri(dataModalPreviewDoc);        
-    }, [dataModalPreviewDoc])
+    const docs = [
+        {
+            uri: dataModalPreviewDoc,
+            fileType: "pdf",
+            fileName: "a.pdf"
+        }
+    ]
 
     if (dataModalPreviewDoc && dataModalPreviewDoc.length !== 0 && setExt && setExt.length !== 0) {
         return (
@@ -57,11 +59,16 @@ const ModalPreviewDocument = (props) => {
                     <Modal.Body>
                         <div className='preview'>
                             <DocViewer
-                                documents={dataModalPreviewDoc.map((file) => ({
-                                    uri: window.URL.createObjectURL(file),
-                                    // fileType: "application/pdf",
-                                    // fileName: file.name,
-                                }))}
+
+                                //data từ local
+                                // documents={dataModalPreviewDoc.map((file) => ({
+                                //     uri: window.URL.createObjectURL(file),
+                                //     // fileType: "application/pdf",
+                                //     // fileName: file.name,
+                                // }))}
+
+                                //data từ api
+                                documents={docs}
                                 pluginRenderers={DocViewerRenderers}
                                 style={{ height: "100rem" }}
                             />

@@ -415,10 +415,10 @@ function ModalAddDoc(props) {
             view[i] = binary.charCodeAt(i);
         }
 
-        const blob = new Blob( [view], { type: "application/pdf" });
+        const blob = new Blob([view], { type: "application/pdf" });
 
         return blob;
-      }
+    }
 
     //xử lý file, đọc file để preview file
     const handlePdfFile = (event) => {
@@ -444,13 +444,15 @@ function ModalAddDoc(props) {
                     let result_split = result.split(",");
                     let base64Data = result_split[1];
                     let blob_file = b64toBlob(base64Data);
-                    var file = new File([blob_file], "my_image.png",{type:"application/pdf", lastModified:new Date().getTime()})
-                    
+                    let file = new File([blob_file], "my_image.png", { lastModified: new Date().getTime(), type: blob_file.type })
+                    let url_file = window.URL.createObjectURL(file)
+                    console.log(url_file);
+
                     // console.log(blob_file);
                     // console.log('objfile: ', file);
 
                     setDataFile(base64Data);
-                    setPdfFile(file)
+                    setPdfFile(url_file)
                 }
             }
 
