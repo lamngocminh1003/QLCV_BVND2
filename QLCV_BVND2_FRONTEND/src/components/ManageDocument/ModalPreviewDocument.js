@@ -24,8 +24,7 @@ const ModalPreviewDocument = (props) => {
     const docs = [
         {
             uri: dataModalPreviewDoc,
-            fileType: "pdf",
-            fileName: "a.pdf"
+            fileType: "pdf"
         }
     ]
 
@@ -51,7 +50,6 @@ const ModalPreviewDocument = (props) => {
     }
 
     else if (dataModalPreviewDoc && dataModalPreviewDoc.length !== 0) {
-        console.log(dataModalPreviewDoc);
         return (
             <>
                 <Modal show={props.open} dialogClassName="modal-80mw mt-0">

@@ -1,7 +1,5 @@
 import "./Document.scss";
 
-import { Buffer } from "buffer";
-
 import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import _, { set } from 'lodash';
@@ -415,10 +413,10 @@ function ModalAddDoc(props) {
             view[i] = binary.charCodeAt(i);
         }
 
-        const blob = new Blob([view], { type: "application/pdf" });
+        const blob = new Blob( [view], { type: "application/pdf" });
 
         return blob;
-    }
+      }
 
     //xử lý file, đọc file để preview file
     const handlePdfFile = (event) => {
@@ -444,15 +442,13 @@ function ModalAddDoc(props) {
                     let result_split = result.split(",");
                     let base64Data = result_split[1];
                     let blob_file = b64toBlob(base64Data);
-                    let file = new File([blob_file], "my_image.png", { lastModified: new Date().getTime(), type: blob_file.type })
-                    let url_file = window.URL.createObjectURL(file)
-                    console.log(url_file);
-
+                    var file = new File([blob_file], "my_image.png",{type:"application/pdf", lastModified:new Date().getTime()})
+                    
                     // console.log(blob_file);
                     // console.log('objfile: ', file);
 
                     setDataFile(base64Data);
-                    setPdfFile(url_file)
+                    setPdfFile(file)
                 }
             }
 

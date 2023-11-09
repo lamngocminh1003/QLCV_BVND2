@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react'
 import moment from 'moment';
 import 'moment/locale/vi';
 import { UserContext } from '../../context/UserContext';
-import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 //import progressbar
 import CircularProgress from "../ProgressBar/CircularProgressWithLabel";
@@ -13,11 +13,17 @@ import ModalDocumentOfDepartment from '../ManageDocument/ModalDocumentOfDepartme
 const ListDocOfDepartment = () => {
     const { user } = useContext(UserContext);
 
-    const [searchValue, setSearchValue] = useState('');
+    //config modalDocOfDepartment
+    const [openModal, setOpenModal] = useState();
+    const [dataModalDocOfDepartment, setDataModalDocOfDepartment] = useState();
 
+    //config search
+    const [searchValue, setSearchValue] = useState('');
     const keys = ["docName", "docDes", "docExpireStart", "docExpireEnd", "docHandOver"];
 
+    //cofig some variables
     const today = moment();
+    const totalPages = 5;
 
     const listDocDepartment = [
         {
@@ -79,8 +85,9 @@ const ListDocOfDepartment = () => {
         },
     ]
 
-    const btnEdit = () => {
-
+    const btnAssign = (itemListDocDepartment) => {
+        setOpenModal(true);
+        setDataModalDocOfDepartment(itemListDocDepartment);
     }
 
     const btnDel = () => {
@@ -106,7 +113,7 @@ const ListDocOfDepartment = () => {
 
                         <div className='row px-0 d-flex mt-2'>
                             <div className='col-2'>
-                                <button type="button" className="btn btn-primary">Chua biet nut nay lam gi</button>
+                                <button type="button" className="btn btn-primary add-doc">Chua biet nut nay lam gi</button>
                             </div>
 
                             <div className='col-4'>
@@ -167,7 +174,7 @@ const ListDocOfDepartment = () => {
                                                     if (itemListDocDepartment.docStatus === 3) {
                                                         return (
                                                             <>
-                                                                <button className="btn btn-warning" onClick={() => btnEdit(itemListDocDepartment)}> <AssignmentOutlinedIcon /></button>
+                                                                <button className="btn btn-warning" onClick={() => btnAssign(itemListDocDepartment)}> <i className="fa text-white"> <AssignmentIcon />  </i> </button>
                                                             </>
                                                         )
                                                     } else {
@@ -187,7 +194,38 @@ const ListDocOfDepartment = () => {
                         </table>
                     </div>
                 </div>
+                {totalPages > 0 &&
+                    <div className='table-footer row d-flex justify-content-center mt-2'>
+                        <div className='col-6 d-flex justify-content-center table-paginate'>
+                            <ReactPaginate
+                                nextLabel=">"
+                                // onPageChange={handlePageClick}
+                                pageRangeDisplayed={3}
+                                marginPagesDisplayed={4}
+                                pageCount={totalPages}
+                                previousLabel="<"
+                                pageClassName="page-item"
+                                pageLinkClassName="page-link"
+                                previousClassName="page-item"
+                                previousLinkClassName="page-link"
+                                nextClassName="page-item"
+                                nextLinkClassName="page-link"
+                                breakLabel="..."
+                                breakClassName="page-item"
+                                breakLinkClassName="page-link"
+                                containerClassName="pagination"
+                                activeClassName="active"
+                                renderOnZeroPageCount={null}
+                            />
+                        </div>
+                    </div>
+                }
             </div>
+            <ModalDocumentOfDepartment
+                open={openModal}
+                close={setOpenModal}
+                dataModalDocumentOfDepartment={dataModalDocOfDepartment}
+            />
         </>
     )
 }

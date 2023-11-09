@@ -125,7 +125,7 @@ function ListDoc() {
     const [searchValue, setSearchValue] = useState('');
     const keys = ["docName", "docDes", "docExpireStart", "docExpireEnd", "docHandOver"];
 
-    const totalPages = 2;
+    const totalPages = 5;
 
     const btnActiveModalAddDoc = () => {
         setActionModalDoc("CREATE");
@@ -292,27 +292,29 @@ function ListDoc() {
                             </div>
                         </div>
                         {totalPages > 0 &&
-                            <div className='table-footer'>
-                                <ReactPaginate
-                                    nextLabel="next >"
-                                    onPageChange={handlePageClick}
-                                    pageRangeDisplayed={3}
-                                    marginPagesDisplayed={4}
-                                    pageCount={totalPages}
-                                    previousLabel="< previous"
-                                    pageClassName="page-item"
-                                    pageLinkClassName="page-link"
-                                    previousClassName="page-item"
-                                    previousLinkClassName="page-link"
-                                    nextClassName="page-item"
-                                    nextLinkClassName="page-link"
-                                    breakLabel="..."
-                                    breakClassName="page-item"
-                                    breakLinkClassName="page-link"
-                                    containerClassName="pagination"
-                                    activeClassName="active"
-                                    renderOnZeroPageCount={null}
-                                />
+                            <div className='table-footer row d-flex justify-content-center mt-2'>
+                                <div className='col-6 d-flex justify-content-center table-paginate'>
+                                    <ReactPaginate
+                                        nextLabel=">"
+                                        onPageChange={handlePageClick}
+                                        pageRangeDisplayed={3}
+                                        marginPagesDisplayed={4}
+                                        pageCount={totalPages}
+                                        previousLabel="<"
+                                        pageClassName="page-item"
+                                        pageLinkClassName="page-link"
+                                        previousClassName="page-item"
+                                        previousLinkClassName="page-link"
+                                        nextClassName="page-item"
+                                        nextLinkClassName="page-link"
+                                        breakLabel="..."
+                                        breakClassName="page-item"
+                                        breakLinkClassName="page-link"
+                                        containerClassName="pagination"
+                                        activeClassName="active"
+                                        renderOnZeroPageCount={null}
+                                    />
+                                </div>
                             </div>
                         }
                     </div>
@@ -321,6 +323,7 @@ function ListDoc() {
 
             <ModalDocument
                 active={isShowModalDoc}
+                //reset lại data cho modal theo action edit
                 inactive={btnInActiveModalAddDoc}
                 close={setIsShowModalDoc}
                 setActionModalDoc={actionModalDoc}
