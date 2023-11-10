@@ -40,16 +40,23 @@
 }
 
 //modal preview doc
-.fade{
-    &.modal{
-        &.show{
-            overflow: hidden;
+.preview{
+    &.fade{
+        &.modal{
+            &.show{
+                overflow: hidden;
+            }
         }
     }
 }
 
 .modal-80mw {
     min-width:80%;
+}
+
+//modaldocumentofdepartment
+.modal-55mw{
+    min-width: 55%;
 }
 
 //react doc viewer
@@ -65,6 +72,7 @@
           }
     }
 }
+
 
 
 

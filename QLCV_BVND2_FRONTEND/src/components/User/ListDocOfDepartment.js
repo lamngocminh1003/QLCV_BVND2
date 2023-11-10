@@ -15,6 +15,7 @@ const ListDocOfDepartment = () => {
 
     //config modalDocOfDepartment
     const [openModal, setOpenModal] = useState();
+    const [actionModal, setActionModal] = useState();
     const [dataModalDocOfDepartment, setDataModalDocOfDepartment] = useState();
 
     //config search
@@ -86,8 +87,9 @@ const ListDocOfDepartment = () => {
     ]
 
     const btnAssign = (itemListDocDepartment) => {
-        setOpenModal(true);
         setDataModalDocOfDepartment(itemListDocDepartment);
+        setActionModal("ASSIGN");
+        setOpenModal(true);
     }
 
     const btnDel = () => {
@@ -224,6 +226,7 @@ const ListDocOfDepartment = () => {
             <ModalDocumentOfDepartment
                 open={openModal}
                 close={setOpenModal}
+                action={actionModal}
                 dataModalDocumentOfDepartment={dataModalDocOfDepartment}
             />
         </>
