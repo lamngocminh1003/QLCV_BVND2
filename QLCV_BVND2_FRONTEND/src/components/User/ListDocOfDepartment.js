@@ -182,7 +182,7 @@ const ListDocOfDepartment = () => {
                                                     } else {
                                                         return (
                                                             <>
-                                                                <button className="btn btn-share" style={{ backgroundColor: "#d63384" }} onClick={() => btnHandOver()}> <i className="fa-solid fa fa fa-share text-white"></i></button>
+                                                                <button className="btn btn-share" style={{ backgroundColor: "#d63384" }} onClick={() => btnHandOver()}> <i className="fa-solid fa-share text-white"></i></button>
                                                             </>
                                                         )
                                                     }
