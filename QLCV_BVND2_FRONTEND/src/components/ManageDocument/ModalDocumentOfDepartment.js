@@ -128,7 +128,7 @@ const ModalDocumentOfDepartment = (props) => {
                                                         <div className='list-child-task-of-title border border-top-0 rounded-bottom' style={{backgroundColor: "#fff"}}>
                                                             <AccordionDetails>
                                                                 <Typography>
-                                                                    đây là phần tag người dùng và thảo luận (comment) về task đó cho người dùng
+                                                                    {/* đây là phần tag người dùng và thảo luận (comment) về task đó cho người dùng  */}
                                                                 </Typography>
                                                             </AccordionDetails>
                                                         </div>
