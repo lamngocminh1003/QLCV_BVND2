@@ -1,4 +1,3 @@
-// import axios from "axios";
 import axios from '../setup/axios';
 
 const registerNewUser = (data) => {
@@ -10,6 +9,25 @@ const registerNewUser = (data) => {
     password,
   });
 };
+
+//code không setup axios
+// import axios from "axios";
+
+// const backendURL = 'http://localhost:5179';
+
+// const token = localStorage.getItem("token");
+// // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
+// const config = {
+//   headers: {
+//     Authorization: `Bearer ${token}`,
+//   },
+// };
+
+// const userLogin = (userId, password) => {
+//   return axios.post(`${backendURL}/api/UserAccount/Login`, { userId, password }, config);
+// };
+
+//code có setup axios
 const userLogin = (valueUserName, valuePassWord) => {
   return axios.post("/api/user/login", { valueUserName, valuePassWord });
 };
