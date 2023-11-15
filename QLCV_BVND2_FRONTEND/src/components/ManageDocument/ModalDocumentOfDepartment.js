@@ -158,46 +158,42 @@ const ModalDocumentOfDepartment = (props) => {
                                     {
                                         Object.entries(listTask).map(([itemKey, itemValue]) => {
                                             return (
-                                                <>
-                                                    <Accordion className='list-title mt-4 rounded-3' key={`task-${itemKey}`} style={{ boxShadow: 'none', wordBreak: 'break-all' }}>
-                                                        <div className='list-parent-task p-1'>
-                                                            <AccordionSummary>
-                                                                <Typography className={`item child ${itemKey} text-uppercase text-white fw-bolder col-11 px-0`} style={{ fontSize: '17px' }} >
-                                                                    {itemValue.taskName}
-                                                                </Typography>
-                                                                <Box className='text-white d-flex ms-auto align-items-center col-0'>
-                                                                    <EditIcon className='mr-1' fontSize='medium' onClick={(event) => editTask('taskName', event.currentTarget.textContent, itemKey, event)} />
-                                                                    <DeleteIcon fontSize='medium' color="inherit" onClick={(event) => delTask(itemKey, event)} />
-                                                                </Box>
-                                                            </AccordionSummary>
-                                                        </div>
-                                                        <div className='list-children-task border border-top-0 rounded-bottom' style={{ backgroundColor: "#fff" }}>
-                                                            <AccordionDetails>
-                                                                <Typography>
-                                                                    {/* đây là phần tag người dùng và thảo luận (comment), đặt loại công việc, chọn ngày hết hạn về task đó cho người dùng */}
-                                                                    <label htmlFor={`assign ${itemKey}`} className='form-label'>Bàn giao công việc</label>
-                                                                    <Mention id={`assign ${itemKey}`} 
-                                                                        value={value} 
-                                                                        onChange={(e) => setValue(e.target.value)}
-                                                                        suggestions={suggestions} 
-                                                                        onSearch={onSearch} 
-                                                                        field="nickname"
-                                                                        placeholder="Gõ @ để tag người dùng" 
-                                                                        rows={3.5} 
-                                                                        cols={50}     
-                                                                        itemTemplate={itemTemplate} 
-                                                                        autoResize
-                                                                    />
-                                                                    <label for={`discuss ${itemKey}`} className='form-label mt-3'>Thảo luận công việc</label>
-                                                                    <Mention id={`assign ${itemKey}`} placeholder="Nhập để thảo luận" rows={3.5} cols={50} />
-                                                                </Typography>
-                                                            </AccordionDetails>
-                                                        </div>
-                                                    </Accordion>
-                                                  
-                                                </>
+                                                <Accordion className='list-title mt-4 rounded-3' key={`task-${itemKey}`} style={{ boxShadow: 'none', wordBreak: 'break-all' }}>
+                                                    <div className='list-parent-task p-1'>
+                                                        <AccordionSummary>
+                                                            <Typography className={`item child ${itemKey} text-uppercase text-white fw-bolder col-11 px-0`} style={{ fontSize: '17px' }}>
+                                                                {itemValue.taskName}
+                                                            </Typography>
+                                                            <Box className='text-white d-flex ms-auto align-items-center col-0'>
+                                                                <EditIcon className='mr-1' fontSize='medium' onClick={(event) => editTask('taskName', event.currentTarget.textContent, itemKey, event)} />
+                                                                <DeleteIcon fontSize='medium' color="inherit" onClick={(event) => delTask(itemKey, event)} />
+                                                            </Box>
+                                                        </AccordionSummary>
+                                                    </div>
+                                                    <div className='list-children-task border border-top-0 rounded-bottom' style={{ backgroundColor: "#fff" }}>
+                                                        <AccordionDetails>
+                                                            <Typography component={'div'}>
+                                                                {/* đây là phần tag người dùng và thảo luận (comment), đặt loại công việc, chọn ngày hết hạn về task đó cho người dùng */}
+                                                                <label htmlFor={`assign ${itemKey}`} className='form-label'>Bàn giao công việc</label>
+                                                                <Mention id={`assign ${itemKey}`}
+                                                                    value={value}
+                                                                    onChange={(e) => setValue(e.target.value)}
+                                                                    suggestions={suggestions}
+                                                                    onSearch={onSearch}
+                                                                    field="nickname"
+                                                                    placeholder="Gõ @ để tag người dùng"
+                                                                    rows={3.5}
+                                                                    cols={50}
+                                                                    itemTemplate={itemTemplate}
+                                                                />
+                                                                <label htmlFor={`discuss ${itemKey}`} className='form-label mt-3'>Thảo luận công việc</label>
+                                                                {/* <Mention id={`assign ${itemKey}`} placeholder="Nhập để thảo luận" rows={3.5} cols={50} /> */}
+                                                            </Typography>
+                                                        </AccordionDetails>
+                                                    </div>
+                                                </Accordion>
                                             )
-                                              {/* <div className={`list-title form-control mt-3 d-flex justify-content-between py-2`} key={`task-${itemKey}`}>
+                                            {/* <div className={`list-title form-control mt-3 d-flex justify-content-between py-2`} key={`task-${itemKey}`}>
                                                         <div className={`item child ${itemKey} text-uppercase text-white fw-bolder py-1 col-11`}
                                                             contentEditable={true}
                                                             style={{ fontSize: '17px' }}
