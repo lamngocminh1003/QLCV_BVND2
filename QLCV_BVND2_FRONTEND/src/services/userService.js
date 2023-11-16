@@ -1,35 +1,23 @@
-import axios from '../setup/axios';
+import axios from "axios";
 
-const registerNewUser = (data) => {
-  let { email, userName, phone, password } = data;
-  return axios.post("http://localhost:8080/api/v1/register", {
-    email,
-    userName,
-    phone,
-    password,
-  });
+const backendURL = 'https://localhost:7147';
+
+const token = localStorage.getItem("token");
+// Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
+const config = {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
 };
 
-//code không setup axios
-// import axios from "axios";
-
-// const backendURL = 'http://localhost:5179';
-
-// const token = localStorage.getItem("token");
-// // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
-// const config = {
-//   headers: {
-//     Authorization: `Bearer ${token}`,
-//   },
-// };
-
-// const userLogin = (userId, password) => {
-//   return axios.post(`${backendURL}/api/UserAccount/Login`, { userId, password }, config);
-// };
-
-//code có setup axios
-const userLogin = (valueUserName, valuePassWord) => {
-  return axios.post("/api/user/login", { valueUserName, valuePassWord });
+const userLogin = async (userId, password) => {
+  return await axios.post(`${backendURL}/api/UserAccount/Login`, { userId, password }, config)
+  .then(function(response){
+    return response.data
+  })
+  .catch(function(error){
+    return error.response.status
+  })
 };
 
 const userLogout = () => {
@@ -77,7 +65,7 @@ const fetchDepartmentList = () => {
 }
 
 export {
-  registerNewUser, userLogin, userLogout, fetchUserList, deleteUserById, updateUserById, createNewUser, getUserAccount,
+  userLogin, userLogout, fetchUserList, deleteUserById, updateUserById, createNewUser, getUserAccount,
   fetchRoleList, fetchPositionList, fetchDepartmentList,
   createDocAPI
 };

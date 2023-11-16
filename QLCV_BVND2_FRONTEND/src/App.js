@@ -25,7 +25,7 @@ function App() {
               color='rgba(54, 215, 183, 1)'
               size={150}
             />
-            <div className="mt-1 ml-3">Đang tải, hãy kiên nhẫn...</div>
+            <div className="mt-1 ml-3">Đợi chờ là hạnh phúc...</div>
           </div>
           :
           <>

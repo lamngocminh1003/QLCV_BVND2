@@ -6,7 +6,6 @@ import { Link, NavLink, useHistory } from "react-router-dom";
 import { UserContext } from '../../context/UserContext';
 import './Nav.scss';
 import logo from '../../assets/image/logo.png';
-import { userLogout } from '../../services/userService';
 import { handleLoginRedux, handleLogoutRedux } from "../redux/actions/userAction";
 import { useContext } from "react";
 import { toast } from "react-toastify";
@@ -18,16 +17,10 @@ const Header = (props) => {
   const history = useHistory();
 
   const handleLogout = async () => {
-    let data = await userLogout(); //xóa cookies
     localStorage.removeItem('jwt'); //xóa localStorage
     logoutContext();
-    if (data && +data.EC === 0) {
-      toast.success('đã đăng xuất!');
-      history.push('/login_user');
-    }
-    else {
-      toast.error(data.EM);
-    }
+    toast.success('Đăng xuất thành công!');
+    history.push('/login_user');
   }
 
   if (user && user.isAuthenticated === true || location.pathname === '/') {
@@ -54,7 +47,7 @@ const Header = (props) => {
                   <></>
                 }
 
-                {user && user.isAuthenticated === true && user.account.departmentId === 5 ?
+                {user && user.isAuthenticated === true && localStorage.getItem('userId') === user.account.departmentHead ?
                   <>
                     <NavLink exact to="/list_doc" className="nav-link">Văn bản</NavLink>
                   </>
@@ -63,7 +56,7 @@ const Header = (props) => {
                 }
 
                 {(() => {
-                  if (user && user.isAuthenticated === true && user.account.departmentId === 1 || user && user.isAuthenticated === true && user.account.departmentId === 5) {
+                  if (user && user.isAuthenticated === true && user.account.departmentId === "1" || user && user.isAuthenticated === true && user.account.departmentId === "5") {
                     return (
                       <></>
                     )

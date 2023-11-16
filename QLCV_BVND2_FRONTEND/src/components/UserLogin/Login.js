@@ -67,33 +67,33 @@ const LoginUser = () => {
         }
 
         let response = await userLogin(valueUserName, valuePassword);
-        if (response.EC === 0) {
-            //toast.success(response.EM)
-
-            //lấy các data nhận được từ axios trả về để gộp lại thành biến data để đẩy qua cho UserContext
-
-            let userToken = response.DT.access_token
-            let permission = response.DT.permissionWithRole;
-            let departmentId = response.DT.department;
-            let departmentName = response.DT.departmentName;
-            let userName = response.DT.userName;
-            let fullName = response.DT.fullName;
-            let email = response.DT.email;
+        if(response === 400){
+            toast.error('Tài khoản hoặc mật khẩu không chính xác!');
+        }
+        else{
+            toast.success(`Xin chào ${response.userFullName}!`)
+            
+            let userToken = response.tokenDTO.token;
+            let userId = response.userId;
+            let fullName = response.userFullName;
+            let email = response.email;
+            let departmentId = response.department.department_ID;
+            let departmentName = response.department.department_Name
+            let departmentHead = response.department.department_Head
 
             let data = {
                 isAuthenticated: true,
                 token: userToken,
-                account: { permission, departmentId, departmentName, userName, fullName, email }
+                account: {userId, fullName, email, departmentId, departmentName, departmentHead}
             }
 
-            localStorage.setItem('jwt', data.token);
             //cập nhật lại giá trị của biến context global, biến data sẽ ghi đè lên biến user đang dùng state trong file UserContext
+            localStorage.setItem('jwt', response.tokenDTO.token);
+            localStorage.setItem('userId', response.userId);
+            localStorage.setItem('departmentHead', response.department.department_Head)
             loginContext(data);
-
             history.push('/');
-        }
-        else {
-            toast.error(response.EM)
+            
         }
     }
 

@@ -3,14 +3,14 @@ import { toast } from 'react-toastify';
 
 // Set config defaults when creating the instance
 const instance = axios.create({
-    baseURL: 'http://localhost:8080'
+    baseURL: 'http://localhost:7147'
 });
 
 
-instance.defaults.withCredentials = true;
+instance.defaults.withCredentials = false;
 
 // // Alter defaults after instance has been created
-instance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("jwt")}`;
+instance.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("token")}`;
 
 // Add a request interceptor
 instance.interceptors.request.use(function (config) {

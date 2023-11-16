@@ -424,32 +424,38 @@ function ModalAddDoc(props) {
         if (selectedFile) {
             if (selectedFile && checkPDF.includes(selectedFile.type)) {
                 event.target.files?.length && setPdfFile(Array.from(event.target.files))
+                //set tên văn bản theo tên file đã chọn
                 let fileName = selectedFile.name.split(".");
-                setIsAllow(true);
                 setFileName(fileName[0]);
 
+                //set lại docName của state docData
                 docData.docName = fileName[0];
                 setdocData(docData);
 
-                let _validInput = _.cloneDeep(validateInputDefault);
-                _validInput.docFileData = true;
-                setValidInput(_validInput);
+                setDataFile(event.target.files);
 
-                let reader = new FileReader();
-                reader.readAsDataURL(selectedFile);
-                reader.onload = (e) => {
-                    let result = e.target.result;
-                    let result_split = result.split(",");
-                    let base64Data = result_split[1];
-                    let blob_file = b64toBlob(base64Data);
-                    var file = new File([blob_file], "my_image.png",{type:"application/pdf", lastModified:new Date().getTime()})
+                setIsAllow(true);
+                
+
+                // let _validInput = _.cloneDeep(validateInputDefault);
+                // _validInput.docFileData = true;
+                // setValidInput(_validInput);
+
+                // let reader = new FileReader();
+                // reader.readAsDataURL(selectedFile);
+                // reader.onload = (e) => {
+                //     let result = e.target.result;
+                //     let result_split = result.split(",");
+                //     let base64Data = result_split[1];
+                //     let blob_file = b64toBlob(base64Data);
+                //     var file = new File([blob_file], "my_image.png",{type:"application/pdf", lastModified:new Date().getTime()})
                     
-                    // console.log(blob_file);
-                    // console.log('objfile: ', file);
+                //     // console.log(blob_file);
+                //     // console.log('objfile: ', file);
 
-                    setDataFile(base64Data);
-                    setPdfFile(file)
-                }
+                //     setDataFile(base64Data);
+                //     setPdfFile(file)
+                // }
             }
 
             else if (selectedFile && checkDocType.includes(selectedFile.type)) {
@@ -524,7 +530,7 @@ function ModalAddDoc(props) {
             docData.docFileData = dataFile;
             console.log('data: ', docData);
             let response = createDocAPI(docData);
-            // console.log('response: ', response);
+            console.log('response: ', response);
         }
         else {
             console.log(check);
