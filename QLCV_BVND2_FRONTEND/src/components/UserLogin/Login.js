@@ -11,7 +11,6 @@ import './Login_Template/css/util.css';
 import './Login_Template/css/main.css';
 import image from './Login_Template/images/logo.png';
 
-
 import './Login.scss';
 import { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
@@ -73,27 +72,21 @@ const LoginUser = () => {
         else{
             toast.success(`Xin chào ${response.userFullName}!`)
             
-            let userToken = response.tokenDTO.token;
             let userId = response.userId;
             let fullName = response.userFullName;
             let email = response.email;
-            let departmentId = response.department.department_ID;
             let departmentName = response.department.department_Name
             let departmentHead = response.department.department_Head
 
             let data = {
                 isAuthenticated: true,
-                token: userToken,
-                account: {userId, fullName, email, departmentId, departmentName, departmentHead}
+                account: {userId, fullName, email, departmentName, departmentHead}
             }
 
             //cập nhật lại giá trị của biến context global, biến data sẽ ghi đè lên biến user đang dùng state trong file UserContext
             localStorage.setItem('jwt', response.tokenDTO.token);
-            localStorage.setItem('userId', response.userId);
-            localStorage.setItem('departmentHead', response.department.department_Head)
             loginContext(data);
             history.push('/');
-            
         }
     }
 
@@ -111,7 +104,7 @@ const LoginUser = () => {
                             </span>
 
                             <div className="wrap-input100">
-                                <input className={objValidInput.isValidUserName ? 'form-control' : 'is-invalid form-control'} type="text" name="userName" placeholder='Tên người dùng' value={valueUserName} onChange={(event) => { setValueUserName(event.target.value) }} />
+                                <input className={objValidInput.isValidUserName ? 'form-control' : 'is-invalid form-control'} type="text" name="userName" placeholder='Tên người dùng' value={valueUserName} autoComplete='off' onChange={(event) => { setValueUserName(event.target.value) }} />
                             </div>
 
                             <div className="wrap-input100 ">

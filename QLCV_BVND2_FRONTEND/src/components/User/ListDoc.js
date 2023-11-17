@@ -184,14 +184,14 @@ function ListDoc() {
                             </div>
 
                             <div className="row">
-                                {user && user.account.departmentId === 5 ?
+                                {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị' && user.account.departmentHead !== null ?
                                     <>
                                         <div className='px-0' style={{ display: "block", zIndex: "100" }}>
                                             <button className='btn btn-primary mb-3 col-1 add-doc' style={{ paddingRight: "7.1rem" }} onClick={() => btnActiveModalAddDoc()} ><i className="fa fa-plus i-add"></i>Tạo văn bản</button>
                                         </div>
                                     </>
                                     :
-                                    null
+                                    <></>
                                 }
                                 <div className="row justify-content-center mt-2">
                                     <table className="table table-hover table-bordered ">

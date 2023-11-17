@@ -20,7 +20,7 @@ const Header = (props) => {
     localStorage.removeItem('jwt'); //xóa localStorage
     logoutContext();
     toast.success('Đăng xuất thành công!');
-    history.push('/login_user');
+    history.push('/login-user');
   }
 
   if (user && user.isAuthenticated === true || location.pathname === '/') {
@@ -37,26 +37,25 @@ const Header = (props) => {
               <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
 
                 <NavLink exact to="/" className="nav-link">Trang chủ</NavLink>
-                {user && user.isAuthenticated === true && user.account.departmentId === 1 ?
+                {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Giám đốc' ?
                   <>
-                    <NavLink exact to="/list_user" className="nav-link">Người dùng</NavLink>
-                    <NavLink exact to="/list_doc" className="nav-link">Văn bản</NavLink>
-                    <NavLink exact to="/project_user" className="nav-link">Dự án</NavLink>
+                    <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
+                    <NavLink exact to="/list-doc" className="nav-link">Văn bản</NavLink>
+                    <NavLink exact to="/project-user" className="nav-link">Dự án</NavLink>
                   </>
                   :
                   <></>
                 }
 
-                {user && user.isAuthenticated === true && localStorage.getItem('userId') === user.account.departmentHead ?
-                  <>
-                    <NavLink exact to="/list_doc" className="nav-link">Văn bản</NavLink>
-                  </>
+                {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị'  ?
+                  <><NavLink exact to="/list-doc" className="nav-link">Văn bản</NavLink></>
                   :
                   <></>
                 }
 
                 {(() => {
-                  if (user && user.isAuthenticated === true && user.account.departmentId === "1" || user && user.isAuthenticated === true && user.account.departmentId === "5") {
+                  if (user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Giám đốc'
+                  || user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị') {
                     return (
                       <></>
                     )
@@ -66,11 +65,17 @@ const Header = (props) => {
                       <></>
                     )
                   }
+                  else if(user && user.isAuthenticated === true && user.account.departmentName !== 'Phòng Giám đốc' && user.account.departmentHead === user.account.userId 
+                  || user && user.isAuthenticated === true && user.account.departmentName !== 'Phòng Hành chính quản trị' && user.account.departmentHead === user.account.userId ) {
+                    return(
+                      //hiện khi người login là trưởng phòng của các khoa
+                      <><NavLink exact to="/list-doc-department" className="nav-link">Văn bản</NavLink></>
+                    )
+                  }
                   else {
                     return (
-                      <>
-                        <NavLink exact to="/list_doc_department" className="nav-link">Văn bản</NavLink>
-                      </>
+                      //ẩn khi người login là các thành viên trong khoa
+                      <><NavLink exact to="/member-task-department" className="nav-link">Công việc</NavLink></>
                     )
                   }
                 })()}
@@ -80,14 +85,14 @@ const Header = (props) => {
                 {user && user.isAuthenticated === true ?
                   <>
                     <NavDropdown title={user.account.fullName} id="navbarScrollingDropdown">
-                      <NavDropdown.Item href="#action/3.1">Đổi mật khẩu</NavDropdown.Item>
-                      <NavDropdown.Item href="#action/3.2" onClick={() => handleLogout()}>Đăng xuất</NavDropdown.Item>
+                      <NavDropdown.Item href="">Đổi mật khẩu</NavDropdown.Item>
+                      <NavDropdown.Item href="" onClick={() => handleLogout()}>Đăng xuất</NavDropdown.Item>
                     </NavDropdown>
                   </>
                   :
                   <>
                     <Nav>
-                      <NavLink to="/login_user" className="nav-link">Đăng nhập</NavLink>
+                      <NavLink to="/login-user" className="nav-link">Đăng nhập</NavLink>
                     </Nav>
                   </>
                 }
@@ -96,7 +101,6 @@ const Header = (props) => {
           </Container>
         </Navbar>
       </div>
-
     );
   }
   else {

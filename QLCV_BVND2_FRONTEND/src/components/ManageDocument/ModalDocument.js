@@ -603,6 +603,7 @@ function ModalAddDoc(props) {
                                                                     onChange={(event) => handlePdfFile(event)}
                                                                     onClick={(event) => handleOnClickInputFile(event)}
                                                                     autoComplete="off"
+                                                                    multiple
                                                                 />
                                                             </div>
                                                             <div className="mt-4 mb-3 col-sm-12 " >

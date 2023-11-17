@@ -2,7 +2,7 @@ import axios from "axios";
 
 const backendURL = 'https://localhost:7147';
 
-const token = localStorage.getItem("token");
+const token = localStorage.getItem("jwt");
 // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
 const config = {
   headers: {
@@ -20,6 +20,16 @@ const userLogin = async (userId, password) => {
   })
 };
 
+const getUserAccount = () => {
+  return axios.get(`${backendURL}/api/UserAccount/GetUserLogin`, config)
+  .then(function(response){
+    return response.data
+  })
+  .catch(function(error){
+    return error.response.status
+  })
+}
+
 const userLogout = () => {
   return axios.post("/api/user/logout");
 }
@@ -32,9 +42,7 @@ const fetchUserById = (user) => {
   return axios.get("/api/user/read/userId", { data: { userId: user.id } });
 }
 
-const getUserAccount = () => {
-  return axios.get(`api/user/account`);
-}
+
 
 const createNewUser = (userData) => {
   return axios.post(`/api/user/create`, { userData });

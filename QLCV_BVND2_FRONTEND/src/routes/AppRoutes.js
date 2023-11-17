@@ -9,6 +9,7 @@ import LoginUser from '../components/UserLogin/Login';
 import ListUser from "../components/User/ListUser";
 import ListDoc from "../components/User/ListDoc";
 import ListDocOfDepartment from "../components/User/ListDocOfDepartment";
+import MemberTask from "../components/Task/MemberTask";
 import Header from "../components/Nav/Header";
 
 const AppRoutes = (props) => {
@@ -20,13 +21,14 @@ const AppRoutes = (props) => {
           <Route exact path="/">{"home"}</Route>
           <Route path="/about">about</Route>
           <Route path="/login"><Login /></Route>
-          <Route path="/login_user"><LoginUser /></Route>
+          <Route path="/login-user"><LoginUser /></Route>
           <Route path="/create-account"><CreateAccount /></Route>
           <PrivateRoutes path="/users" component={Users} />
           <PrivateRoutes path="/projects" component={Project} />
-          <PrivateRoutes path="/list_user" component={ListUser} />
-          <PrivateRoutes path="/list_doc" component={ListDoc} />
-          <PrivateRoutes path="/list_doc_department" component={ListDocOfDepartment} />
+          <PrivateRoutes path="/list-user" component={ListUser} />
+          <PrivateRoutes path="/list-doc" component={ListDoc} />
+          <PrivateRoutes path="/list-doc-department" component={ListDocOfDepartment} />
+          <PrivateRoutes path="/member-task-department" component={MemberTask} />
           <Route path="*">
             <Page404 />{" "}
           </Route>
