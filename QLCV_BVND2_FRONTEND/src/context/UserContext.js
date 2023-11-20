@@ -61,17 +61,15 @@ const UserProvider = ({ children }) => {
             setUser({ ...userDefault, isLoading: false });
         }
         else{
-            let userId = response.user_Id;
-            let fullName = response.user_FullName;
-            let email = response.user_Email;
-            // let departmentId = response.department.department_ID;
-            let departmentId = "6"
-            let departmentName = "Phòng Điều dưỡng"
-            let departmentHead = "dieuduong"
+            let userId = response.userId;
+            let fullName = response.userFullName;
+            let email = response.userEmail;
+            let departmentName = response.departmentName
+            let departmentHead = response.department_Head
 
             let data = {
                 isAuthenticated: true,
-                account: {userId, fullName, email, departmentId, departmentName, departmentHead}
+                account: {userId, fullName, email, departmentName, departmentHead}
             }
 
             setTimeout(() => {
@@ -92,17 +90,15 @@ const UserProvider = ({ children }) => {
                         setUser({ ...user, isLoading: false });
                     }
                     else{
-                        let userId = response.user_Id;
-                        let fullName = response.user_FullName;
-                        let email = response.user_Email;
-                        // let departmentId = response.department.department_ID;
-                        let departmentId = "6"
-                        let departmentName = "Phòng Điều dưỡng"
-                        let departmentHead = "dieuduong"
+                        let userId = response.userId;
+                        let fullName = response.userFullName;
+                        let email = response.userEmail;
+                        let departmentName = response.departmentName
+                        let departmentHead = response.department_Head
 
                         let data = {
                             isAuthenticated: true,
-                            account: {userId, fullName, email, departmentId, departmentName, departmentHead}
+                            account: {userId, fullName, email, departmentName, departmentHead}
                         }
 
                         setTimeout(() => {

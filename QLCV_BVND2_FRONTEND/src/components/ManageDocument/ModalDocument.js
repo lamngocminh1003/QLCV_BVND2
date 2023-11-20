@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import _, { set } from 'lodash';
 import { toast } from 'react-toastify';
+import moment from "moment";
 
 import Modal from 'react-bootstrap/Modal';
 import ModalPreviewDocument from './ModalPreviewDocument';
@@ -22,6 +23,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
+import {createDocIncoming} from "../../services/docService";
+
 registerLocale("vi", vi);
 
 function ModalAddDoc(props) {
@@ -32,19 +35,17 @@ function ModalAddDoc(props) {
         docName: '',
         docExpireStart: '',
         docExpireEnd: '',
-        docFileName: '',
-        docFileData: '',
         docDes: '',
+        files: [],
         docHandOver: ''
     }
 
     //biến để check validate khi submit, khi onChange
     const validateInputDefault = {
         docName: true,
+        docFile: true,
         docExpireStart: true,
         docExpireEnd: true,
-        docFileName: true,
-        docFileData: true,
         docDes: true,
         docHandOver: true,
     }
@@ -287,7 +288,7 @@ function ModalAddDoc(props) {
         }
     ];
 
-    const checkPDF = ['application/pdf'];
+    const checkPDF = 'application/pdf';
     const checkDocType =
         ['application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']; //docx, xlsx
@@ -404,102 +405,58 @@ function ModalAddDoc(props) {
         return check;
     }
 
-    const b64toBlob = (b64Data) => {
-        var binary = atob(b64Data.replace(/\s/g, ''));
-        var len = binary.length;
-        var buffer = new ArrayBuffer(len);
-        var view = new Uint8Array(buffer);
-        for (var i = 0; i < len; i++) {
-            view[i] = binary.charCodeAt(i);
-        }
-
-        const blob = new Blob( [view], { type: "application/pdf" });
-
-        return blob;
-      }
-
     //xử lý file, đọc file để preview file
     const handlePdfFile = (event) => {
-        let selectedFile = event.target.files[0];
+        let selectedFile = event.target.files;
+        
         if (selectedFile) {
-            if (selectedFile && checkPDF.includes(selectedFile.type)) {
-                event.target.files?.length && setPdfFile(Array.from(event.target.files))
-                //set tên văn bản theo tên file đã chọn
-                let fileName = selectedFile.name.split(".");
-                setFileName(fileName[0]);
-
-                //set lại docName của state docData
-                docData.docName = fileName[0];
-                setdocData(docData);
-
-                setDataFile(event.target.files);
-
-                setIsAllow(true);
-                
-
-                // let _validInput = _.cloneDeep(validateInputDefault);
-                // _validInput.docFileData = true;
-                // setValidInput(_validInput);
-
-                // let reader = new FileReader();
-                // reader.readAsDataURL(selectedFile);
-                // reader.onload = (e) => {
-                //     let result = e.target.result;
-                //     let result_split = result.split(",");
-                //     let base64Data = result_split[1];
-                //     let blob_file = b64toBlob(base64Data);
-                //     var file = new File([blob_file], "my_image.png",{type:"application/pdf", lastModified:new Date().getTime()})
-                    
-                //     // console.log(blob_file);
-                //     // console.log('objfile: ', file);
-
-                //     setDataFile(base64Data);
-                //     setPdfFile(file)
-                // }
-            }
-
-            else if (selectedFile && checkDocType.includes(selectedFile.type)) {
-                let fileName = selectedFile.name.split(".");
-                setIsAllow(true);
-                setFileName(fileName[0]);
-
-                docData.docName = fileName[0];
-                setdocData(docData);
-
-                let _validInput = _.cloneDeep(validateInputDefault);
-                _validInput.docFileData = true;
-                setValidInput(_validInput);
-
-                setPdfFile(selectedFile);
-                setExt(fileName.pop());
-
-                setFileName(selectedFile.name);
-                let reader = new FileReader();
-                reader.readAsDataURL(selectedFile);
-                reader.onload = (e) => {
-                    setDataFile(e.target.result);
+            let i;
+            for(i = 0; i < selectedFile.length; i++){
+                if (`${selectedFile[i].type}` === checkPDF){
+                    setDataFile(selectedFile[i]);
+                    //set lại docName của state docData
+                    let fileName = selectedFile[i].name.split(".");
+                    docData.docName = fileName[0];
+                    setdocData(docData);
+                    setIsAllow(true);
+                    break;
                 }
-            }
-
-            else {
-                toast.error('Định dạng file không hợp lệ!');
-
-                let _validInput = _.cloneDeep(validateInputDefault);
-                _validInput.docFileData = false;
-                setValidInput(_validInput);
-
-                docData.docName = '';
-                setdocData(docData);
-
-                setIsAllow(false);
+                else{
+                    toast.error('Hãy chọn ít nhất một file pdf!');
+                    break;
+                }
             }
         }
         else {
-            toast.warning('Xin hãy chọn tài liệu!');
+            toast.warning('Xin hãy chọn văn bản!');
             docData.docName = '';
             setdocData(docData);
             setIsAllow(false);
         }
+    }
+
+    const formatDateISO8601 = () => {
+        //lấy value của 2 ô input date start và date end
+        let docExpireStartValue = document.getElementById("dateStart").value;
+        let docExpireEndValue = document.getElementById("dateFinish").value;
+
+        //cắt value
+        let docExpireStartValueFormat = docExpireStartValue.split("/");
+        let docExpireEndValueFormat = docExpireEndValue.split("/");
+
+        //template string chuỗi đã cắt thành chuỗi yyyy/mm/dd
+        let docStartDate = `${docExpireStartValueFormat[2]}${docExpireStartValueFormat[1]}${docExpireStartValueFormat[0]}`;
+        let docEndDate = `${docExpireEndValueFormat[2]}${docExpireEndValueFormat[1]}${docExpireEndValueFormat[0]}`;
+
+        //format chuỗi yyyy/mm/dd sang ISO-8601
+        let stringDateStart = moment(docStartDate)
+        let TimeStart = stringDateStart.format('YYYY-MM-DD') + 'T00:00:00.000Z';
+
+        let stringDateEnd = moment(docEndDate)
+        let TimeEnd = stringDateEnd.format('YYYY-MM-DD') + 'T23:59:00.000Z';
+
+        docData.docExpireStart = TimeStart;
+        docData.docExpireEnd = TimeEnd;
     }
 
     //đóng modal này
@@ -512,28 +469,24 @@ function ModalAddDoc(props) {
         setIsAllow(false);
     }
 
-    const btnSubmit = () => {
-        let check = checkValidInputWhenSubmit();
-        if (check === true) {
-            let docExpireStartValue = document.getElementById("dateStart").value;
-            let docExpireEndValue = document.getElementById("dateFinish").value;
+    const btnSubmit = async () => {
+        formatDateISO8601();
+        let formDataFile = new FormData();
 
-            let docExpireStartValueFormat = docExpireStartValue.split("/");
-            let docExpireEndValueFormat = docExpireEndValue.split("/");
-
-            let docStartDate = `${docExpireStartValueFormat[2]}${docExpireStartValueFormat[1]}${docExpireStartValueFormat[0]}`;
-            let docEndDate = `${docExpireEndValueFormat[2]}${docExpireEndValueFormat[1]}${docExpireEndValueFormat[0]}`;
-
-            docData.docExpireStart = docStartDate;
-            docData.docExpireEnd = docEndDate;
-            docData.docFileName = fileName;
-            docData.docFileData = dataFile;
-            console.log('data: ', docData);
-            let response = createDocAPI(docData);
-            console.log('response: ', response);
+        let i;
+        for(i = 0; i < dataFile.length; i++)
+        {
+            formDataFile.append('files', dataFile[i])
         }
-        else {
-            console.log(check);
+
+        docData.files = formDataFile;
+
+        let result = await createDocIncoming(docData);
+        if(result === 200){
+            toast.success('Tạo văn bản thành công!');
+        }
+        else{
+            toast.error('Tạo văn bản thất bại, vui lòng thử lại!')
         }
     }
 
@@ -599,7 +552,7 @@ function ModalAddDoc(props) {
                                                             </div>
                                                             <div className="col-sm-6">
                                                                 <label htmlFor="doc" className="form-label">Văn bản</label>
-                                                                <input type="file" name="document" id="doc" className={validInput.docFileData ? 'form-control' : 'form-control is-invalid'}
+                                                                <input type="file" name="document" id="doc" className={validInput.docFile ? 'form-control' : 'form-control is-invalid'}
                                                                     onChange={(event) => handlePdfFile(event)}
                                                                     onClick={(event) => handleOnClickInputFile(event)}
                                                                     autoComplete="off"

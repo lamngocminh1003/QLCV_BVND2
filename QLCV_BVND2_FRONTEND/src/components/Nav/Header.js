@@ -23,6 +23,7 @@ const Header = (props) => {
     history.push('/login-user');
   }
 
+
   if (user && user.isAuthenticated === true || location.pathname === '/') {
     return (
       <div className="nav-header">
@@ -65,8 +66,8 @@ const Header = (props) => {
                       <></>
                     )
                   }
-                  else if(user && user.isAuthenticated === true && user.account.departmentName !== 'Phòng Giám đốc' && user.account.departmentHead === user.account.userId 
-                  || user && user.isAuthenticated === true && user.account.departmentName !== 'Phòng Hành chính quản trị' && user.account.departmentHead === user.account.userId ) {
+                  else if(user && user.isAuthenticated === true && user.account.departmentName !== 'Phòng Giám đốc' && user.account.departmentHead === true
+                  || user && user.isAuthenticated === true && user.account.departmentName !== 'Phòng Hành chính quản trị' && user.account.departmentHead === true ) {
                     return(
                       //hiện khi người login là trưởng phòng của các khoa
                       <><NavLink exact to="/list-doc-department" className="nav-link">Văn bản</NavLink></>

@@ -74,9 +74,9 @@ const LoginUser = () => {
             
             let userId = response.userId;
             let fullName = response.userFullName;
-            let email = response.email;
-            let departmentName = response.department.department_Name
-            let departmentHead = response.department.department_Head
+            let email = response.userEmail;
+            let departmentName = response.departmentName
+            let departmentHead = response.departmentHead
 
             let data = {
                 isAuthenticated: true,
