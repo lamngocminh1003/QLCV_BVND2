@@ -16,14 +16,18 @@ import { addMonths } from 'date-fns';
 import vi from "date-fns/locale/vi";
 import { createDocAPI } from "../../services/userService";
 
-//import some shit to create mention
+//import some shit to create assign to department
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 
-import {createDocIncoming} from "../../services/docService";
+//import react file icon
+import {FileIcon, defaultStyles} from 'react-file-icon';
+
+//import doc service api
+import {createDocIncoming, getAllDocSendUserLogin} from "../../services/docService";
 
 registerLocale("vi", vi);
 
@@ -406,7 +410,7 @@ function ModalAddDoc(props) {
     }
 
     //xử lý file, đọc file để preview file
-    const handlePdfFile = (event) => {
+    const handleFile = (event) => {
         let selectedFile = event.target.files;
         
         if (selectedFile) {
@@ -426,6 +430,7 @@ function ModalAddDoc(props) {
                     break;
                 }
             }
+            setDataFile(selectedFile);
         }
         else {
             toast.warning('Xin hãy chọn văn bản!');
@@ -484,6 +489,11 @@ function ModalAddDoc(props) {
         let result = await createDocIncoming(docData);
         if(result === 200){
             toast.success('Tạo văn bản thành công!');
+            setdocData(defaultDocData);
+            document.getElementById("doc").value = "";
+            setStartDate('');
+            setEndDate('');
+            setDataFile('');
         }
         else{
             toast.error('Tạo văn bản thất bại, vui lòng thử lại!')
@@ -540,7 +550,7 @@ function ModalAddDoc(props) {
                                                 return (
                                                     <>
                                                         <div className="row">
-                                                            <div className="col-sm-6">
+                                                            <div className={props.setActionModalDoc === "INFO" ? 'col-sm-12' : 'col-sm-6'}>
                                                                 <label htmlFor="tit" className="form-label">Tên văn bản</label>
                                                                 <input type="text" className={validInput.docName ? 'form-control' : 'form-control is-invalid'} id="tit" name="title" value={docData.docName || ""}
                                                                     onChange={(event) => handleOnchangeInput(event.target.value, "docName")}
@@ -550,15 +560,22 @@ function ModalAddDoc(props) {
                                                                     required
                                                                 />
                                                             </div>
-                                                            <div className="col-sm-6">
-                                                                <label htmlFor="doc" className="form-label">Văn bản</label>
-                                                                <input type="file" name="document" id="doc" className={validInput.docFile ? 'form-control' : 'form-control is-invalid'}
-                                                                    onChange={(event) => handlePdfFile(event)}
-                                                                    onClick={(event) => handleOnClickInputFile(event)}
-                                                                    autoComplete="off"
-                                                                    multiple
-                                                                />
-                                                            </div>
+                                                            {props.setActionModalDoc === "INFO" ? 
+                                                                <></>
+                                                            : 
+                                                                <>
+                                                                    <div className="col-sm-6">
+                                                                        <label htmlFor="doc" className="form-label">Văn bản</label>
+                                                                        <input type="file" name="document" id="doc" className={validInput.docFile ? 'form-control' : 'form-control is-invalid'}
+                                                                        onChange={(event) => handleFile(event)}
+                                                                        onClick={(event) => handleOnClickInputFile(event)}
+                                                                        autoComplete="off"
+                                                                        accept=".pdf"
+                                                                        multiple
+                                                                    />
+                                                                    </div>
+                                                                </>
+                                                            }
                                                             <div className="mt-4 mb-3 col-sm-12 " >
                                                                 <div className="date-expire-group">
                                                                     <fieldset className="border rounded-3 p-4 ">
@@ -629,6 +646,72 @@ function ModalAddDoc(props) {
                                                                 <label htmlFor="des" className="form-label">Mô tả văn bản</label>
                                                                 <textarea className={validInput.docDes ? 'form-control' : 'form-control is-invalid'} id="des" name="description" rows="4" value={docData.docDes || ""} onChange={(event) => handleOnchangeInput(event.target.value, "docDes")} autoComplete="off" ></textarea>
                                                             </div>
+                                                            {props.setActionModalDoc === "INFO" ? 
+                                                                <>
+                                                                    <div className="mb-2 mt-2 col-sm-12">
+                                                                        <p className="fs-5 fw-bolder" style={{color: '#212529'}}>Các file đính kèm</p>
+                                                                        <div className="wrap-type-icon-file" style={{display: 'inline-flex', flexWrap: 'wrap'}}>
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
+                                                                                <FileIcon color="deepskyblue" extension="doc"{...defaultStyles.doc} />
+                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
+                                                                                <FileIcon color="deepskyblue" extension="docx" {...defaultStyles.docx} />
+                                                                                <p>tilte filaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
+                                                                                <FileIcon extension="pdf" {...defaultStyles.pdf} />
+                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0 mr-0" >
+                                                                                <FileIcon extension="xls" {...defaultStyles.xls} />
+                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
+                                                                                <FileIcon extension="xlsx" {...defaultStyles.xlsx} />
+                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
+                                                                                <FileIcon extension="pptx" {...defaultStyles.pptx} />
+                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
+                                                                                <FileIcon extension="ppt" {...defaultStyles.ppt} />
+                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0 mr-0" >
+                                                                                <FileIcon color="lavender" extension="jpeg" {...defaultStyles.jpeg} />
+                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
+                                                                                <FileIcon color="lavender" extension="jpg" {...defaultStyles.jpg} />
+                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
+                                                                                <FileIcon color="lavender" extension="png" {...defaultStyles.png} />
+                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            </div>
+
+                                                                            
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                </>
+                                                            : 
+                                                                null
+                                                            }
                                                         </div>
                                                     </>
                                                 )
@@ -639,7 +722,7 @@ function ModalAddDoc(props) {
                                                     <Modal.Body style={{ textAlign: "center" }}>Bạn có chắc muốn xóa văn bản "<strong>{props.assignDataDoc.docName}</strong>" này không?</Modal.Body>
                                                 )
                                             }
-
+                                            
                                             else {
                                                 return (
                                                     <>
@@ -711,13 +794,10 @@ function ModalAddDoc(props) {
                                     <>
                                         {docData.docStatus === 0 ?
                                             <>
-                                                <Button variant="light" style={{ backgroundColor: "#4dd4ac", borderColor: "white" }}>Xem văn bản</Button>
                                                 <Button variant="primary">Duyệt</Button>
                                             </>
                                             :
-                                            <>
-                                                <Button variant="light" style={{ backgroundColor: "#4dd4ac", borderColor: "white" }}>Xem văn bản</Button>
-                                            </>
+                                            <></>
                                         }
                                     </>
                                 )

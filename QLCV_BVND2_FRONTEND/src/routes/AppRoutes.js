@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Route, Link, Switch, NavLink, } from "react-router-dom";
 import Page404 from "../components/ErrorPage/Page404";
 import Login from "../components/Login/Login";
-import CreateAccount from "../components/CreateAccount/CreateAccount";
 import Users from "../components/ManageUsers/Users";
 import PrivateRoutes from "./PrivateRoutes";
 import Project from "../components/Project/Project";
@@ -22,7 +21,6 @@ const AppRoutes = (props) => {
           <Route path="/about">about</Route>
           <Route path="/login"><Login /></Route>
           <Route path="/login-user"><LoginUser /></Route>
-          <Route path="/create-account"><CreateAccount /></Route>
           <PrivateRoutes path="/users" component={Users} />
           <PrivateRoutes path="/projects" component={Project} />
           <PrivateRoutes path="/list-user" component={ListUser} />

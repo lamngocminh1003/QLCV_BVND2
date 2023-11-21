@@ -74,7 +74,7 @@ const UserProvider = ({ children }) => {
 
             setTimeout(() => {
                 setUser(data);
-            }, 2 * 1000)
+            }, 1.5 * 1000)
         }
     }
 
@@ -103,7 +103,7 @@ const UserProvider = ({ children }) => {
 
                         setTimeout(() => {
                             setUser(data);
-                        }, 2 * 1000)
+                        }, 1.5 * 1000)
                     }
                 } catch (error) {
                     console.log(error)

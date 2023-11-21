@@ -78,12 +78,12 @@ const LoginUser = () => {
             let departmentName = response.departmentName
             let departmentHead = response.departmentHead
 
+            //cập nhật lại giá trị của biến context global, biến data sẽ ghi đè lên biến user đang dùng state trong file UserContext
             let data = {
                 isAuthenticated: true,
                 account: {userId, fullName, email, departmentName, departmentHead}
             }
 
-            //cập nhật lại giá trị của biến context global, biến data sẽ ghi đè lên biến user đang dùng state trong file UserContext
             localStorage.setItem('jwt', response.tokenDTO.token);
             loginContext(data);
             history.push('/');

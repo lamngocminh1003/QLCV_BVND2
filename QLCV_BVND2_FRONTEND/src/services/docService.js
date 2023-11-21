@@ -26,6 +26,16 @@ const createDocIncoming = async (dataObj) => {
   })
 }
 
+const getAllDocSendUserLogin = async () => {
+  return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocSendUserLogin`, config)
+  .then(function(response){
+    return response.data
+  })
+  .catch(function(error){
+    return error.response.status
+  })
+}
+
 export {
-    createDocIncoming
+    createDocIncoming, getAllDocSendUserLogin
 };

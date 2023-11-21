@@ -35,6 +35,7 @@ const userLogout = () => {
 }
 
 const fetchUserList = (page, limit) => {
+  console.log(page, limit)
   return axios.get(`/api/user/read?page=${page}&limit=${limit}`);
 }
 
