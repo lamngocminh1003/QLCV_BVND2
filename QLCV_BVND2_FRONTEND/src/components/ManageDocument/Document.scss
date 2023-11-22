@@ -1,7 +1,8 @@
-#expireInput {
-    // .react-datepicker-wrapper{
-    //     width: 100%;
-    // }
+//modal document
+.modal-dialog {
+    &.modal-lg{
+        margin-top: 0px;
+    }
 }
 
 .react-datepicker__current-month 
@@ -41,8 +42,17 @@
 
 .display-type-file-icon{
     word-break: break-all; 
-    text-align: center !important; 
-    margin-right: 11%;
+    margin-right: 4%;
+    text-align: center !important;
+    cursor: pointer;
+    .tilte-doc{
+        color: #212529;
+        font-size: 15.5px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* number of lines to show */ 
+        -webkit-box-orient: vertical;   
+    }
 }
 
 //modal preview doc

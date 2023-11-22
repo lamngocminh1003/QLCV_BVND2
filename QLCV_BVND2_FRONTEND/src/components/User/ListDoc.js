@@ -1,10 +1,11 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import moment from 'moment';
 import 'moment/locale/vi';
 import { UserContext } from '../../context/UserContext';
 import ReactPaginate from 'react-paginate';
 import "./ListDoc.scss";
 import ModalDocument from '../ManageDocument/ModalDocument';
+import {getAllDocSendUserLogin} from '../../services/docService'
 
 function ListDoc() {
     const { user } = useContext(UserContext);
@@ -18,6 +19,8 @@ function ListDoc() {
     const [dataDocEdit, setDataDocEdit] = useState({});
     //lấy data trong table row để truyền qua modal khác
     const [dataDoc, setDataDoc] = useState({});
+
+    // const [listDoc, setListDoc] = useState([])
 
     const listDoc = [
         {
@@ -162,6 +165,15 @@ function ListDoc() {
     const handlePageClick = (event) => {
         setCurrentPage(+event.selected + 1)
     };
+
+    // const fetchAllDoc = async () => {
+    //     let result = await getAllDocSendUserLogin();
+    //     setListDoc(result)
+    // }
+
+    // useEffect(()=> {
+    //     fetchAllDoc();
+    // }, [])
     
     return (
         <>

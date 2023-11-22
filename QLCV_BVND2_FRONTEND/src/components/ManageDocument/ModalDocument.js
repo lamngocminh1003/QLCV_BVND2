@@ -1,20 +1,23 @@
 import "./Document.scss";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import _, { set } from 'lodash';
 import { toast } from 'react-toastify';
+import { UserContext } from '../../context/UserContext';
 import moment from "moment";
 
 import Modal from 'react-bootstrap/Modal';
 import ModalPreviewDocument from './ModalPreviewDocument';
+
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 
 //import components react datepicker
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addMonths } from 'date-fns';
 import vi from "date-fns/locale/vi";
-import { createDocAPI } from "../../services/userService";
 
 //import some shit to create assign to department
 import Checkbox from '@mui/material/Checkbox';
@@ -27,12 +30,14 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import {FileIcon, defaultStyles} from 'react-file-icon';
 
 //import doc service api
-import {createDocIncoming, getAllDocSendUserLogin} from "../../services/docService";
+import {createDocIncoming} from "../../services/docService";
+import { Box } from "@mui/material";
 
 registerLocale("vi", vi);
 
 function ModalAddDoc(props) {
     const { assignDataDocEdit } = props
+    const { user } = useContext(UserContext);
 
     //set default value đại diện cho các ô input
     const defaultDocData = {
@@ -297,14 +302,6 @@ function ModalAddDoc(props) {
         ['application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']; //docx, xlsx
 
-    useEffect(() => {
-        if (props.setActionModalDoc === "EDIT" || props.setActionModalDoc === "INFO") {
-            setdocData({ ...assignDataDocEdit })
-            setStartDate(false) //set giá trị cho state startDate để enabled cho ô input expireDate
-            setEndDate(false)
-        }
-    }, [assignDataDocEdit])
-
     const handleOnchangeInput = (value, inputName) => {
         setValidInput(validateInputDefault);
         let _docData = _.cloneDeep(docData);
@@ -508,6 +505,14 @@ function ModalAddDoc(props) {
         setIsShowModalPreviewDoc(true);
     }
 
+    useEffect(() => {
+        if (props.setActionModalDoc === "EDIT" || props.setActionModalDoc === "INFO") {
+            setdocData({ ...assignDataDocEdit })
+            setStartDate(false) //set giá trị cho state startDate để enabled cho ô input expireDate
+            setEndDate(false)
+        }
+    }, [assignDataDocEdit])
+
     return (
         <>
             <div>
@@ -646,67 +651,123 @@ function ModalAddDoc(props) {
                                                                 <label htmlFor="des" className="form-label">Mô tả văn bản</label>
                                                                 <textarea className={validInput.docDes ? 'form-control' : 'form-control is-invalid'} id="des" name="description" rows="4" value={docData.docDes || ""} onChange={(event) => handleOnchangeInput(event.target.value, "docDes")} autoComplete="off" ></textarea>
                                                             </div>
-                                                            {props.setActionModalDoc === "INFO" ? 
+                                                            {props.setActionModalDoc === "INFO" || props.setActionModalDoc === "EDIT" ? 
                                                                 <>
                                                                     <div className="mb-2 mt-2 col-sm-12">
                                                                         <p className="fs-5 fw-bolder" style={{color: '#212529'}}>Các file đính kèm</p>
                                                                         <div className="wrap-type-icon-file" style={{display: 'inline-flex', flexWrap: 'wrap'}}>
 
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
-                                                                                <FileIcon color="deepskyblue" extension="doc"{...defaultStyles.doc} />
-                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon extension="doc" {...defaultStyles.doc} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
-                                                                                <FileIcon color="deepskyblue" extension="docx" {...defaultStyles.docx} />
-                                                                                <p>tilte filaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon extension="docx" {...defaultStyles.docx} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte filaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
-                                                                                <FileIcon extension="pdf" {...defaultStyles.pdf} />
-                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon extension="pdf" {...defaultStyles.pdf} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte fileaaaaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-
-
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0 mr-0" >
-                                                                                <FileIcon extension="xls" {...defaultStyles.xls} />
-                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon extension="xls" {...defaultStyles.xls} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
-                                                                                <FileIcon extension="xlsx" {...defaultStyles.xlsx} />
-                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0 mr-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon extension="xlsx" {...defaultStyles.xlsx} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
-                                                                                <FileIcon extension="pptx" {...defaultStyles.pptx} />
-                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon extension="doc" {...defaultStyles.doc} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
-                                                                                <FileIcon extension="ppt" {...defaultStyles.ppt} />
-                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon extension="pptx" {...defaultStyles.pptx} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte fileaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0 mr-0" >
-                                                                                <FileIcon color="lavender" extension="jpeg" {...defaultStyles.jpeg} />
-                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon extension="ppt" {...defaultStyles.ppt} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
-                                                                                <FileIcon color="lavender" extension="jpg" {...defaultStyles.jpg} />
-                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon color="lavender" extension="jpeg" {...defaultStyles.jpeg} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-                                                                            <div className="display-type-file-icon col-2 px-0 py-0" >
-                                                                                <FileIcon color="lavender" extension="png" {...defaultStyles.png} />
-                                                                                <p>tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
+                                                                            <div className="display-type-file-icon col-2 px-0 py-0 mr-0">
+                                                                                <Tooltip title="day la full title cua van ban khi hover vao icon" TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                    <Box>
+                                                                                        <div style={{width: '60%', margin: 'auto'}}>
+                                                                                            <FileIcon color="lavender" extension="jpg" {...defaultStyles.jpg} />
+                                                                                        </div>
+                                                                                    </Box>
+                                                                                </Tooltip>
+                                                                                <p className="mt-2 tilte-doc">tilte fileaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>
                                                                             </div>
 
-                                                                            
                                                                         </div>
-                                                                        
                                                                     </div>
                                                                 </>
                                                             : 
@@ -789,10 +850,10 @@ function ModalAddDoc(props) {
                                         <Button variant="primary" onClick={() => btnSubmit()}>Xóa</Button>
                                     </>
                                 )
-                            } else if (props.setActionModalDoc === "INFO") {
+                            } else if (props.setActionModalDoc === "INFO" ) {
                                 return (
                                     <>
-                                        {docData.docStatus === 0 ?
+                                        {docData.docStatus === 0 && user.isAuthenticated === true && user.account.departmentName === 'Phòng giám đốc' ?
                                             <>
                                                 <Button variant="primary">Duyệt</Button>
                                             </>

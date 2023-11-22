@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getUserAccount } from '../services/userService';
 import { toast } from 'react-toastify';
+import { useLocation } from "react-router-dom";
 
 const UserContext = React.createContext(null);
 
@@ -38,18 +39,36 @@ const UserProvider = ({ children }) => {
             let currentDate  = new Date();
 
             if(decodeJWT.exp * 1000 < currentDate.getTime()) {
-                //alert('Token đã hết hạn hoặc không tồn tại!')
+                //console.log('Token đã hết hạn hoặc không tồn tại')
                 localStorage.removeItem('jwt'); //xóa localStorage
                 return result 
             }
             else{
-                //alert('jwt còn hạn')
+                //console.log('token còn hạn');
                 result = true;
                 return result
             }
         }
         else{
             return result
+        }
+    }
+
+    const checkURLToAccess = (data) => {
+        let check = true;
+        if(window.location.pathname === '/list-doc' && data.account.departmentName === 'Phòng Giám đốc' && data.account.departmentHead === true 
+        || window.location.pathname === '/list-doc' && data.account.departmentName === 'Phòng Hành chính quản trị' && data.account.departmentHead === true){
+            return check;
+        }
+
+        else if(window.location.pathname === '/list-doc-department' && data.account.departmentName === 'Phòng Giám đốc' && data.account.departmentHead === true 
+        || window.location.pathname === '/list-doc-department' && data.account.departmentName === 'Phòng Hành chính quản trị' && data.account.departmentHead === true){
+            check = false
+            return check;
+        }
+
+        else{
+            console.log('trường hợp này chưa biết...')
         }
     }
 
@@ -65,13 +84,15 @@ const UserProvider = ({ children }) => {
             let fullName = response.userFullName;
             let email = response.userEmail;
             let departmentName = response.departmentName
-            let departmentHead = response.department_Head
+            let departmentHead = response.departmentHead
 
             let data = {
                 isAuthenticated: true,
                 account: {userId, fullName, email, departmentName, departmentHead}
             }
 
+            // let check = checkURLToAccess(data);
+            // console.log(check)
             setTimeout(() => {
                 setUser(data);
             }, 1.5 * 1000)
@@ -80,30 +101,43 @@ const UserProvider = ({ children }) => {
 
     useEffect(() => {
         if (window.location.pathname !== '/' && window.location.pathname !== '/login-user') {
-            fetchUser();
+            let result = checkJWTExpire();
+            if(result === true){
+                fetchUser();
+            }
+            else{
+                setUser({ ...user, isLoading: false });
+            }
         }
         else if (window.location.pathname === '/') {
             (async () => {
                 try {
                     let response = await getUserAccount();
+                    //không có token
                     if(response === 401){
                         setUser({ ...user, isLoading: false });
                     }
                     else{
-                        let userId = response.userId;
-                        let fullName = response.userFullName;
-                        let email = response.userEmail;
-                        let departmentName = response.departmentName
-                        let departmentHead = response.department_Head
+                        let result = checkJWTExpire();
+                        if(result === true){
+                            let userId = response.userId;
+                            let fullName = response.userFullName;
+                            let email = response.userEmail;
+                            let departmentName = response.departmentName
+                            let departmentHead = response.departmentHead
 
-                        let data = {
-                            isAuthenticated: true,
-                            account: {userId, fullName, email, departmentName, departmentHead}
+                            let data = {
+                                isAuthenticated: true,
+                                account: {userId, fullName, email, departmentName, departmentHead}
+                            }
+
+                            setTimeout(() => {
+                                setUser(data);
+                            }, 1.5 * 1000)
                         }
-
-                        setTimeout(() => {
-                            setUser(data);
-                        }, 1.5 * 1000)
+                        else{
+                            setUser({ ...user, isLoading: false });
+                        }
                     }
                 } catch (error) {
                     console.log(error)
@@ -111,6 +145,7 @@ const UserProvider = ({ children }) => {
             })();
         }
         else {
+            //không có token
             setUser({ ...user, isLoading: false });
         }
     }, [])

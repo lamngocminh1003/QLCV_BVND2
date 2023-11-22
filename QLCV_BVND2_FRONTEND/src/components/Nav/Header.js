@@ -23,7 +23,6 @@ const Header = (props) => {
     history.push('/login-user');
   }
 
-
   if (user && user.isAuthenticated === true || location.pathname === '/') {
     return (
       <div className="nav-header">
