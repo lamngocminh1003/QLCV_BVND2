@@ -5,130 +5,134 @@ import { UserContext } from '../../context/UserContext';
 import ReactPaginate from 'react-paginate';
 import "./ListDoc.scss";
 import ModalDocument from '../ManageDocument/ModalDocument';
-import {getAllDocSendUserLogin} from '../../services/docService'
+import {getListByUserLimitNumberPage} from '../../services/docService'
+
 
 function ListDoc() {
     const { user } = useContext(UserContext);
     //set ẩn hiện cho modal
     const [isShowModalDoc, setIsShowModalDoc] = useState(false);
+
     //set phương thức thực hiện cho modal
     const [actionModalDoc, setActionModalDoc] = useState("CREATE");
+
     //set paginate 
     const [currentPage, setCurrentPage] = useState(1);
+    const [currentLimit, setCurrentLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(0);
+    const [listDoc, setListDoc] = useState([]);
+
     //lấy data trong table row để truyền qua modal khác để edit
     const [dataDocEdit, setDataDocEdit] = useState({});
+
     //lấy data trong table row để truyền qua modal khác
     const [dataDoc, setDataDoc] = useState({});
 
-    // const [listDoc, setListDoc] = useState([])
-
-    const listDoc = [
-        {
-            idDoc: 1,
-            docName: "Khoa nội",
-            docFile: "khoanoi.pdf",
-            docDes: "Mô tả văn bản 1",
-            docExpireStart: "2023-07-05",
-            docExpireEnd: "2024-01-01",
-            docHandOver: "",
-            docStatus: 0
-        },
-        {
-            idDoc: 2,
-            docName: "Khoa ngoại tổng hợp",
-            docFile: "khoangoaitonghop.pdf",
-            docDes: "Mô tả văn bản 2",
-            docExpireStart: "2023-11-20",
-            docExpireEnd: "2024-07-05",
-            docHandOver: "",
-            docStatus: 1
-        },
-        {
-            idDoc: 3,
-            docName: "Thực phẩm thức ăn",
-            docFile: "khoatieuhoa.pdf",
-            docDes: "Mô tả văn bản 3",
-            docExpireStart: "2023-12-10",
-            docExpireEnd: "2024-01-31",
-            docHandOver: "Khoa tiêu hóa",
-            docStatus: 2
-        },
-        {
-            idDoc: 4,
-            docName: "Trang thiết bị",
-            docFile: "trangthietbi.pdf",
-            docDes: "Mô tả văn bản 4",
-            docExpireStart: "2024-02-02",
-            docExpireEnd: "2024-07-05",
-            docHandOver: "Khoa Phẫu thuật trong ngày",
-            docStatus: 3
-        },
-        {
-            idDoc: 5,
-            docName: "Chăm sóc trẻ em",
-            docFile: "treem.pdf",
-            docDes: "Props Format theo tháng ngày năm",
-            docExpireStart: "2023-10-18",
-            docExpireEnd: "2024-07-29",
-            docHandOver: "",
-            docStatus: 0
-        },
-        // {
-        //     idDoc: 6,
-        //     docName: "Khoa thần kinh",
-        //     docFile: "thankinh.pdf",
-        //     docDes: "Mô tả văn bản 6",
-        //     docExpireStart: "2023-10-10",
-        //     docExpireEnd: "2024-01-01",
-        //     docHandOver: "",
-        //     docStatus: 0
-        // },
-        // {
-        //     idDoc: 7,
-        //     docName: "Khoa nội tổng hợp",
-        //     docFile: "khoanoitonghop.pdf",
-        //     docDes: "Mô tả văn bản 7",
-        //     docExpireStart: "2023-02-11",
-        //     docExpireEnd: "2024-05-17",
-        //     docHandOver: "",
-        //     docStatus: 1
-        // },
-        // {
-        //     idDoc: 8,
-        //     docName: "Khoa dược",
-        //     docFile: "khoaduoc.pdf",
-        //     docDes: "Mô tả văn bản 8",
-        //     docExpireStart: "2023-10-12",
-        //     docExpireEnd: "2024-05-31",
-        //     docHandOver: "Khoa dược",
-        //     docStatus: 2
-        // },
-        // {
-        //     idDoc: 9,
-        //     docName: "Phòng chống bắt cóc",
-        //     docFile: "phongchongbatcoc.pdf",
-        //     docDes: "Mô tả văn bản 9",
-        //     docExpireStart: "2023-06-02",
-        //     docExpireEnd: "2024-01-10",
-        //     docHandOver: "Phòng bảo vệ",
-        //     docStatus: 3
-        // },
-        // {
-        //     idDoc: 10,
-        //     docName: "Phòng chống covid",
-        //     docFile: "phongchongcovid.pdf",
-        //     docDes: "Mô tả văn bản 10",
-        //     docExpireStart: "2023-10-18",
-        //     docExpireEnd: "2024-07-29",
-        //     docHandOver: "",
-        //     docStatus: 0
-        // }
-    ]
+    // const listDoc = [
+    //     {
+    //         idDoc: 1,
+    //         docName: "Khoa nội",
+    //         docFile: "khoanoi.pdf",
+    //         docDes: "Mô tả văn bản 1",
+    //         docExpireStart: "2023-07-05",
+    //         docExpireEnd: "2024-01-01",
+    //         docHandOver: "",
+    //         docStatus: 0
+    //     },
+    //     {
+    //         idDoc: 2,
+    //         docName: "Khoa ngoại tổng hợp",
+    //         docFile: "khoangoaitonghop.pdf",
+    //         docDes: "Mô tả văn bản 2",
+    //         docExpireStart: "2023-11-20",
+    //         docExpireEnd: "2024-07-05",
+    //         docHandOver: "",
+    //         docStatus: 1
+    //     },
+    //     {
+    //         idDoc: 3,
+    //         docName: "Thực phẩm thức ăn",
+    //         docFile: "khoatieuhoa.pdf",
+    //         docDes: "Mô tả văn bản 3",
+    //         docExpireStart: "2023-12-10",
+    //         docExpireEnd: "2024-01-31",
+    //         docHandOver: "Khoa tiêu hóa",
+    //         docStatus: 2
+    //     },
+    //     {
+    //         idDoc: 4,
+    //         docName: "Trang thiết bị",
+    //         docFile: "trangthietbi.pdf",
+    //         docDes: "Mô tả văn bản 4",
+    //         docExpireStart: "2024-02-02",
+    //         docExpireEnd: "2024-07-05",
+    //         docHandOver: "Khoa Phẫu thuật trong ngày",
+    //         docStatus: 3
+    //     },
+    //     {
+    //         idDoc: 5,
+    //         docName: "Chăm sóc trẻ em",
+    //         docFile: "treem.pdf",
+    //         docDes: "Props Format theo tháng ngày năm",
+    //         docExpireStart: "2023-10-18",
+    //         docExpireEnd: "2024-07-29",
+    //         docHandOver: "",
+    //         docStatus: 0
+    //     },
+    //     // {
+    //     //     idDoc: 6,
+    //     //     docName: "Khoa thần kinh",
+    //     //     docFile: "thankinh.pdf",
+    //     //     docDes: "Mô tả văn bản 6",
+    //     //     docExpireStart: "2023-10-10",
+    //     //     docExpireEnd: "2024-01-01",
+    //     //     docHandOver: "",
+    //     //     docStatus: 0
+    //     // },
+    //     // {
+    //     //     idDoc: 7,
+    //     //     docName: "Khoa nội tổng hợp",
+    //     //     docFile: "khoanoitonghop.pdf",
+    //     //     docDes: "Mô tả văn bản 7",
+    //     //     docExpireStart: "2023-02-11",
+    //     //     docExpireEnd: "2024-05-17",
+    //     //     docHandOver: "",
+    //     //     docStatus: 1
+    //     // },
+    //     // {
+    //     //     idDoc: 8,
+    //     //     docName: "Khoa dược",
+    //     //     docFile: "khoaduoc.pdf",
+    //     //     docDes: "Mô tả văn bản 8",
+    //     //     docExpireStart: "2023-10-12",
+    //     //     docExpireEnd: "2024-05-31",
+    //     //     docHandOver: "Khoa dược",
+    //     //     docStatus: 2
+    //     // },
+    //     // {
+    //     //     idDoc: 9,
+    //     //     docName: "Phòng chống bắt cóc",
+    //     //     docFile: "phongchongbatcoc.pdf",
+    //     //     docDes: "Mô tả văn bản 9",
+    //     //     docExpireStart: "2023-06-02",
+    //     //     docExpireEnd: "2024-01-10",
+    //     //     docHandOver: "Phòng bảo vệ",
+    //     //     docStatus: 3
+    //     // },
+    //     // {
+    //     //     idDoc: 10,
+    //     //     docName: "Phòng chống covid",
+    //     //     docFile: "phongchongcovid.pdf",
+    //     //     docDes: "Mô tả văn bản 10",
+    //     //     docExpireStart: "2023-10-18",
+    //     //     docExpireEnd: "2024-07-29",
+    //     //     docHandOver: "",
+    //     //     docStatus: 0
+    //     // }
+    // ]
     //config search field
     const [searchValue, setSearchValue] = useState('');
-    const keys = ["docName", "docDes", "docExpireStart", "docExpireEnd", "docHandOver"];
-
-    const totalPages = 5;
+    const keys = ["document_Incomming_Title", "document_Incomming_Content", "document_Incomming_TimeStart", "document_Incomming_Deadline", "document_Incomming_Time"];
 
     const btnActiveModalAddDoc = () => {
         setActionModalDoc("CREATE");
@@ -166,14 +170,17 @@ function ListDoc() {
         setCurrentPage(+event.selected + 1)
     };
 
-    // const fetchAllDoc = async () => {
-    //     let result = await getAllDocSendUserLogin();
-    //     setListDoc(result)
-    // }
+    const fetchAllDoc = async () => {
+        let result = await getListByUserLimitNumberPage(currentLimit, currentPage);
+        if(result.documents.length !== 0){
+            setTotalPages(result.totalPages);
+            setListDoc(result.documents)
+        }
+    }
 
-    // useEffect(()=> {
-    //     fetchAllDoc();
-    // }, [])
+    useEffect(()=> {
+        fetchAllDoc();
+    }, [currentPage])
     
     return (
         <>
@@ -205,7 +212,7 @@ function ListDoc() {
                                     :
                                     <></>
                                 }
-                                <div className="row justify-content-center mt-2">
+                                <div className="row  mt-2">
                                     <table className="table table-hover table-bordered ">
                                         <thead>
                                             <tr>
@@ -213,7 +220,7 @@ function ListDoc() {
                                                 <th scope="col">Tên văn bản</th>
                                                 <th scope="col">Mô tả văn bản</th>
                                                 <th scope="col">Thời hạn xử lý</th>
-                                                <th scope="col">Bàn giao</th>
+                                                <th scope="col">Thời gian gửi lên</th>
                                                 <th scope="col">Trạng thái</th>
                                                 {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị' ?
                                                     <><th scope="col">Thao tác</th></>
@@ -231,27 +238,28 @@ function ListDoc() {
                                                 return (
                                                     <tr key={`row-${indexListDoc}`}>
                                                         <td>{indexListDoc + 1}</td>
-                                                        <td><button className='title-doc' onClick={() => btnInfo(itemListDoc)}>{itemListDoc.docName}</button></td>
-                                                        <td>{itemListDoc.docDes}</td>
-                                                        <td>{`${moment(itemListDoc.docExpireStart).format('L')} - ${moment(itemListDoc.docExpireEnd).format('L')}`}</td>
-                                                        <td>{itemListDoc.docHandOver.length !== 0 ? itemListDoc.docHandOver : null}</td>
+                                                        <td style={{width: '20%'}}><button className='title-doc' onClick={() => btnInfo(itemListDoc)}>{itemListDoc.document_Incomming_Title}</button></td>
+                                                        <td style={{width: '28%'}}>{itemListDoc.document_Incomming_Content}</td>
+                                                        <td><div className='d-flex'>{`${moment(itemListDoc.document_Incomming_TimeStart).format('L')} - ${moment(itemListDoc.document_Incomming_Deadline).format('L')}`}</div></td>
+                                                        <td>{`${moment(itemListDoc.document_Incomming_Time).format('llll')}`}</td>
+                                                        {/* <td>{itemListDoc.docHandOver.length !== 0 ? itemListDoc.docHandOver : null}</td> */}
                                                         <td>
                                                             {(() => {
-                                                                if (itemListDoc.docStatus === 0) {
+                                                                if (itemListDoc.document_Incomming_State === 0) {
                                                                     return (
                                                                         <>
                                                                             <span className="status rounded-pill wait">Chờ duyệt</span>
                                                                         </>
                                                                     )
                                                                 }
-                                                                else if (itemListDoc.docStatus === 1) {
+                                                                else if (itemListDoc.document_Incomming_State === 1) {
                                                                     return (
                                                                         <>
                                                                             <span className="status rounded-pill checked">Đã duyệt</span>
                                                                         </>
                                                                     )
                                                                 }
-                                                                else if (itemListDoc.docStatus === 2) {
+                                                                else if (itemListDoc.document_Incomming_State === 2) {
                                                                     return (
                                                                         <>
                                                                             <span className="status rounded-pill ahead">Bàn giao</span>
@@ -271,14 +279,14 @@ function ListDoc() {
                                                         {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị' ?
                                                             <td className='text-center'>
                                                                 {(() => {
-                                                                    if (itemListDoc.docStatus === 0) {
+                                                                    if (itemListDoc.document_Incomming_State === 0) {
                                                                         return (
                                                                             <>
                                                                                 <button className="btn btn-warning" onClick={() => btnEdit(itemListDoc)}> <i className="fa-solid fa-pen-to-square text-white"></i></button>
                                                                                 <button className="btn btn-danger mx-2" onClick={() => btnDel(itemListDoc)} > <i className="fa-solid fa-trash text-white"></i></button>
                                                                             </>
                                                                         )
-                                                                    } else if (itemListDoc.docStatus === 1) {
+                                                                    } else if (itemListDoc.document_Incomming_State === 1) {
                                                                         return (
                                                                             <>
                                                                                 <button className="btn btn-share" style={{ backgroundColor: "#d63384" }} onClick={() => btnHandOver()}> <i className="fa-solid fa fa fa-share text-white"></i></button>

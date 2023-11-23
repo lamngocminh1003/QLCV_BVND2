@@ -26,6 +26,7 @@ const createDocIncoming = async (dataObj) => {
   })
 }
 
+//lấy văn bản theo dạng không phân trang
 const getAllDocSendUserLogin = async () => {
   return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocSendUserLogin`, config)
   .then(function(response){
@@ -36,6 +37,17 @@ const getAllDocSendUserLogin = async () => {
   })
 }
 
+//lấy văn bản theo dạng phân trang
+const getListByUserLimitNumberPage = async (limit, page) => {
+  return await axios.get(`${backendURL}/api/DocumentIncomming/GetListByUserLimitNumberPage/${limit}/${page}`, config)
+  .then(function(response){
+    return response.data
+  })
+  .catch(function(error){
+    return error.response.status
+  })
+}
+
 export {
-    createDocIncoming, getAllDocSendUserLogin
+    createDocIncoming, getAllDocSendUserLogin, getListByUserLimitNumberPage
 };

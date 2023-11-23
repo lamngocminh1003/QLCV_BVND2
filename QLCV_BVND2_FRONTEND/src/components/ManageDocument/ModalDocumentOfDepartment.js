@@ -187,7 +187,7 @@ const ModalDocumentOfDepartment = (props) => {
                                                                     itemTemplate={itemTemplate}
                                                                 />
                                                                 <label htmlFor={`discuss ${itemKey}`} className='form-label mt-3'>Thảo luận công việc</label>
-                                                                {/* <Mention id={`assign ${itemKey}`} placeholder="Nhập để thảo luận" rows={3.5} cols={50} /> */}
+                                                                <Mention id={`assign ${itemKey}`} placeholder="Nhập để thảo luận" rows={3.5} cols={50} />
                                                             </Typography>
                                                         </AccordionDetails>
                                                     </div>

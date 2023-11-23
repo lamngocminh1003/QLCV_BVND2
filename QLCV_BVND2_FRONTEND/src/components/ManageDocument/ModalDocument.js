@@ -45,7 +45,7 @@ function ModalAddDoc(props) {
         docExpireStart: '',
         docExpireEnd: '',
         docDes: '',
-        files: [],
+        files: '',
         docHandOver: ''
     }
 
@@ -389,45 +389,39 @@ function ModalAddDoc(props) {
         }
     }
 
-    const checkValidInputWhenSubmit = () => {
-        setValidInput(validateInputDefault)
-        let check = true;
-        for (const key of Object.keys(docData)) {
-            if (docData.docName.length === 0) {
-                let _validInput = _.cloneDeep(validateInputDefault);
-                _validInput.docName = false;
-                setValidInput(_validInput);
-
-                toast.error("Bạn chưa đặt tên cho văn bản!");
-                check = false;
-                break;
-            }
-        }
-        return check;
-    }
-
     //xử lý file, đọc file để preview file
     const handleFile = (event) => {
         let selectedFile = event.target.files;
         
         if (selectedFile) {
             let i;
+            let count = 0;
             for(i = 0; i < selectedFile.length; i++){
                 if (`${selectedFile[i].type}` === checkPDF){
-                    setDataFile(selectedFile[i]);
                     //set lại docName của state docData
                     let fileName = selectedFile[i].name.split(".");
                     docData.docName = fileName[0];
                     setdocData(docData);
                     setIsAllow(true);
-                    break;
-                }
-                else{
-                    toast.error('Hãy chọn ít nhất một file pdf!');
+                    count++;
                     break;
                 }
             }
-            setDataFile(selectedFile);
+
+            if(count === 0){
+                toast.error('Hãy chọn ít nhất một file pdf!');
+                docData.docName = '';
+                docData.files = selectedFile;
+                setdocData(docData);
+                setIsAllow(false);
+            }
+
+            else{
+                setDataFile(selectedFile);
+                docData.files = selectedFile;
+                setdocData(docData);
+                setIsAllow(true);
+            }
         }
         else {
             toast.warning('Xin hãy chọn văn bản!');
@@ -471,29 +465,85 @@ function ModalAddDoc(props) {
         setIsAllow(false);
     }
 
-    const btnSubmit = async () => {
-        formatDateISO8601();
-        let formDataFile = new FormData();
+    const checkValidInputWhenSubmit = () => {
+        setValidInput(validateInputDefault)
+        let count = 0;
+        let check = true;
+        for (const key of Object.keys(docData)) {
+            if (docData.docName.length === 0) {
+                let _validInput = _.cloneDeep(validateInputDefault);
+                _validInput.docName = false;
+                setValidInput(_validInput);
 
-        let i;
-        for(i = 0; i < dataFile.length; i++)
-        {
-            formDataFile.append('files', dataFile[i])
+                toast.error("Bạn chưa đặt tên cho văn bản!");
+                check = false;
+                break;
+            }
+            else if(docData.docDes.length === 0){
+                let _validInput = _.cloneDeep(validateInputDefault);
+                _validInput.docDes = false;
+                setValidInput(_validInput);
+
+                toast.error("Bạn chưa nhập mô tả cho văn bản!");
+                check = false;
+                break;
+            }
+            else if(docData.files.length === 0){
+                let _validInput = _.cloneDeep(validateInputDefault);
+                _validInput.docFile = false;
+                setValidInput(_validInput);
+
+                toast.error("Bạn chưa chọn văn bản!");
+                check = false;
+                break;
+            }
+            else if(docData.files.length !== 0){
+                for (const keyFile of Object.keys(docData.files)){
+                    if(docData.files[keyFile].type === checkPDF){
+                        count++
+                        break;
+                    }
+                }
+                if(count === 0){
+                    toast.error('Bạn chưa chọn file pdf!');
+                }
+                break;
+            }
         }
+        return check;
+    }
 
-        docData.files = formDataFile;
+    const btnSubmit = async () => {
+        let check = checkValidInputWhenSubmit();
+        if (check === true){
+            console.log('duoc submit')
+            formatDateISO8601();
+            let formDataFile = new FormData();
 
-        let result = await createDocIncoming(docData);
-        if(result === 200){
-            toast.success('Tạo văn bản thành công!');
-            setdocData(defaultDocData);
-            document.getElementById("doc").value = "";
-            setStartDate('');
-            setEndDate('');
-            setDataFile('');
+            let i;
+            for(i = 0; i < dataFile.length; i++)
+            {
+                formDataFile.append('files', dataFile[i])
+            }
+
+            docData.files = formDataFile;
+
+            let result = await createDocIncoming(docData);
+            if(result === 200){
+                toast.success('Tạo văn bản thành công!');
+                setdocData(defaultDocData);
+                document.getElementById("doc").value = "";
+                setStartDate('');
+                setEndDate('');
+                setDataFile('');
+                setIsAllow(false);
+            }
+            else{
+                toast.error('Tạo văn bản thất bại, vui lòng thử lại!')
+            }
         }
         else{
-            toast.error('Tạo văn bản thất bại, vui lòng thử lại!')
+            console.log('khong duoc submit')
         }
     }
 
@@ -516,7 +566,7 @@ function ModalAddDoc(props) {
     return (
         <>
             <div>
-                <Modal show={props.active} onHide={() => handleOnCloseModal()} size="lg">
+                <Modal show={props.active} onHide={() => handleOnCloseModal()} size="lg" style={props.setActionModalDoc === 'EDIT' ? '' : {marginTop: '2.5rem'}}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             {(() => {
@@ -555,7 +605,7 @@ function ModalAddDoc(props) {
                                                 return (
                                                     <>
                                                         <div className="row">
-                                                            <div className={props.setActionModalDoc === "INFO" ? 'col-sm-12' : 'col-sm-6'}>
+                                                            <div className='col-sm-12'>
                                                                 <label htmlFor="tit" className="form-label">Tên văn bản</label>
                                                                 <input type="text" className={validInput.docName ? 'form-control' : 'form-control is-invalid'} id="tit" name="title" value={docData.docName || ""}
                                                                     onChange={(event) => handleOnchangeInput(event.target.value, "docName")}
@@ -569,13 +619,13 @@ function ModalAddDoc(props) {
                                                                 <></>
                                                             : 
                                                                 <>
-                                                                    <div className="col-sm-6">
+                                                                    <div className="mt-3 col-sm-12">
                                                                         <label htmlFor="doc" className="form-label">Văn bản</label>
                                                                         <input type="file" name="document" id="doc" className={validInput.docFile ? 'form-control' : 'form-control is-invalid'}
                                                                         onChange={(event) => handleFile(event)}
                                                                         onClick={(event) => handleOnClickInputFile(event)}
                                                                         autoComplete="off"
-                                                                        accept=".pdf"
+                                                                        accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png"
                                                                         multiple
                                                                     />
                                                                     </div>
@@ -787,9 +837,37 @@ function ModalAddDoc(props) {
                                             else {
                                                 return (
                                                     <>
-                                                        <div className="row mt-3 row d-flex justify-content-center">
-                                                            <div className="mb-3 col-sm-12">
+                                                        <div className="row row d-flex justify-content-center">
+                                                            <div className="mt-2 col-sm-12">
                                                                 <label htmlFor="mention" className="form-label">Bàn giao tới phòng khoa</label>
+                                                                <Autocomplete
+                                                                    multiple
+                                                                    id="mention"
+                                                                    options={dataPhongKhoa}
+                                                                    disableCloseOnSelect
+                                                                    getOptionLabel={(option) => option.tenPhongKhoa}
+                                                                    renderOption={(props, option, { selected }) => (
+                                                                        <li {...props}>
+                                                                            <Checkbox
+                                                                                icon={icon}
+                                                                                checkedIcon={checkedIcon}
+                                                                                style={{ marginRight: 8 }}
+                                                                                checked={selected}
+                                                                            />
+                                                                            {option.tenPhongKhoa}
+                                                                        </li>
+                                                                    )}
+                                                                    style={{ width: 715 }}
+                                                                    renderInput={(params) => (
+                                                                        <TextField {...params} />
+                                                                    )}
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row mt-4 row d-flex justify-content-center">
+                                                            <div className="col-sm-12">
+                                                                <label htmlFor="mention" className="form-label">Bàn giao tới cá nhân</label>
                                                                 <Autocomplete
                                                                     multiple
                                                                     id="mention"
@@ -853,10 +931,8 @@ function ModalAddDoc(props) {
                             } else if (props.setActionModalDoc === "INFO" ) {
                                 return (
                                     <>
-                                        {docData.docStatus === 0 && user.isAuthenticated === true && user.account.departmentName === 'Phòng giám đốc' ?
-                                            <>
-                                                <Button variant="primary">Duyệt</Button>
-                                            </>
+                                        {docData.docStatus === 0 && user.isAuthenticated === true && user.account.departmentName === "Phòng Giám đốc" ?
+                                            <><Button variant="primary">Duyệt</Button></>
                                             :
                                             <></>
                                         }

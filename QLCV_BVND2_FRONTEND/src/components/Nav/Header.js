@@ -48,7 +48,10 @@ const Header = (props) => {
                 }
 
                 {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị'  ?
-                  <><NavLink exact to="/list-doc" className="nav-link">Văn bản</NavLink></>
+                  <>
+                    <NavLink exact to="/list-doc-sent" className="nav-link">Văn bản đã gửi</NavLink>
+                    <NavLink exact to="/list-doc-handover" className="nav-link">Văn bản đã bàn giao</NavLink>
+                  </>
                   :
                   <></>
                 }
