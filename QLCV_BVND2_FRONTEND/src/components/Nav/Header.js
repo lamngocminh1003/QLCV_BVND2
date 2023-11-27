@@ -37,6 +37,8 @@ const Header = (props) => {
               <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
 
                 <NavLink exact to="/" className="nav-link">Trang chủ</NavLink>
+                <NavLink exact to="/list-propose-sent" className="nav-link">Đề xuất đã gửi</NavLink>
+                <NavLink exact to="/list-propose-confirm" className="nav-link">Đề xuất đã duyệt</NavLink>
                 {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Giám đốc' ?
                   <>
                     <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>

@@ -1,17 +1,20 @@
 import axios from "axios";
 
-const backendURL = 'https://localhost:7147';
+const backendURL = 'http://146.190.89.3:9090';
 
-const token = localStorage.getItem("jwt");
-// Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
-const config = {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-};
+const createConfig = () => {
+  const token = localStorage.getItem("jwt");
+  // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return config;
+}
 
 const userLogin = async (userId, password) => {
-  return await axios.post(`${backendURL}/api/UserAccount/Login`, { userId, password }, config)
+  return await axios.post(`${backendURL}/api/UserAccount/Login`, { userId, password })
   .then(function(response){
     return response.data
   })
@@ -20,8 +23,9 @@ const userLogin = async (userId, password) => {
   })
 };
 
-const getUserAccount = () => {
-  return axios.get(`${backendURL}/api/UserAccount/GetUserLogin`, config)
+const getUserAccount = async () => {
+  const config = createConfig();
+  return await axios.get(`${backendURL}/api/UserAccount/GetUserLogin`, config)
   .then(function(response){
     return response.data
   })

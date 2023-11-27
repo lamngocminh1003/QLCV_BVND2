@@ -106,10 +106,11 @@ const UserProvider = ({ children }) => {
                 fetchUser();
             }
             else{
+                //không có token
                 setUser({ ...user, isLoading: false });
             }
         }
-        else if (window.location.pathname === '/') {
+        else if (window.location.pathname === '/' || window.location.pathname === '/login-user') {
             (async () => {
                 try {
                     let response = await getUserAccount();
@@ -137,6 +138,7 @@ const UserProvider = ({ children }) => {
                         }
                         else{
                             setUser({ ...user, isLoading: false });
+                            
                         }
                     }
                 } catch (error) {
@@ -145,7 +147,6 @@ const UserProvider = ({ children }) => {
             })();
         }
         else {
-            //không có token
             setUser({ ...user, isLoading: false });
         }
     }, [])

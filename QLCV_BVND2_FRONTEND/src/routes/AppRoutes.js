@@ -6,6 +6,7 @@ import PrivateRoutes from "./PrivateRoutes";
 import Project from "../components/Project/Project";
 import LoginUser from '../components/UserLogin/Login';
 import ListUser from "../components/User/ListUser";
+import ListPropose from "../components/User/ListPropose";
 import ListDoc from "../components/User/ListDoc";
 import ListDocOfDepartment from "../components/User/ListDocOfDepartment";
 import MemberTask from "../components/Task/MemberTask";
@@ -24,6 +25,8 @@ const AppRoutes = (props) => {
           <PrivateRoutes path="/users" component={Users} />
           <PrivateRoutes path="/projects" component={Project} />
           <PrivateRoutes path="/list-user" component={ListUser} />
+          <PrivateRoutes path="/list-propose-sent" component={ListPropose} />
+          <PrivateRoutes path="/list-propose-confirm" component={ListPropose} />
           <PrivateRoutes path="/list-doc-sent" component={ListDoc} />
           <PrivateRoutes path="/list-doc-handover" component={ListDoc} />
           <PrivateRoutes path="/list-doc-department" component={ListDocOfDepartment} />

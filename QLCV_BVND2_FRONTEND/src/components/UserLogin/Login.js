@@ -20,7 +20,7 @@ import { UserContext } from '../../context/UserContext';
 
 
 const LoginUser = () => {
-    const { loginContext } = useContext(UserContext);
+    const { user, loginContext } = useContext(UserContext);
 
     let history = useHistory();
 
@@ -89,6 +89,18 @@ const LoginUser = () => {
             history.push('/');
         }
     }
+
+    useEffect(() => {
+        // Kiểm tra trạng thái đăng nhập khi component được render
+        if (user && user.isAuthenticated === true) {
+          history.push("/");
+        }
+    
+        let session = localStorage.getItem("jwt");
+        if (session) {
+          history.push("/");
+        }
+    }, [user, history]);
 
     return (
         <div className='container-login-form' id='login-form'>

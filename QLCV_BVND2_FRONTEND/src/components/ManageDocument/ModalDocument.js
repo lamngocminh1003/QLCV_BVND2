@@ -516,7 +516,6 @@ function ModalAddDoc(props) {
     const btnSubmit = async () => {
         let check = checkValidInputWhenSubmit();
         if (check === true){
-            console.log('duoc submit')
             formatDateISO8601();
             let formDataFile = new FormData();
 
@@ -585,6 +584,10 @@ function ModalAddDoc(props) {
                                 } else if (props.setActionModalDoc === "INFO") {
                                     return (
                                         <div className='text-primary text-uppercase'>Thông tin văn bản</div>
+                                    )
+                                } else if (props.setActionModalDoc === "FEEDBACK") {
+                                    return (
+                                        <div className='text-primary text-uppercase'>Phản hồi văn bản</div>
                                     )
                                 } else {
                                     return (
@@ -833,6 +836,12 @@ function ModalAddDoc(props) {
                                                     <Modal.Body style={{ textAlign: "center" }}>Bạn có chắc muốn xóa văn bản "<strong>{props.assignDataDoc.docName}</strong>" này không?</Modal.Body>
                                                 )
                                             }
+
+                                            else if (props.setActionModalDoc === "FEEDBACK") {
+                                                return (
+                                                    <Modal.Body style={{ textAlign: "center" }}>đây là nội dung mà phòng giám đốc sẽ phản hồi cho phòng văn thư nếu có, nó sẽ hiển thị khi văn bản đang ở trạng thái từ chối, trả về chỉnh sửa, đã duyệt</Modal.Body>
+                                                )
+                                            }
                                             
                                             else {
                                                 return (
@@ -937,6 +946,10 @@ function ModalAddDoc(props) {
                                             <></>
                                         }
                                     </>
+                                )
+                            } else if (props.setActionModalDoc === "FEEDBACK") {
+                                return (
+                                    <></>
                                 )
                             } else {
                                 return (

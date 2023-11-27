@@ -1,17 +1,21 @@
 import axios from "axios";
 
-const backendURL = 'https://localhost:7147';
+const backendURL = 'http://146.190.89.3:9090';
 
-const token = localStorage.getItem("jwt");
-// Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
-const config = {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-};
+const createConfig = () => {
+  const token = localStorage.getItem("jwt");
+  // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return config;
+}
 
 const createDocIncoming = async (dataObj) => {
-    return await axios.post(`${backendURL}/api/DocumentIncomming?Title=${dataObj.docName}&Content=${dataObj.docDes}&TimeStart=${dataObj.docExpireStart}&TimeEnd=${dataObj.docExpireEnd}`, 
+    const token = localStorage.getItem("jwt");
+    return await axios.post(`${backendURL}/api/DocumentIncomming/Create?Title=${dataObj.docName}&Content=${dataObj.docDes}&TimeStart=${dataObj.docExpireStart}&TimeEnd=${dataObj.docExpireEnd}`, 
     dataObj.files, {
         headers: {
             "content-type": "multipart/form-data",
@@ -28,6 +32,7 @@ const createDocIncoming = async (dataObj) => {
 
 //lấy văn bản theo dạng không phân trang
 const getAllDocSendUserLogin = async () => {
+  const config = createConfig();
   return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocSendUserLogin`, config)
   .then(function(response){
     return response.data
@@ -39,7 +44,8 @@ const getAllDocSendUserLogin = async () => {
 
 //lấy văn bản theo dạng phân trang
 const getListByUserLimitNumberPage = async (limit, page) => {
-  return await axios.get(`${backendURL}/api/DocumentIncomming/GetListByUserLimitNumberPage/${limit}/${page}`, config)
+  const config = createConfig();
+  return await axios.get(`${backendURL}/api/DocumentSend/GetListDocSendByUserLimitNumberPage/${limit}/${page}`, config)
   .then(function(response){
     return response.data
   })
