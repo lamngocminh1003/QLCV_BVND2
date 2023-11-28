@@ -1,38 +1,31 @@
 import "./Document.scss";
-
 import React, { useState, useEffect, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import _, { set } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../context/UserContext';
 import moment from "moment";
-
 import Modal from 'react-bootstrap/Modal';
 import ModalPreviewDocument from './ModalPreviewDocument';
-
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-
 //import components react datepicker
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addMonths } from 'date-fns';
 import vi from "date-fns/locale/vi";
-
 //import some shit to create assign to department
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-
 //import react file icon
 import {FileIcon, defaultStyles} from 'react-file-icon';
-
 //import doc service api
 import {createDocIncoming} from "../../services/docService";
 import { Box } from "@mui/material";
-
+import { NIL } from "uuid";
 registerLocale("vi", vi);
 
 function ModalAddDoc(props) {
@@ -66,7 +59,7 @@ function ModalAddDoc(props) {
 
     //pdf onChange inputFile state
     const [fileName, setFileName] = useState();
-    const [dataFile, setDataFile] = useState();
+    const [dataFile, setDataFile] = useState([]);
     const [pdfFile, setPdfFile] = useState();
     const [ext, setExt] = useState();
 
@@ -298,9 +291,17 @@ function ModalAddDoc(props) {
     ];
 
     const checkPDF = 'application/pdf';
+    const checkXLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const checkDoc = 'application/msword';
+    const checkDocx = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    const checkJPG = 'image/jpeg';
+    const checkPNG = 'image/png';
+
     const checkDocType =
         ['application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']; //docx, xlsx
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/msword','application/pdf','image/jpeg','image/png'
+        ]; //docx, xlsx, doc, pdf, jpeg, png
 
     const handleOnchangeInput = (value, inputName) => {
         setValidInput(validateInputDefault);
@@ -417,10 +418,11 @@ function ModalAddDoc(props) {
             }
 
             else{
-                setDataFile(selectedFile);
+                setDataFile([...dataFile, selectedFile]);
                 docData.files = selectedFile;
                 setdocData(docData);
                 setIsAllow(true);
+                mergeArray();
             }
         }
         else {
@@ -554,6 +556,13 @@ function ModalAddDoc(props) {
         setIsShowModalPreviewDoc(true);
     }
 
+    const mergeArray = () => {
+        for(let i = 0; i < dataFile.length; i++)
+        {
+            console.log('zxcvzxcvzxcvxzc',dataFile[i])
+        }
+    }
+
     useEffect(() => {
         if (props.setActionModalDoc === "EDIT" || props.setActionModalDoc === "INFO") {
             setdocData({ ...assignDataDocEdit })
@@ -565,7 +574,7 @@ function ModalAddDoc(props) {
     return (
         <>
             <div>
-                <Modal show={props.active} onHide={() => handleOnCloseModal()} size="lg" style={props.setActionModalDoc === 'EDIT' ? '' : {marginTop: '2.5rem'}}>
+                <Modal show={props.active} onHide={() => handleOnCloseModal()} size="lg" style={props.setActionModalDoc === 'EDIT' || props.setActionModalDoc === 'CREATE' ? '' : {marginTop: '2.5rem'}}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             {(() => {
@@ -704,7 +713,7 @@ function ModalAddDoc(props) {
                                                                 <label htmlFor="des" className="form-label">Mô tả văn bản</label>
                                                                 <textarea className={validInput.docDes ? 'form-control' : 'form-control is-invalid'} id="des" name="description" rows="4" value={docData.docDes || ""} onChange={(event) => handleOnchangeInput(event.target.value, "docDes")} autoComplete="off" ></textarea>
                                                             </div>
-                                                            {props.setActionModalDoc === "INFO" || props.setActionModalDoc === "EDIT" ? 
+                                                            {props.setActionModalDoc === "INFO"? 
                                                                 <>
                                                                     <div className="mb-2 mt-2 col-sm-12">
                                                                         <p className="fs-5 fw-bolder" style={{color: '#212529'}}>Các file đính kèm</p>
@@ -824,6 +833,68 @@ function ModalAddDoc(props) {
                                                                     </div>
                                                                 </>
                                                             : 
+                                                                null
+                                                            }
+
+                                                            {props.setActionModalDoc === "CREATE" || props.setActionModalDoc === "EDIT" ?
+                                                                dataFile.length > 0 ?
+                                                                    <>
+                                                                        <div className="mb-2 mt-2 col-sm-12">
+                                                                                <p className="fs-6 fw-bolder" style={{color: '#212529'}}>Các file đính kèm</p>
+                                                                                <div className="wrap-type-icon-file" style={{display: 'inline-flex', flexWrap: 'wrap'}}>
+                                                                                    {dataFile.map((itemDataFile, indexDataFile) => {
+                                                                                        for(let i = 0; i < itemDataFile.length; i++){
+                                                                                            return(
+                                                                                                <div className="display-type-file-icon col-2 px-0 py-0" key={`file-${indexDataFile}`}>
+                                                                                                    <Tooltip title={itemDataFile[i].name} TransitionComponent={Fade} TransitionProps={{ timeout: 550 }} arrow>
+                                                                                                        <Box>
+                                                                                                            <div style={{width: '60%', margin: 'auto'}}>
+                                                                                                                {(() => {
+                                                                                                                    if(itemDataFile[i].type === checkPDF){
+                                                                                                                        return(
+                                                                                                                            <><FileIcon extension="pdf" {...defaultStyles.pdf} /></>
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                    else if(itemDataFile[i].type === checkDoc){
+                                                                                                                        return(
+                                                                                                                            <><FileIcon extension="doc" {...defaultStyles.doc} /></>
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                    else if(itemDataFile[i].type === checkDocx){
+                                                                                                                        return(
+                                                                                                                            <><FileIcon extension="docx" {...defaultStyles.docx} /></>
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                    else if(itemDataFile[i].type === checkXLSX){
+                                                                                                                        return(
+                                                                                                                            <><FileIcon extension="xlsx" {...defaultStyles.xlsx} /></>
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                    else if(itemDataFile[i].type === checkJPG){
+                                                                                                                        return(
+                                                                                                                            <><FileIcon color="lavender" extension="jpg" {...defaultStyles.jpg} /></>
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                    else if(itemDataFile[i].type === checkPNG){
+                                                                                                                        return(
+                                                                                                                            <><FileIcon color="lavender" extension="png" {...defaultStyles.png} /></>
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                })()}
+                                                                                                            </div>
+                                                                                                        </Box> 
+                                                                                                    </Tooltip>
+                                                                                                    <p className="mt-2 tilte-doc">{itemDataFile[i].name}</p>
+                                                                                                </div>
+                                                                                            )
+                                                                                        }
+                                                                                    })}
+                                                                                </div>
+                                                                        </div>  
+                                                                    </>
+                                                                :
+                                                                    null
+                                                            :
                                                                 null
                                                             }
                                                         </div>

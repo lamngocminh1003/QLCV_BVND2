@@ -127,7 +127,7 @@ function ListDoc() {
                                                 <th scope="col">Thời hạn xử lý</th>
                                                 <th scope="col">Thời gian gửi lên</th>
                                                 <th scope="col">Trạng thái</th>
-                                                <th>Phản hồi</th>
+                                                <th scope="col">Phản hồi</th>
                                                 {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị' ?
                                                     <><th scope="col">Thao tác</th></>
                                                     :

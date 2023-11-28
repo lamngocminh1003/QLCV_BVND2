@@ -37,13 +37,17 @@ const Header = (props) => {
               <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
 
                 <NavLink exact to="/" className="nav-link">Trang chủ</NavLink>
-                <NavLink exact to="/list-propose-sent" className="nav-link">Đề xuất đã gửi</NavLink>
-                <NavLink exact to="/list-propose-confirm" className="nav-link">Đề xuất đã duyệt</NavLink>
+                {user && user.isAuthenticated === true ? 
+                <>
+                  <NavLink exact to="/list-propose" className="nav-link">Đề xuất</NavLink>
+                </> 
+                : 
+                <></>
+                }
                 {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Giám đốc' ?
                   <>
-                    <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
                     <NavLink exact to="/list-doc" className="nav-link">Văn bản</NavLink>
-                    <NavLink exact to="/project-user" className="nav-link">Dự án</NavLink>
+                    {/* <NavLink exact to="/project-user" className="nav-link">Dự án</NavLink> */}
                   </>
                   :
                   <></>
@@ -51,10 +55,15 @@ const Header = (props) => {
 
                 {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị'  ?
                   <>
-                    <NavLink exact to="/list-doc-sent" className="nav-link">Văn bản đã gửi</NavLink>
-                    <NavLink exact to="/list-doc-handover" className="nav-link">Văn bản đã bàn giao</NavLink>
+                    <NavLink exact to="/list-doc" className="nav-link">Văn bản</NavLink>
                   </>
                   :
+                  <></>
+                }
+
+                {user && user.isAuthenticated === true && user.account.departmentHead === true ? 
+                  <><NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink></>
+                : 
                   <></>
                 }
 
@@ -74,7 +83,10 @@ const Header = (props) => {
                   || user && user.isAuthenticated === true && user.account.departmentName !== 'Phòng Hành chính quản trị' && user.account.departmentHead === true ) {
                     return(
                       //hiện khi người login là trưởng phòng của các khoa
-                      <><NavLink exact to="/list-doc-department" className="nav-link">Văn bản</NavLink></>
+                      <>
+                        <NavLink exact to="/list-doc-department" className="nav-link">Văn bản</NavLink>
+                        <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
+                      </>
                     )
                   }
                   else {

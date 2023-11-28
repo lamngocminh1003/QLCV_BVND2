@@ -25,10 +25,8 @@ const AppRoutes = (props) => {
           <PrivateRoutes path="/users" component={Users} />
           <PrivateRoutes path="/projects" component={Project} />
           <PrivateRoutes path="/list-user" component={ListUser} />
-          <PrivateRoutes path="/list-propose-sent" component={ListPropose} />
-          <PrivateRoutes path="/list-propose-confirm" component={ListPropose} />
-          <PrivateRoutes path="/list-doc-sent" component={ListDoc} />
-          <PrivateRoutes path="/list-doc-handover" component={ListDoc} />
+          <PrivateRoutes path="/list-propose" component={ListPropose} />
+          <PrivateRoutes path="/list-doc" component={ListDoc} />
           <PrivateRoutes path="/list-doc-department" component={ListDocOfDepartment} />
           <PrivateRoutes path="/member-task-department" component={MemberTask} />
           <Route path="*">
