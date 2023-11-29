@@ -44,7 +44,7 @@ const Header = (props) => {
                 : 
                 <></>
                 }
-                {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Giám đốc' ?
+                {user && user.isAuthenticated === true && user.account.departmentId === 'GD' ?
                   <>
                     <NavLink exact to="/list-doc" className="nav-link">Văn bản</NavLink>
                     {/* <NavLink exact to="/project-user" className="nav-link">Dự án</NavLink> */}
@@ -53,7 +53,7 @@ const Header = (props) => {
                   <></>
                 }
 
-                {user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị'  ?
+                {user && user.isAuthenticated === true && user.account.departmentId === 'HCQT'  ?
                   <>
                     <NavLink exact to="/list-doc" className="nav-link">Văn bản</NavLink>
                   </>
@@ -61,15 +61,15 @@ const Header = (props) => {
                   <></>
                 }
 
-                {user && user.isAuthenticated === true && user.account.departmentHead === true ? 
+                {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ? 
                   <><NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink></>
                 : 
                   <></>
                 }
 
                 {(() => {
-                  if (user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Giám đốc'
-                  || user && user.isAuthenticated === true && user.account.departmentName === 'Phòng Hành chính quản trị') {
+                  if (user && user.isAuthenticated === true && user.account.departmentId === 'GD'
+                  || user && user.isAuthenticated === true && user.account.departmentId === 'HCQT') {
                     return (
                       <></>
                     )
@@ -79,13 +79,12 @@ const Header = (props) => {
                       <></>
                     )
                   }
-                  else if(user && user.isAuthenticated === true && user.account.departmentName !== 'Phòng Giám đốc' && user.account.departmentHead === true
-                  || user && user.isAuthenticated === true && user.account.departmentName !== 'Phòng Hành chính quản trị' && user.account.departmentHead === true ) {
+                  else if(user && user.isAuthenticated === true && user.account.departmentName !== 'GD' && user.account.userId === user.account.departmentHead
+                  || user && user.isAuthenticated === true && user.account.departmentName !== 'HCQT' && user.account.userId === user.account.departmentHead ) {
                     return(
                       //hiện khi người login là trưởng phòng của các khoa
                       <>
                         <NavLink exact to="/list-doc-department" className="nav-link">Văn bản</NavLink>
-                        <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
                       </>
                     )
                   }

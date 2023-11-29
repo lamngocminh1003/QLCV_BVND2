@@ -75,13 +75,14 @@ const LoginUser = () => {
             let userId = response.userId;
             let fullName = response.userFullName;
             let email = response.userEmail;
-            let departmentName = response.departmentName
-            let departmentHead = response.departmentHead
+            let departmentId = response.department.department_ID;   
+            let departmentName = response.department.department_Name;
+            let departmentHead = response.department.department_Head;
 
             //cập nhật lại giá trị của biến context global, biến data sẽ ghi đè lên biến user đang dùng state trong file UserContext
             let data = {
                 isAuthenticated: true,
-                account: {userId, fullName, email, departmentName, departmentHead}
+                account: {userId, fullName, email, departmentId, departmentName, departmentHead}
             }
 
             localStorage.setItem('jwt', response.tokenDTO.token);

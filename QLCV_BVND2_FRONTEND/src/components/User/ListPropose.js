@@ -8,46 +8,15 @@ import "./ListPropose.scss";
 import moment from 'moment';
 import { Button } from '@mui/material';
 
+import Box from '@mui/material/Box';
+import { DataGrid } from '@mui/x-data-grid';
+
+import { getProposeSendByUserLogin } from '../../services/proposeService';
+
 const ListPropose = () => {
     const { user } = useContext(UserContext);
 
-    const listPropose = [
-        {
-            document_Incomming_Id: '1',
-            document_Incomming_Title: 'Sửa máy lạnh',
-            document_Incomming_Content: 'Đây là đề xuất sửa máy lạnh',
-            document_Incomming_Time: "2023-11-22T11:32:03.607",
-            document_Incomming_State: 0
-        },
-        {
-            document_Incomming_Id: '2',
-            document_Incomming_Title: 'Nâng cấp nhà vệ sinh',
-            document_Incomming_Content: 'Đây là đề xuất nâng cấp nhà vệ sinh',
-            document_Incomming_Time: "2023-11-23T08:10:17.013",
-            document_Incomming_State: 1
-        },
-        {
-            document_Incomming_Id: '3',
-            document_Incomming_Title: 'Nâng cấp máy tính của cả phòng lên window 10',
-            document_Incomming_Content: 'Đây là đề xuất nâng cấp máy tính của cả phòng lên window 10',
-            document_Incomming_Time: "2023-11-25T11:46:33.047",
-            document_Incomming_State: 2
-        },
-        {
-            document_Incomming_Id: '4',
-            document_Incomming_Title: 'Trồng thêm cây cảnh',
-            document_Incomming_Content: 'Đây là đề xuất trồng thêm cây cảnh',
-            document_Incomming_Time: "2023-11-26T11:46:33.047",
-            document_Incomming_State: 3
-        },
-        {
-            document_Incomming_Id: '5',
-            document_Incomming_Title: 'Mua thiết bị vật tư y tế kim tiêm, máy đo huyết áp',
-            document_Incomming_Content: 'Đây là đề xuất mua thiết bị vật tư y tế kim tiêm, máy đo huyết áp',
-            document_Incomming_Time: "2023-11-27T11:46:33.047",
-            document_Incomming_State: 4
-        }
-    ]
+    const [listPropose, setListPropose] = useState([]);
     
     //set paginate 
     const [currentPage, setCurrentPage] = useState(1);
@@ -60,6 +29,7 @@ const ListPropose = () => {
     //config modal propose
     const [showModalPropose, setShowModalPropose] = useState(false);
     const [actionModal, setActionModal] = useState("CREATE");
+    const [dataModalPropose, setDataModalPropose] = useState({});
 
     const handlePageClick = (event) => {
         setCurrentPage(+event.selected + 1)
@@ -67,6 +37,17 @@ const ListPropose = () => {
 
     const btnActiveModalPropose = () => {
         setActionModal("CREATE");
+        setShowModalPropose(true);
+    }
+
+    const btnInActiveModalPropose = () => {
+        setDataModalPropose({});
+        fetchAllPropose();
+    }
+
+    const btnInfo = (itemListPropose) => {
+        setActionModal("INFO");
+        setDataModalPropose(itemListPropose);
         setShowModalPropose(true);
     }
 
@@ -82,6 +63,17 @@ const ListPropose = () => {
 
     }
 
+    const fetchAllPropose = async () => {
+        let resultListPropose = await getProposeSendByUserLogin();
+        if(resultListPropose.length !== 0){
+            setListPropose(resultListPropose);
+        }
+    }
+
+    useEffect(()=> {
+        fetchAllPropose();
+    }, [currentPage])
+
     return(
         <>
             <div>
@@ -90,7 +82,7 @@ const ListPropose = () => {
                         <div className='user-body'>
                             <div className='row mb-2 mt-1'>
                                 <div className='col-4'>
-                                    <h3 className="row text-primary text-uppercase mb-2">Danh sách đề xuất đã gửi</h3>
+                                    <h3 className="row text-primary text-uppercase mb-2">Danh sách đề xuất</h3>
                                 </div>
                                 <div className='col-4 mt-1'>
                                     <form method='GET' autoComplete='off'>
@@ -112,7 +104,7 @@ const ListPropose = () => {
                                             <tr>
                                                 <th scope='col'>STT</th>
                                                 <th scope="col">Tên đề xuất</th>
-                                                <th scope="col">Mô tả đề xuất</th>
+                                                <th scope="col">Nội dung đề xuất</th>
                                                 <th scope="col">Thời gian gửi</th>
                                                 <th scope="col">Trạng thái</th>
                                                 <th scope="col">Thao tác</th>
@@ -123,8 +115,8 @@ const ListPropose = () => {
                                             {listPropose.map((itemListPropose, indexListPropose) => {
                                                 return(
                                                     <tr key={`row-${indexListPropose}`}>
-                                                        <td className='align-middle'>{itemListPropose.document_Incomming_Id}</td>
-                                                        <td style={{width: '26%'}} className='align-middle'><button className='title-doc text-start'>{itemListPropose.document_Incomming_Title}</button></td>
+                                                        <td className='align-middle'>{indexListPropose+1}</td>
+                                                        <td style={{width: '26%'}} className='align-middle'><button className='title-doc text-start' onClick={() => btnInfo(itemListPropose)}>{itemListPropose.document_Incomming_Title}</button></td>
                                                         <td style={{width: '30%'}} className='align-middle'>{itemListPropose.document_Incomming_Content}</td>
                                                         <td className='align-middle'>{`${moment(itemListPropose.document_Incomming_Time).format('llll')}`}</td>
                                                         <td className='align-middle'>
@@ -228,7 +220,8 @@ const ListPropose = () => {
                 active={showModalPropose}
                 close={setShowModalPropose}
                 setActionModalPropose={actionModal}
-                //inactive={btnInActiveModalAddDoc}
+                inactive={btnInActiveModalPropose}
+                dataModalPropose={dataModalPropose}
                 //reset lại data cho modal theo action edit
                 // inactive={btnInActiveModalAddDoc}
                 // close={setIsShowModalDoc}

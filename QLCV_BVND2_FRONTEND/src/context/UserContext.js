@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getUserAccount } from '../services/userService';
 import { toast } from 'react-toastify';
-import { useLocation } from "react-router-dom";
 
 const UserContext = React.createContext(null);
 
@@ -83,12 +82,13 @@ const UserProvider = ({ children }) => {
             let userId = response.userId;
             let fullName = response.userFullName;
             let email = response.userEmail;
-            let departmentName = response.departmentName
-            let departmentHead = response.departmentHead
+            let departmentId = response.department.department_ID;   
+            let departmentName = response.department.department_Name;
+            let departmentHead = response.department.department_Head;
 
             let data = {
                 isAuthenticated: true,
-                account: {userId, fullName, email, departmentName, departmentHead}
+                account: {userId, fullName, email, departmentId, departmentName, departmentHead}
             }
 
             // let check = checkURLToAccess(data);
@@ -124,12 +124,13 @@ const UserProvider = ({ children }) => {
                             let userId = response.userId;
                             let fullName = response.userFullName;
                             let email = response.userEmail;
-                            let departmentName = response.departmentName
-                            let departmentHead = response.departmentHead
+                            let departmentId = response.department.department_ID;   
+                            let departmentName = response.department.department_Name;
+                            let departmentHead = response.department.department_Head;
 
                             let data = {
                                 isAuthenticated: true,
-                                account: {userId, fullName, email, departmentName, departmentHead}
+                                account: {userId, fullName, email, departmentId, departmentName, departmentHead}
                             }
 
                             setTimeout(() => {

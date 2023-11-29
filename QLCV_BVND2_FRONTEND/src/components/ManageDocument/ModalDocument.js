@@ -422,7 +422,7 @@ function ModalAddDoc(props) {
                 docData.files = selectedFile;
                 setdocData(docData);
                 setIsAllow(true);
-                mergeArray();
+                
             }
         }
         else {
@@ -556,11 +556,13 @@ function ModalAddDoc(props) {
         setIsShowModalPreviewDoc(true);
     }
 
-    const mergeArray = () => {
-        for(let i = 0; i < dataFile.length; i++)
-        {
-            console.log('zxcvzxcvzxcvxzc',dataFile[i])
-        }
+    const mergeArray = (dataFilee) => {
+        dataFilee.map((itemDataFile, indexDataFile) => {
+            for(let i = 0; i < dataFilee.length; i++)
+            {
+                console.log('zxcvzxcvzxcvxzc',dataFilee[i])
+            }
+        })
     }
 
     useEffect(() => {
@@ -839,6 +841,7 @@ function ModalAddDoc(props) {
                                                             {props.setActionModalDoc === "CREATE" || props.setActionModalDoc === "EDIT" ?
                                                                 dataFile.length > 0 ?
                                                                     <>
+                                                                    {mergeArray(dataFile)}
                                                                         <div className="mb-2 mt-2 col-sm-12">
                                                                                 <p className="fs-6 fw-bolder" style={{color: '#212529'}}>Các file đính kèm</p>
                                                                                 <div className="wrap-type-icon-file" style={{display: 'inline-flex', flexWrap: 'wrap'}}>

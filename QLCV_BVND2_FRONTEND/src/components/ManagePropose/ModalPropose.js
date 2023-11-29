@@ -1,16 +1,66 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
-import _, { set } from 'lodash';
+import _, { cloneDeep, set } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../context/UserContext';
 
 import Modal from 'react-bootstrap/Modal';
 
+import { createProposeByEmploy, createProposeByHeader } from '../../services/proposeService';
+
 const ModalPropose = (props) => {
+    const { user, logoutContext } = useContext(UserContext);
+
+    const dataProposeDefault = {
+        document_Incomming_Title: '',
+        proposeFile: '',
+        document_Incomming_Content: ''
+    }
+
+    const [dataPropose, setDataPropose] = useState(dataProposeDefault);
+    const [dataProposeFile, setDataProposeFile] = useState([]);
 
     const handleHideModal = () => {
         props.close(false)
+        setDataPropose(dataProposeDefault)
     }
+
+    const handleOnchange = (value, name) => {
+        let _dataPropose = cloneDeep(dataPropose);
+        _dataPropose[name] = value;
+        setDataPropose(_dataPropose);
+    }
+
+    const handleFile = (event) => {
+        let selectedFile = event.target.files;
+        if(selectedFile){
+            setDataProposeFile(selectedFile);
+        }
+    }
+
+    const handleCreateProposeByEmploy = async () => {
+        let formDataFile = new FormData();
+
+        let i;
+        for(i = 0; i < dataProposeFile.length; i++)
+        {
+            formDataFile.append('proposeFiles', dataProposeFile[i])
+        }
+
+        dataPropose.proposeFile = formDataFile;
+        let result = await createProposeByEmploy(dataPropose);
+    }
+
+    const handleCreateProposeByHeader = async () => {
+        // let result = await createProposeByHeader();
+        // console.log(result)
+    }
+
+    useEffect(()=> {
+        if(props.setActionModalPropose === 'INFO'){
+            setDataPropose({...props.dataModalPropose})
+        }
+    }, [props.dataModalPropose])
 
     return(
         <>
@@ -55,15 +105,16 @@ const ModalPropose = (props) => {
                                         <div className="row">
                                             <div className='col-sm-12'>
                                                 <label className='form-label fs-5' htmlFor='propose'>Tên đề xuất <span className='text-danger'>(*)</span></label>
-                                                <input type='text' className='form-control' id="propose"></input>   
+                                                <input type='text' className='form-control' id="propose" onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Title')} value={dataPropose.document_Incomming_Title || ""}></input>   
                                             </div>
                                             <div className='col-sm-12 mt-3'>
                                                 <label className='form-label fs-5' htmlFor='proposeFile'>File đính kèm</label>
-                                                <input type='file' className='form-control' id="proposeFile"></input>
+                                                <input type='file' className='form-control' id="proposeFile" onChange={(e) => handleFile(e)} 
+                                                accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple></input>
                                             </div>
                                             <div className='col-sm-12 mt-3'>
-                                                <label className='form-label fs-5' htmlFor='proposeContent'>Nội dung đề xuất <span className='text-danger'>(*)</span></label>
-                                                <textarea className='form-control' id="proposeContent" rows="4"></textarea>
+                                                <label className='form-label fs-5' htmlFor='document_Incomming_Content'>Nội dung đề xuất <span className='text-danger'>(*)</span></label>
+                                                <textarea className='form-control' id="document_Incomming_Content" rows="4" onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Content')} value={dataPropose.document_Incomming_Content || ""}></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -72,7 +123,11 @@ const ModalPropose = (props) => {
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="primary" >Tạo</Button>
+                        {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ? 
+                            <><Button variant="primary" onClick={() => handleCreateProposeByHeader()}>Tạo</Button> </>
+                        : 
+                            <><Button variant="primary" onClick={() => handleCreateProposeByEmploy()}>Tạo</Button></>
+                        }
                         <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
                     </Modal.Footer>
                 </Modal>

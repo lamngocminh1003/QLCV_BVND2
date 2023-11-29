@@ -95,7 +95,7 @@ function ListDoc() {
                         <div className='user-body'>
                             <div className='row mb-2 mt-1'>
                                 <div className='col-4'>
-                                    <h3 className="row text-primary text-uppercase mb-2">Danh sách văn bản đã gửi</h3>
+                                    <h3 className="row text-primary text-uppercase mb-2">Danh sách văn bản</h3>
                                 </div>
                                 <div className='col-4 mt-1'>
                                     <form method='GET' autoComplete='off'>
