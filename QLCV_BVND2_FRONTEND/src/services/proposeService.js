@@ -13,7 +13,7 @@ const createConfig = () => {
   return config;
 }
 
-const getProposeSendByUserLogin = async () => {
+const getProposeSend = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocSendByUserLogin`, config)
     .then(function(response){
@@ -24,7 +24,18 @@ const getProposeSendByUserLogin = async () => {
     })
 }
 
-const createProposeByEmploy = async (dataObj) => {
+const getProposeReceive = async () => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocReceiveByUserLogin`, config)
+    .then(function(response){
+        return response.data
+    })
+    .catch(function(error){
+        return error.response.status
+    })
+}
+
+const createPropose = async (dataObj) => {
     const token = localStorage.getItem("jwt");
     return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`, 
     dataObj.proposeFile, {
@@ -52,6 +63,17 @@ const createProposeByHeader = async (dataObj) => {
     })
 }
 
+const updateProposeState = async (id, state) => {
+    const config = createConfig();
+    return await axios.put(`${backendURL}/api/DocumentIncomming/UpdateState/${id}/${state}`, '', config)
+    .then(function(response){
+        return response.status
+    })
+    .catch(function(error){
+        return error.response.status
+    })
+}
+
 export {
-    createProposeByEmploy, createProposeByHeader, getProposeSendByUserLogin
+    createPropose, createProposeByHeader, getProposeSend, getProposeReceive, updateProposeState
 };

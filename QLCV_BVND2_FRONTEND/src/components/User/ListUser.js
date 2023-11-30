@@ -5,8 +5,10 @@ import ModalUser from '../ManageUsers/ModalUser';
 import ReactPaginate from 'react-paginate';
 import './ListUser.scss';
 import { toast, ToastContainer } from 'react-toastify';
+import { UserContext } from '../../context/UserContext';
 
 const ListUser = (props) => {
+    const { user } = useContext(UserContext);
 
     const [listUsers, setListUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -96,13 +98,14 @@ const ListUser = (props) => {
             <div className="container mt-4">
                 <div className='manage-users-container'>
                     <div className='user-header'>
-                        <h3 className="row text-primary text-uppercase mb-3">Danh sách người dùng</h3>
+                        <h3 className="row text-primary text-uppercase mb-3">{`Danh sách người dùng ${user.account.departmentName}`}</h3>
                         <div className='actions'>
                             <button className='btn btn-primary mb-3 add-user' onClick={() => { setIsShowModalUser(true); setActionModalUser("CREATE") }}><i className="fa fa-plus i-add"></i>Thêm người dùng</button>
                         </div>
                     </div>
                     <div className='user-body'>
                         <div className="row">
+                        {listUsers && listUsers.length > 0 ?
                             <table className="table table-hover table-bordered">
                                 <thead>
                                     <tr>
@@ -116,35 +119,33 @@ const ListUser = (props) => {
                                         <th scope="col">Khoa phòng</th>
                                         <th scope="col">Thao tác</th>
                                     </tr>
-                                </thead>
-
+                                </thead>  
                                 <tbody>
-                                    {listUsers && listUsers.length > 0 ?
-                                        <>
-                                            {listUsers.map((itemUserList, indexUserList) => {
-                                                return (
-                                                    <tr key={`row-${indexUserList}`}>
-                                                        <td>{(currentPage - 1) * currentLimit + indexUserList + 1}</td>
-                                                        <td>{itemUserList.fullName}</td>
-                                                        <td>{itemUserList.userName}</td>
-                                                        <td>{itemUserList.phone}</td>
-                                                        <td>{itemUserList.email}</td>
-                                                        <td>{itemUserList.role ? itemUserList.role.roleName : ''}</td>
-                                                        <td>{itemUserList.position ? itemUserList.position.positionName : ''}</td>
-                                                        <td>{itemUserList.department ? itemUserList.department.departmentName : ''}</td>
-                                                        <td>
-                                                            <button className="btn btn-warning" onClick={() => btnEditUserFunc(itemUserList)}> <i className="fa-solid fa-pen-to-square text-white"></i></button>
-                                                            <button className="btn btn-danger mx-2" onClick={() => btnDeleteFunc(itemUserList)}> <i className="fa-solid fa-trash"></i></button>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })}
-                                        </>
-                                        :
-                                        <><tr><td>Không tìm thấy danh sách người dùng</td></tr></>
-                                    }
+                                    <>
+                                        {listUsers.map((itemUserList, indexUserList) => {
+                                            return (
+                                                <tr key={`row-${indexUserList}`}>
+                                                    <td>{(currentPage - 1) * currentLimit + indexUserList + 1}</td>
+                                                    <td>{itemUserList.fullName}</td>
+                                                    <td>{itemUserList.userName}</td>
+                                                    <td>{itemUserList.phone}</td>
+                                                    <td>{itemUserList.email}</td>
+                                                    <td>{itemUserList.role ? itemUserList.role.roleName : ''}</td>
+                                                    <td>{itemUserList.position ? itemUserList.position.positionName : ''}</td>
+                                                    <td>{itemUserList.department ? itemUserList.department.departmentName : ''}</td>
+                                                    <td>
+                                                        <button className="btn btn-warning" onClick={() => btnEditUserFunc(itemUserList)}> <i className="fa-solid fa-pen-to-square text-white"></i></button>
+                                                        <button className="btn btn-danger mx-2" onClick={() => btnDeleteFunc(itemUserList)}> <i className="fa-solid fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })}
+                                    </>
                                 </tbody>
                             </table>
+                        :
+                            <><p className="text-center fw-bold fs-5">Không tìm thấy danh sách người dùng, hãy thêm mới!</p></>
+                        }
                         </div>
                     </div>
                     {totalPages > 0 &&

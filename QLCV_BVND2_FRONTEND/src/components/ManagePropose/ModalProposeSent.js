@@ -6,7 +6,7 @@ import { UserContext } from '../../context/UserContext';
 
 import Modal from 'react-bootstrap/Modal';
 
-import { createProposeByEmploy, createProposeByHeader } from '../../services/proposeService';
+import { createPropose, createProposeByHeader } from '../../services/proposeService';
 
 const ModalPropose = (props) => {
     const { user, logoutContext } = useContext(UserContext);
@@ -48,7 +48,12 @@ const ModalPropose = (props) => {
         }
 
         dataPropose.proposeFile = formDataFile;
-        let result = await createProposeByEmploy(dataPropose);
+        let response = await createPropose(dataPropose);
+        if(response === 200){
+            toast.success('Gửi đề xuất thành công!');
+        }else{
+            toast.error('Đã có lỗi xảy ra ở server vui lòng liên hệ quản trị viên để kiểm tra lại!');
+        }
     }
 
     const handleCreateProposeByHeader = async () => {
@@ -71,7 +76,7 @@ const ModalPropose = (props) => {
                             {(() => {
                                 if(props.setActionModalPropose === "CREATE"){
                                     return(
-                                        <><div className='text-primary text-uppercase'>Tạo đề xuất</div></>
+                                        <><div className='text-primary text-uppercase'>Gửi đề xuất</div></>
                                     )
                                 }
                                 else if(props.setActionModalPropose === "EDIT"){
@@ -124,9 +129,9 @@ const ModalPropose = (props) => {
                     </Modal.Body>
                     <Modal.Footer>
                         {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ? 
-                            <><Button variant="primary" onClick={() => handleCreateProposeByHeader()}>Tạo</Button> </>
+                            <><Button variant="primary" onClick={() => handleCreateProposeByHeader()}>Gửi</Button> </>
                         : 
-                            <><Button variant="primary" onClick={() => handleCreateProposeByEmploy()}>Tạo</Button></>
+                            <><Button variant="primary" onClick={() => handleCreateProposeByEmploy()}>Gửi</Button></>
                         }
                         <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
                     </Modal.Footer>

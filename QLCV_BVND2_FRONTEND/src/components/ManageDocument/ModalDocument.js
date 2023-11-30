@@ -26,7 +26,7 @@ import {FileIcon, defaultStyles} from 'react-file-icon';
 import {createDocIncoming} from "../../services/docService";
 import { Box } from "@mui/material";
 import { NIL } from "uuid";
-registerLocale("vi", vi);
+// registerLocale("vi", vi);
 
 function ModalAddDoc(props) {
     const { assignDataDocEdit } = props
@@ -448,10 +448,10 @@ function ModalAddDoc(props) {
 
         //format chuỗi yyyy/mm/dd sang ISO-8601
         let stringDateStart = moment(docStartDate)
-        let TimeStart = stringDateStart.format('YYYY-MM-DD') + 'T00:00:00.000Z';
+        let TimeStart = moment(docStartDate).format("YYYY-MM-DDTHH:mm:ssZ");
 
         let stringDateEnd = moment(docEndDate)
-        let TimeEnd = stringDateEnd.format('YYYY-MM-DD') + 'T23:59:00.000Z';
+        let TimeEnd = moment(docEndDate).format("YYYY-MM-DDT23:59:ssZ");
 
         docData.docExpireStart = TimeStart;
         docData.docExpireEnd = TimeEnd;

@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { UserContext } from '../../context/UserContext';
 import ReactPaginate from 'react-paginate';
 
-import ModalPropose from '../ManagePropose/ModalPropose';
+import ModalProposeSent from '../ManagePropose/ModalProposeSent';
 import "./ListPropose.scss";
 
 import moment from 'moment';
@@ -11,9 +11,9 @@ import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 
-import { getProposeSendByUserLogin } from '../../services/proposeService';
+import { createPropose, createProposeByHeader, getProposeSend } from '../../services/proposeService';
 
-const ListPropose = () => {
+function ListProposeSent() {
     const { user } = useContext(UserContext);
 
     const [listPropose, setListPropose] = useState([]);
@@ -64,7 +64,7 @@ const ListPropose = () => {
     }
 
     const fetchAllPropose = async () => {
-        let resultListPropose = await getProposeSendByUserLogin();
+        let resultListPropose = await getProposeSend();
         if(resultListPropose.length !== 0){
             setListPropose(resultListPropose);
         }
@@ -82,7 +82,7 @@ const ListPropose = () => {
                         <div className='user-body'>
                             <div className='row mb-2 mt-1'>
                                 <div className='col-4'>
-                                    <h3 className="row text-primary text-uppercase mb-2">Danh sách đề xuất</h3>
+                                    <h3 className="row text-primary text-uppercase mb-2">Đề xuất gửi</h3>
                                 </div>
                                 <div className='col-4 mt-1'>
                                     <form method='GET' autoComplete='off'>
@@ -96,7 +96,7 @@ const ListPropose = () => {
 
                             <div className="row">
                                 <div className='px-0' style={{ display: "block", zIndex: "100" }}>
-                                    <button className='btn btn-primary mb-3 col-1 add-doc' style={{ paddingRight: "7.1rem" }} onClick={() => btnActiveModalPropose()} ><i className="fa fa-plus i-add"></i>Tạo đề xuất</button>
+                                    <button className='btn btn-primary mb-3 col-1 add-doc' style={{ paddingRight: "7.1rem" }} onClick={() => btnActiveModalPropose()} ><i className="fa fa-plus i-add"></i>Gửi đề xuất</button>
                                 </div>
                                 <div className="row mt-2">
                                     <table className="table table-hover table-bordered ">
@@ -106,6 +106,7 @@ const ListPropose = () => {
                                                 <th scope="col">Tên đề xuất</th>
                                                 <th scope="col">Nội dung đề xuất</th>
                                                 <th scope="col">Thời gian gửi</th>
+                                                <th scope="col">Nơi nhận</th>
                                                 <th scope="col">Trạng thái</th>
                                                 <th scope="col">Thao tác</th>
                                             </tr>
@@ -216,7 +217,7 @@ const ListPropose = () => {
                 </div>
             </div>
 
-            <ModalPropose
+            <ModalProposeSent
                 active={showModalPropose}
                 close={setShowModalPropose}
                 setActionModalPropose={actionModal}
@@ -233,4 +234,4 @@ const ListPropose = () => {
     )
 }
 
-export default ListPropose
+export default ListProposeSent

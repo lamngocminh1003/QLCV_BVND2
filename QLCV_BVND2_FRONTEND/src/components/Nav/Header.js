@@ -37,13 +37,6 @@ const Header = (props) => {
               <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
 
                 <NavLink exact to="/" className="nav-link">Trang chủ</NavLink>
-                {user && user.isAuthenticated === true ? 
-                <>
-                  <NavLink exact to="/list-propose" className="nav-link">Đề xuất</NavLink>
-                </> 
-                : 
-                <></>
-                }
                 {user && user.isAuthenticated === true && user.account.departmentId === 'GD' ?
                   <>
                     <NavLink exact to="/list-doc" className="nav-link">Văn bản</NavLink>
@@ -61,8 +54,19 @@ const Header = (props) => {
                   <></>
                 }
 
+                {user && user.isAuthenticated === true ? 
+                <>
+                  <NavLink exact to="/list-propose-sent" className="nav-link">Đề xuất gửi</NavLink>
+                </> 
+                : 
+                <></>
+                }
+
                 {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ? 
-                  <><NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink></>
+                  <>
+                    <NavLink exact to="/list-propose-recive" className="nav-link">Đề xuất nhận</NavLink>
+                    <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
+                  </>
                 : 
                   <></>
                 }
@@ -75,6 +79,11 @@ const Header = (props) => {
                     )
                   }
                   else if (user && user.isAuthenticated === false) {
+                    return (
+                      <></>
+                    )
+                  }
+                  else if (user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead) {
                     return (
                       <></>
                     )
