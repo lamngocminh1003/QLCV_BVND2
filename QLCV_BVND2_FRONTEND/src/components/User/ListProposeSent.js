@@ -106,7 +106,11 @@ function ListProposeSent() {
                                                 <th scope="col">Tên đề xuất</th>
                                                 <th scope="col">Nội dung đề xuất</th>
                                                 <th scope="col">Thời gian gửi</th>
-                                                <th scope="col">Nơi nhận</th>
+                                                {user && user.account.userId === user.account.departmentHead ? 
+                                                    <th scope="col">Nơi nhận</th>
+                                                    :
+                                                    null
+                                                }
                                                 <th scope="col">Trạng thái</th>
                                                 <th scope="col">Thao tác</th>
                                             </tr>

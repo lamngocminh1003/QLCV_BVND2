@@ -13,6 +13,40 @@ const createConfig = () => {
   return config;
 }
 
+const createPropose = async (dataObj) => {
+    const token = localStorage.getItem("jwt");
+    return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`, 
+    dataObj.proposeFile, {
+        headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          }
+        })
+    .then(function(response){
+        return response.status
+    })
+    .catch(function(error){
+        return error.response.status
+    })
+}
+
+const moveupProposeByHeader = async (dataObj, idDepartment) => {
+    const token = localStorage.getItem("jwt");
+    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}
+    &DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.document_Incomming_Id}`, dataObj.proposeFile, {
+        headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          }
+        })
+    .then(function(response){
+        return response.status
+    })
+    .catch(function(error){
+        return error.response.status
+    })
+}   
+
 const getProposeSend = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocSendByUserLogin`, config)
@@ -35,37 +69,9 @@ const getProposeReceive = async () => {
     })
 }
 
-const createPropose = async (dataObj) => {
-    const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`, 
-    dataObj.proposeFile, {
-        headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          }
-        })
-    .then(function(response){
-        return response.status
-    })
-    .catch(function(error){
-        return error.response.status
-    })
-}
-
-const createProposeByHeader = async (dataObj) => {
+const updateProposeState = async (dataObj, state) => {
     const config = createConfig();
-    return await axios.post(`${backendURL}/api/DocumentIncomming/Create?Title=${dataObj.proposeName}&Content=${dataObj.proposeContent}`)
-    .then(function(response){
-        return response.status
-    })
-    .catch(function(error){
-        return error.response.status
-    })
-}
-
-const updateProposeState = async (id, state) => {
-    const config = createConfig();
-    return await axios.put(`${backendURL}/api/DocumentIncomming/UpdateState/${id}/${state}`, '', config)
+    return await axios.put(`${backendURL}/api/DocumentIncomming/UpdateState?docId=${dataObj.document_Incomming_Id}&state=${state}&Comment=${dataObj.document_Incomming_Comment}`, '', config)
     .then(function(response){
         return response.status
     })
@@ -75,5 +81,5 @@ const updateProposeState = async (id, state) => {
 }
 
 export {
-    createPropose, createProposeByHeader, getProposeSend, getProposeReceive, updateProposeState
+    createPropose, getProposeSend, getProposeReceive, updateProposeState, moveupProposeByHeader
 };

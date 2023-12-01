@@ -6,6 +6,7 @@ import ReactPaginate from 'react-paginate';
 import './ListUser.scss';
 import { toast, ToastContainer } from 'react-toastify';
 import { UserContext } from '../../context/UserContext';
+import Typography from '@mui/material/Typography';
 
 const ListUser = (props) => {
     const { user } = useContext(UserContext);
@@ -144,7 +145,7 @@ const ListUser = (props) => {
                                 </tbody>
                             </table>
                         :
-                            <><p className="text-center fw-bold fs-5">Không tìm thấy danh sách người dùng, hãy thêm mới!</p></>
+                            <><Typography variant='body1' fontSize={17} color='black' className='text-center'>Không tìm thấy danh sách người dùng, hãy thêm mới!</Typography></>
                         }
                         </div>
                     </div>

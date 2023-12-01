@@ -19,11 +19,6 @@ const ListPropose = () => {
     const { user } = useContext(UserContext);
 
     const [listPropose, setListPropose] = useState([]);
-    
-    //set paginate 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [currentLimit, setCurrentLimit] = useState(5);
-    const [totalPages, setTotalPages] = useState(0);
 
     //config search field
     const [searchValue, setSearchValue] = useState('');
@@ -32,15 +27,7 @@ const ListPropose = () => {
     const [showModalPropose, setShowModalPropose] = useState(false);
     const [actionModal, setActionModal] = useState("CREATE");
     const [dataModalPropose, setDataModalPropose] = useState({});
-
-    const handlePageClick = (event) => {
-        setCurrentPage(+event.selected + 1)
-    };
-
-    const btnInActiveModalPropose = () => {
-        setDataModalPropose({});
-        fetchAllPropose();
-    }
+    const [done, setDone] = useState(false);
 
     const btnInfo = (itemListPropose) => {
         setActionModal("INFO");
@@ -56,8 +43,12 @@ const ListPropose = () => {
     }
 
     useEffect(()=> {
+        if(done === true){
+            fetchAllPropose();
+            setDone(false);
+        }
         fetchAllPropose();
-    }, [currentPage])
+    }, [done])
 
     return(
         <>
@@ -139,32 +130,6 @@ const ListPropose = () => {
                                 </div>
                             </div>
                         </div>
-                        {totalPages > 0 &&
-                            <div className='table-footer row d-flex justify-content-center mt-2'>
-                                <div className='col-6 d-flex justify-content-center table-paginate'>
-                                    <ReactPaginate
-                                        nextLabel=">"
-                                        onPageChange={handlePageClick}
-                                        pageRangeDisplayed={3}
-                                        marginPagesDisplayed={4}
-                                        pageCount={totalPages}
-                                        previousLabel="<"
-                                        pageClassName="page-item"
-                                        pageLinkClassName="page-link"
-                                        previousClassName="page-item"
-                                        previousLinkClassName="page-link"
-                                        nextClassName="page-item"
-                                        nextLinkClassName="page-link"
-                                        breakLabel="..."
-                                        breakClassName="page-item"
-                                        breakLinkClassName="page-link"
-                                        containerClassName="pagination"
-                                        activeClassName="active"
-                                        renderOnZeroPageCount={null}
-                                    />
-                                </div>
-                            </div>
-                        }
                     </div>
                 </div>
             </div>
@@ -173,7 +138,7 @@ const ListPropose = () => {
                 active={showModalPropose}
                 close={setShowModalPropose}
                 actionModal={actionModal}
-                inactive={btnInActiveModalPropose}
+                makeModalDoing={setDone}
                 dataModalPropose={dataModalPropose}
                 //reset lại data cho modal theo action edit
                 // inactive={btnInActiveModalAddDoc}
