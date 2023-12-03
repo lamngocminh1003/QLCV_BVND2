@@ -80,7 +80,7 @@ function ModalProposeReceive(props) {
     const proposeMoveUp = async (dataModalProposeReceive) => {
         let response = await moveupProposeByHeader(dataModalProposeReceive, selectedDepartmentId.idPhongKhoa)
         if(response === 200){
-            toast.info('Đã chuyển đề xuất lên!');
+            toast.info(`Đã chuyển đề xuất lên! ${selectedDepartmentId.tenPhongKhoa}`);
             props.makeModalDoing(true);
             props.close(false);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);

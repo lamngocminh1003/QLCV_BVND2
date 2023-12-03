@@ -8,9 +8,8 @@ import "./ListPropose.scss";
 import moment from 'moment';
 import { Button } from '@mui/material';
 
-import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import {Box, Typography} from "@mui/material";
+import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';
 
 import { getProposeReceive } from '../../services/proposeService';
 import { toast } from 'react-toastify';
@@ -18,6 +17,44 @@ import { toast } from 'react-toastify';
 const ListPropose = () => {
     const { user } = useContext(UserContext);
 
+    //config default number propose to display in gridview
+    const [pageSize, setPageSize] = useState(10);
+
+    //config datagrid columns name
+    const columns = [
+        {field: "document_Incomming_Id", headerName: "STT", width: 100},
+        {field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 300},
+        {field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 427},
+        {field: "document_Incomming_UserSend_FullName", headerName: "Người gửi", width: 180},
+        {field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 180, valueFormatter: (params) => moment(params.value).format('llll')},
+        {field: "document_Incomming_State", headerName: "Trạng thái", width: 115, renderCell: (params) => {
+            if(params.row.document_Incomming_State === 0){
+                return(
+                    <><span className="status rounded-pill wait">Chờ duyệt</span></>
+                )
+            }
+            else if(params.row.document_Incomming_State === 1){
+                return(
+                    <><span className="status rounded-pill reject">Từ chối</span></>
+                )
+            }
+            else if(params.row.document_Incomming_State === 2){
+                return(
+                    <><span className="status rounded-pill edit">Chỉnh sửa</span></>
+                )
+            }
+            else if(params.row.document_Incomming_State === 3){
+                return(
+                    <><span className="status rounded-pill browse">Đã duyệt</span></>
+                )
+            }
+            else{
+                return(
+                    <><span className="status rounded-pill move-up">Chuyển lên</span></>
+                )
+            }
+        }}
+    ]
     const [listPropose, setListPropose] = useState([]);
 
     //config search field
@@ -50,6 +87,8 @@ const ListPropose = () => {
         fetchAllPropose();
     }, [done])
 
+    
+
     return(
         <>
             <div>
@@ -70,9 +109,29 @@ const ListPropose = () => {
                                 </div>
                             </div>
 
-                            <div className="row">
-                                <div className="row mt-4">
-                                    <table className="table table-hover table-bordered ">
+                            <div className="row mt-4">
+                                <Box className="px-0 py-0" sx={{ height: 666, width: '100%' }}>
+                                    <DataGrid
+                                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                                        rows={listPropose} 
+                                        fontSize="1.5rem"
+                                        columns={columns} 
+                                        components={{Toolbar: GridToolbar}}
+                                        //autoPageSize={true}
+                                        pagination={true}
+                                        pageSize={pageSize}
+                                        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                                        rowsPerPageOptions={[5, 10, 20, 30, 50, 100]}
+                                        getRowId={(row) => row.document_Incomming_Id}
+                                    />
+                                </Box>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* <table className="table table-hover table-bordered ">
                                         <thead>
                                             <tr>
                                                 <th scope='col'>STT</th>
@@ -126,13 +185,7 @@ const ListPropose = () => {
                                                 )
                                             })}
                                         </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </table> */}
 
             <ModalProposeReceive
                 active={showModalPropose}
