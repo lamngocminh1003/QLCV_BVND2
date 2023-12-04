@@ -7,13 +7,15 @@ import { UserContext } from '../../context/UserContext';
 import './Nav.scss';
 import logo from '../../assets/image/logo.png';
 import { handleLoginRedux, handleLogoutRedux } from "../redux/actions/userAction";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { MenuItem } from '@mui/material';
 
 const Header = (props) => {
   const { user, logoutContext } = useContext(UserContext);
+  const [classActive, setClassActive] = useState(false);
+
   const location = useLocation();
   const history = useHistory();
 
@@ -70,7 +72,7 @@ const Header = (props) => {
                     //hiện khi người login là trưởng phòng ở các phòng chức năng
                     return(
                       <>
-                        <NavDropdown title="Đề xuất nhận">
+                        <NavDropdown title="Đề xuất nhận" className={classActive ? 'active' : ''} onClick={() => setClassActive(true)}>
                           <MenuItem> 
                             <NavLink exact to="/list-propose-recive-out-department" className="nav-link nav-link-item">Nhận từ phòng khoa</NavLink>
                           </MenuItem>

@@ -105,7 +105,7 @@ const ListPropose = () => {
                             </div>
 
                             <div className="row mt-3">
-                                <Box className="px-0 py-0" sx={{ height: 670, width: '100%' }}>
+                                <Box className="px-0 py-0" sx={{ height: 146 + Math.min(pageSize) * 52 + 'px' , width: '100%' }}>
                                     <DataGrid
                                         style={{fontSize: '14.5px'}}
                                         localeText={viVN.components.MuiDataGrid.defaultProps.localeText}

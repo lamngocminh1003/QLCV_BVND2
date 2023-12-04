@@ -8,6 +8,11 @@
     }
 
     .navbar-nav{
+        .nav-item {
+            &.dropdown-toggle:active{
+                color: #61dafb !important;
+            }
+        }
         a, .nav-link
         {
             font-family: "Roboto","Helvetica","Arial",sans-serif;
@@ -33,12 +38,4 @@
             color: #212529 !important
         }      
     }
-
-    .navbar-nav{
-        &.navbar-nav-scroll{
-            &.show &.dropdown{
-                background-color: red;
-            }
-        }
-    } 
 }
