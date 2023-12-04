@@ -8,17 +8,21 @@
     }
 
     .navbar-nav{
-        a, .nav-link{
+        a, .nav-link
+        {
             font-family: "Roboto","Helvetica","Arial",sans-serif;
             color: white !important;
-            &:hover {
+            &.nav-link-item{
+                font-family: "Roboto","Helvetica","Arial",sans-serif;
+                color:black !important;
+                &.active{
+                    color: #61dafb !important;
+                }
+            }&:hover {
                 color: #61dafb !important;
             }
         }
-    }
-
-    .nav-link{
-        &.active{
+        .active{
             color: #61dafb !important;
         }
     }
@@ -29,4 +33,12 @@
             color: #212529 !important
         }      
     }
+
+    .navbar-nav{
+        &.navbar-nav-scroll{
+            &.show &.dropdown{
+                background-color: red;
+            }
+        }
+    } 
 }

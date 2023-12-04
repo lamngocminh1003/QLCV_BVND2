@@ -30,6 +30,24 @@ const createPropose = async (dataObj) => {
     })
 }
 
+const createProposeByHeader = async (dataObj, idDepartment) => {
+    const token = localStorage.getItem("jwt");
+    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}
+    &DepartmentIdReceive=${idDepartment}`, 
+    dataObj.proposeFile, {
+        headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          }
+        })
+    .then(function(response){
+        return response.status
+    })
+    .catch(function(error){
+        return error.response.data
+    })
+}
+
 const moveupProposeByHeader = async (dataObj, idDepartment) => {
     const token = localStorage.getItem("jwt");
     return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}
@@ -58,9 +76,20 @@ const getProposeSend = async () => {
     })
 }
 
-const getProposeReceive = async () => {
+const getProposeReceiveIn = async () => {
     const config = createConfig();
-    return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocReceiveByUserLogin`, config)
+    return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocReceiveInDepartment`, config)
+    .then(function(response){
+        return response.data
+    })
+    .catch(function(error){
+        return error.response.status
+    })
+}
+
+const getProposeReceiveOut = async () => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocReceiveOutDepartment`, config)
     .then(function(response){
         return response.data
     })
@@ -81,5 +110,7 @@ const updateProposeState = async (dataObj, state) => {
 }
 
 export {
-    createPropose, getProposeSend, getProposeReceive, updateProposeState, moveupProposeByHeader
+    createPropose, createProposeByHeader, moveupProposeByHeader,
+    getProposeSend, getProposeReceiveIn, getProposeReceiveOut, 
+    updateProposeState, 
 };

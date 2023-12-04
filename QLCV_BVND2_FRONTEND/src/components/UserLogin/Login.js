@@ -78,11 +78,12 @@ const LoginUser = () => {
             let departmentId = response.department.department_ID;   
             let departmentName = response.department.department_Name;
             let departmentHead = response.department.department_Head;
+            let departmentType = response.department.department_Type;
 
             //cập nhật lại giá trị của biến context global, biến data sẽ ghi đè lên biến user đang dùng state trong file UserContext
             let data = {
                 isAuthenticated: true,
-                account: {userId, fullName, email, departmentId, departmentName, departmentHead}
+                account: {userId, fullName, email, departmentId, departmentName, departmentHead, departmentType}
             }
 
             localStorage.setItem('jwt', response.tokenDTO.token);
@@ -104,7 +105,7 @@ const LoginUser = () => {
     }, [user, history]);
 
     return (
-        <div className='container-login-form' id='login-form'>
+        <div className='container-login-form' id='login-form' style={{height: '100%'}}>
             <div className="limiter">
                 <div className="container-login100">
                     <div className="wrap-login100">

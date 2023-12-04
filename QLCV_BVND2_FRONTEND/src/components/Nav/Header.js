@@ -10,6 +10,7 @@ import { handleLoginRedux, handleLogoutRedux } from "../redux/actions/userAction
 import { useContext } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { MenuItem } from '@mui/material';
 
 const Header = (props) => {
   const { user, logoutContext } = useContext(UserContext);
@@ -22,6 +23,8 @@ const Header = (props) => {
     toast.success('Đăng xuất thành công!');
     history.push('/login-user');
   }
+
+  const classNameFunc = ({ isActive }) => (isActive ? "active_link" : "");
 
   if (user && user.isAuthenticated === true || location.pathname === '/') {
     return (
@@ -48,7 +51,7 @@ const Header = (props) => {
 
                 {user && user.isAuthenticated === true && user.account.departmentId === 'HCQT'  ?
                   <>
-                    <NavLink exact to="/list-doc" className="nav-link">Văn bản</NavLink>
+                    <NavLink to="/list-doc" className="nav-link">Văn bản</NavLink>
                   </>
                   :
                   <></>
@@ -62,14 +65,39 @@ const Header = (props) => {
                 <></>
                 }
 
-                {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ? 
-                  <>
-                    <NavLink exact to="/list-propose-recive" className="nav-link">Đề xuất nhận</NavLink>
-                    <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
-                  </>
-                : 
-                  <></>
-                }
+                {(() => {
+                  if(user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead && user.account.departmentType === 2){
+                    //hiện khi người login là trưởng phòng ở các phòng chức năng
+                    return(
+                      <>
+                        <NavDropdown title="Đề xuất nhận">
+                          <MenuItem> 
+                            <NavLink exact to="/list-propose-recive-out-department" className="nav-link nav-link-item">Nhận từ phòng khoa</NavLink>
+                          </MenuItem>
+                          <MenuItem>
+                            <NavLink exact to="/list-propose-recive-in-department" className="nav-link nav-link-item">Nhận từ nhân viên</NavLink>
+                          </MenuItem>
+                        </NavDropdown>
+                        <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
+                      </>
+                    )
+                  }
+                  else if(user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead && user.account.departmentType === 3){
+                    //hiện khi người login là trưởng phòng ở các khoa bình thường
+                    return(
+                      <>
+                        <NavLink exact to="/list-propose-recive-in-department" className="nav-link">Đề xuất nhận</NavLink>
+                        <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
+                      </>
+                    )
+                  }
+                  else{
+                    //hiện khi người login là nhân viên ở các khoa bình thường lẫn các phòng chức năng
+                    return(
+                      null
+                    )
+                  }
+                })()}
 
                 {(() => {
                   if (user && user.isAuthenticated === true && user.account.departmentId === 'GD'

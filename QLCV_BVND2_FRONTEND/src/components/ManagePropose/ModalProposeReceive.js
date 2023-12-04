@@ -168,17 +168,38 @@ function ModalProposeReceive(props) {
                         </div>
                     </Modal.Body>
                     <Modal.Footer className='mb-2'>
-                        {dataModalProposeReceive.document_Incomming_State === 0 || dataModalProposeReceive.document_Incomming_State === 1 || dataModalProposeReceive.document_Incomming_State === 2 ?
-                            <>
-                                <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
-                                <Button variant="danger" onClick={() => proposeRefuse(dataModalProposeReceive)}>Từ chối đề xuất</Button>
-                                <Button variant="warning" onClick={() => proposeReturn(dataModalProposeReceive)}>Chuyển đề xuất về</Button>
-                            </>
-                        :
-                            <>
-                                <Button variant="info" onClick={() => proposeMoveUp(dataModalProposeReceive)}>Chuyển tiếp đề xuất </Button>
-                            </>
-                        }
+                        {(() => {
+                            if(dataModalProposeReceive.document_Incomming_State === 0){
+                                return(
+                                    <>
+                                        <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
+                                        <Button variant="danger" onClick={() => proposeRefuse(dataModalProposeReceive)}>Từ chối đề xuất</Button>
+                                        <Button variant="warning" onClick={() => proposeReturn(dataModalProposeReceive)}>Trả đề xuất về</Button>
+                                    </>
+                                )
+                            }
+                            else if(dataModalProposeReceive.document_Incomming_State === 1){
+                                return(
+                                    <>
+                                        <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
+                                        <Button variant="warning" onClick={() => proposeReturn(dataModalProposeReceive)}>Trả đề xuất về</Button>
+                                    </>
+                                )
+                            }
+                            else if(dataModalProposeReceive.document_Incomming_State === 2){
+                                return(
+                                    <>
+                                        <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
+                                        <Button variant="danger" onClick={() => proposeRefuse(dataModalProposeReceive)}>Từ chối đề xuất</Button>
+                                    </>
+                                )
+                            }
+                            else{
+                                return(
+                                    <><Button variant="info" onClick={() => proposeMoveUp(dataModalProposeReceive)}>Chuyển tiếp đề xuất </Button></>
+                                )
+                            }
+                        })()}                                      
                         <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
                     </Modal.Footer>
                 </Modal>

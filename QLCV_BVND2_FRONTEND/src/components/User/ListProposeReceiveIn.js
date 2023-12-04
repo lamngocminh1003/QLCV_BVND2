@@ -2,18 +2,19 @@ import React, { useState, useContext, useEffect } from 'react'
 import { UserContext } from '../../context/UserContext';
 import ReactPaginate from 'react-paginate';
 
-import ModalProposeSent from '../ManagePropose/ModalProposeSent';
+import ModalProposeReceive from '../ManagePropose/ModalProposeReceive';
 import "./ListPropose.scss";
 
 import moment from 'moment';
 import { Button } from '@mui/material';
 
-import Box from '@mui/material/Box';
+import {Box, Typography} from "@mui/material";
 import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';
 
-import { getProposeSend } from '../../services/proposeService';
+import { getProposeReceiveIn } from '../../services/proposeService';
+import { toast } from 'react-toastify';
 
-function ListProposeSent() {
+const ListPropose = () => {
     const { user } = useContext(UserContext);
 
     //config default number propose to display in gridview
@@ -21,11 +22,11 @@ function ListProposeSent() {
 
     //config datagrid columns name
     const columns = [
-        {field: "stt", headerName: "STT", width: 100, valueGetter: (params) => params.row.stt},
-        {field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 350},
-        {field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 500},
-        // {field: "? chưa biết key của value", headerName: "Nơi gửi", width: 500},
-        {field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 190, valueFormatter: (params) => moment(params.value).format('llll')},
+        {field: "stt", headerName: "STT", width: 100, flex: 1, valueGetter: (params) => params.row.stt},
+        {field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 300},
+        {field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 425},
+        {field: "document_Incomming_UserSend_FullName", headerName: "Người gửi", width: 180},
+        {field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 185, valueFormatter: (params) => moment(params.value).format('llll')},
         {field: "document_Incomming_State", headerName: "Trạng thái", width: 115, renderCell: (params) => {
             if(params.row.document_Incomming_State === 0){
                 return(
@@ -54,7 +55,6 @@ function ListProposeSent() {
             }
         }}
     ]
-
     const [listPropose, setListPropose] = useState([]);
 
     //config modal propose
@@ -63,36 +63,14 @@ function ListProposeSent() {
     const [dataModalPropose, setDataModalPropose] = useState({});
     const [done, setDone] = useState(false);
 
-    const btnActiveModalPropose = () => {
-        setActionModal("CREATE");
-        setShowModalPropose(true);
-    }
-
-    const btnInActiveModalPropose = () => {
-        setDataModalPropose({});
-        fetchAllPropose();
-    }
-
-    const btnInfo = (itemListPropose) => {
+    const btnInfo = (value) => {
         setActionModal("INFO");
-        setDataModalPropose(itemListPropose);
+        setDataModalPropose(value);
         setShowModalPropose(true);
-    }
-
-    const btnEdit = () => {
-
-    }
-
-    const btnDel = () => {
-
-    }
-
-    const btnFeedBack = () => {
-
     }
 
     const fetchAllPropose = async () => {
-        let resultListPropose = await getProposeSend();
+        let resultListPropose = await getProposeReceiveIn();
         if(resultListPropose.length !== 0){
             setListPropose(resultListPropose);
         }
@@ -112,19 +90,24 @@ function ListProposeSent() {
                 <div className='table-index'>
                     <div className='container mt-3'>
                         <div className='user-body'>
-                            <div className='row mb-2'>
+                            <div className='row mb-2 mt-1'>
                                 <div className='col-4'>
-                                    <h3 className="row text-primary text-uppercase mb-0">Đề xuất gửi</h3>
+                                    <h3 className="row text-primary text-uppercase mb-2">Đề xuất nhận từ nhân viên</h3>
                                 </div>
+                                {/* dùng mui data gridview nên bỏ đoạn này */}
+                                {/* <div className='col-4 mt-1'>
+                                    <form method='GET' autoComplete='off'>
+                                        <div className='d-flex'>
+                                            <input type="text" className="form-control fa py-2" placeholder="&#xF002; Tìm đề xuất..." name="keyDoc" onChange={(e) => setSearchValue(e.target.value)} style={{ fontFamily: "Arial, FontAwesome" }} />
+                                        </div>
+                                    </form>
+                                </div> */}
                             </div>
 
-                            <div className="row mt-2">
-                                <div className='px-0' style={{ display: "block", zIndex: "100" }}>
-                                    <button className='btn btn-primary mt-1 mb-3 col-1 add-doc' style={{ paddingRight: "7.1rem" }} onClick={() => btnActiveModalPropose()} ><i className="fa fa-plus i-add"></i>Gửi đề xuất</button>
-                                </div>
-                                <Box className="px-0 py-0 mt-2" sx={{ height: 670, width: '100%' }}>
+                            <div className="row mt-3">
+                                <Box className="px-0 py-0" sx={{ height: 670, width: '100%' }}>
                                     <DataGrid
-                                        style={{fontSize: '15px'}}
+                                        style={{fontSize: '14.5px'}}
                                         localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                                         rows={listPropose.map((row, index) => ({
                                             ...row,
@@ -148,13 +131,11 @@ function ListProposeSent() {
                 </div>
             </div>
 
-            
-
-            <ModalProposeSent
+            <ModalProposeReceive
                 active={showModalPropose}
                 close={setShowModalPropose}
-                setActionModalPropose={actionModal}
-                inactive={btnInActiveModalPropose}
+                actionModal={actionModal}
+                makeModalDoing={setDone}
                 dataModalPropose={dataModalPropose}
                 //reset lại data cho modal theo action edit
                 // inactive={btnInActiveModalAddDoc}
@@ -167,4 +148,4 @@ function ListProposeSent() {
     )
 }
 
-export default ListProposeSent
+export default ListPropose

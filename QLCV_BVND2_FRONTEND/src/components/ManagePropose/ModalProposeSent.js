@@ -3,10 +3,18 @@ import Button from 'react-bootstrap/Button';
 import _, { cloneDeep, set } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../context/UserContext';
-
 import Modal from 'react-bootstrap/Modal';
-
+//import some theme from mui
+import Typography from '@mui/material/Typography';
+//import some shit to create assign to department
+import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+//import some api
 import { createPropose, createProposeByHeader } from '../../services/proposeService';
+import { getAllDepartmentByType } from '../../services/departmentService'; 
 
 const ModalPropose = (props) => {
     const { user, logoutContext } = useContext(UserContext);
@@ -19,6 +27,13 @@ const ModalPropose = (props) => {
 
     const [dataPropose, setDataPropose] = useState(dataProposeDefault);
     const [dataProposeFile, setDataProposeFile] = useState([]);
+
+    const [listDepartmentByType, setListDepartmentByType] = useState([]);
+    const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
+
+    //config react mui checkboxes
+    const icon = <CheckBoxOutlineBlankIcon fontSize="medium" />
+    const checkedIcon = <CheckBoxIcon fontSize="medium" />
 
     const handleHideModal = () => {
         props.close(false)
@@ -38,6 +53,11 @@ const ModalPropose = (props) => {
         }
     }
 
+    const handleChangeSelectedDepartment = (e, value) => {
+        setSelectedDepartmentId(value.department_ID);
+    };
+
+    //gửi đề xuất bởi nhân viên
     const handleCreateProposeByEmploy = async () => {
         let formDataFile = new FormData();
 
@@ -56,14 +76,38 @@ const ModalPropose = (props) => {
         }
     }
 
+    //gửi đề xuất bởi trưởng phòng
     const handleCreateProposeByHeader = async () => {
-        // let result = await createProposeByHeader();
-        // console.log(result)
+        let formDataFile = new FormData();
+        
+        let i;
+        for(i = 0; i < dataProposeFile.length; i++)
+        {
+            formDataFile.append('proposeFiles', dataProposeFile[i])
+        }
+        dataPropose.proposeFile = formDataFile;
+        let result = await createProposeByHeader(dataPropose, selectedDepartmentId);
+        if(result === 200){
+            toast.success('Gửi đề xuất thành công!');
+        }else{
+            toast.error(result);
+        }
+    }
+
+    const getDepartmentByType = async () => {
+        let resultListDepartment = await getAllDepartmentByType(2);
+        if(resultListDepartment.length !== 0){
+            setListDepartmentByType(resultListDepartment);
+        }   
     }
 
     useEffect(()=> {
         if(props.setActionModalPropose === 'INFO'){
             setDataPropose({...props.dataModalPropose})
+        }
+        else if(props.setActionModalPropose === 'CREATE' && user.account.userId === user.account.departmentHead){
+            setDataPropose({...props.dataModalPropose})
+            getDepartmentByType();
         }
     }, [props.dataModalPropose])
 
@@ -121,6 +165,35 @@ const ModalPropose = (props) => {
                                                 <label className='form-label fs-5' htmlFor='document_Incomming_Content'>Nội dung đề xuất <span className='text-danger'>(*)</span></label>
                                                 <textarea className='form-control' id="document_Incomming_Content" rows="4" onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Content')} value={dataPropose.document_Incomming_Content || ""}></textarea>
                                             </div>
+                                            {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ? 
+                                                <>
+                                                <div className="col-sm-12 mt-3">
+                                                    <Typography variant='body1' fontSize={17} color='FireBrick'>Gửi lên phòng chức năng</Typography>
+                                                    <Autocomplete
+                                                        options={listDepartmentByType}
+                                                        getOptionLabel={(option) => option.department_Name}
+                                                        renderOption={(props, option, { selected }) => (
+                                                            <li {...props}>
+                                                            <Checkbox
+                                                                icon={icon}
+                                                                checkedIcon={checkedIcon}
+                                                                style={{ marginRight: 8 }}
+                                                                checked={selected}
+                                                            />
+                                                            {option.department_Name}
+                                                            </li>
+                                                        )}
+                                                        style={{ width: 718 }}
+                                                        onChange={(e, value) => handleChangeSelectedDepartment(e, value)}
+                                                        renderInput={(params) => (
+                                                            <TextField {...params} placeholder="Gõ hoặc nhấn chọn một phòng chức năng..." />
+                                                        )}
+                                                    />
+                                                </div>
+                                            </> 
+                                            : 
+                                                null
+                                            }
                                         </div>
                                     </div>
                                 </div>

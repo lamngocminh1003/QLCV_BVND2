@@ -7,7 +7,8 @@ import Project from "../components/Project/Project";
 import LoginUser from '../components/UserLogin/Login';
 import ListUser from "../components/User/ListUser";
 import ListProposeSent from "../components/User/ListProposeSent";
-import ListProposeReceive from "../components/User/ListProposeReceive";
+import ListProposeReceiveIn from "../components/User/ListProposeReceiveIn";
+import ListProposeReceiveOut from "../components/User/ListProposeReceiveOut";
 import ListDoc from "../components/User/ListDoc";
 import ListDocOfDepartment from "../components/User/ListDocOfDepartment";
 import MemberTask from "../components/Task/MemberTask";
@@ -27,7 +28,8 @@ const AppRoutes = (props) => {
           <PrivateRoutes path="/projects" component={Project} />
           <PrivateRoutes path="/list-user" component={ListUser} />
           <PrivateRoutes path="/list-propose-sent" component={ListProposeSent} />
-          <PrivateRoutes path="/list-propose-recive" component={ListProposeReceive} />
+          <PrivateRoutes path="/list-propose-recive-in-department" component={ListProposeReceiveIn} />
+          <PrivateRoutes path="/list-propose-recive-out-department" component={ListProposeReceiveOut} />
           <PrivateRoutes path="/list-doc" component={ListDoc} />
           <PrivateRoutes path="/list-doc-department" component={ListDocOfDepartment} />
           <PrivateRoutes path="/member-task-department" component={MemberTask} />

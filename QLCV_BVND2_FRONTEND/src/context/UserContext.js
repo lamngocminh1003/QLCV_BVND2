@@ -85,10 +85,11 @@ const UserProvider = ({ children }) => {
             let departmentId = response.department.department_ID;   
             let departmentName = response.department.department_Name;
             let departmentHead = response.department.department_Head;
+            let departmentType = response.department.department_Type;
 
             let data = {
                 isAuthenticated: true,
-                account: {userId, fullName, email, departmentId, departmentName, departmentHead}
+                account: {userId, fullName, email, departmentId, departmentName, departmentHead, departmentType}
             }
 
             // let check = checkURLToAccess(data);
@@ -127,10 +128,11 @@ const UserProvider = ({ children }) => {
                             let departmentId = response.department.department_ID;   
                             let departmentName = response.department.department_Name;
                             let departmentHead = response.department.department_Head;
+                            let departmentType = response.department.department_Type;
 
                             let data = {
                                 isAuthenticated: true,
-                                account: {userId, fullName, email, departmentId, departmentName, departmentHead}
+                                account: {userId, fullName, email, departmentId, departmentName, departmentHead, departmentType}
                             }
 
                             setTimeout(() => {
