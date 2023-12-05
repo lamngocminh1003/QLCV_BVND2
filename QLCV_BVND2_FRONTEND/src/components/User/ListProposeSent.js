@@ -1,8 +1,14 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useCallback } from 'react'
 import { UserContext } from '../../context/UserContext';
 import ReactPaginate from 'react-paginate';
 
-import ModalProposeSent from '../ManagePropose/ModalProposeSent';
+//modal propose sent với action create
+import ModalProposeSentActionCreate from '../ManagePropose/ModalProposeSentAction/ModalProposeSentActionCreate';
+//modal propose sent với action info
+import ModalProposeSentActionInfo from '../ManagePropose/ModalProposeSentAction/ModalProposeSentActionInfo';
+//modal propose sent với action sửa
+//modal propose sent với action xóa
+
 import "./ListPropose.scss";
 
 import moment from 'moment';
@@ -10,6 +16,7 @@ import { Button } from '@mui/material';
 
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';
+import Link from '@mui/material/Link';
 
 import { getProposeSend } from '../../services/proposeService';
 
@@ -19,14 +26,45 @@ function ListProposeSent() {
     //config default number propose to display in gridview
     const [pageSize, setPageSize] = useState(10);
 
+    //config visible column base on employee or manager
+    const columnUnVisibilityModel = {
+        deparment_NameReceive: true
+    }
+
+    const [columnVisibilityModel, setColumnVisibilityModel] = useState({
+        deparment_NameReceive: false
+    });
+
+    //config expand document_Incomming_Content
+    const ExpandableCell = ({ value }) => {
+        const [expanded, setExpanded] = useState(false);
+    
+        return (
+          <div>
+            {expanded ? value : value.slice(0, 100)}
+            {value.length > 100 && (
+              // eslint-disable-next-line jsx-a11y/anchor-is-valid
+              <Link
+                type="button"
+                component="button"
+                sx={{ fontSize: 'inherit' }}
+                onClick={() => setExpanded(!expanded)}
+              >
+                {expanded ? 'bớt' : 'thêm'}
+              </Link>
+            )}
+          </div>
+        );
+    }
+
     //config datagrid columns name
     const columns = [
         {field: "stt", headerName: "STT", width: 100, valueGetter: (params) => params.row.stt},
         {field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 350},
-        {field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 500},
-        // {field: "? chưa biết key của value", headerName: "Nơi gửi", width: 500},
+        {field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 420, renderCell: (params) => <ExpandableCell {...params} />},
+        {field: "deparment_NameReceive", headerName: "Nơi nhận", width: 125},
         {field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 190, valueFormatter: (params) => moment(params.value).format('llll')},
-        {field: "document_Incomming_State", headerName: "Trạng thái", width: 115, renderCell: (params) => {
+        {field: "document_Incomming_State", headerName: "Trạng thái", width: 125, renderCell: (params) => {
             if(params.row.document_Incomming_State === 0){
                 return(
                     <><span className="status rounded-pill wait">Chờ duyệt</span></>
@@ -55,32 +93,27 @@ function ListProposeSent() {
         }}
     ]
 
+    //config listPropose when useEffect
     const [listPropose, setListPropose] = useState([]);
 
-    //config modal propose
+    //config for all modal propose
     const [showModalPropose, setShowModalPropose] = useState(false);
-    const [actionModal, setActionModal] = useState("CREATE");
     const [dataModalPropose, setDataModalPropose] = useState({});
     const [done, setDone] = useState(false);
 
-    const btnActiveModalPropose = () => {
-        setActionModal("CREATE");
+    //config
+
+    const btnActiveModalProposeActionCreate = () => {
         setShowModalPropose(true);
     }
 
-    const btnInActiveModalPropose = () => {
-        setDataModalPropose({});
-        fetchAllPropose();
-    }
-
-    const btnInfo = (itemListPropose) => {
-        setActionModal("INFO");
+    const btnActiveModalProposeActionCreateInfo = (itemListPropose) => {
         setDataModalPropose(itemListPropose);
         setShowModalPropose(true);
     }
 
     const btnEdit = () => {
-
+        
     }
 
     const btnDel = () => {
@@ -98,12 +131,19 @@ function ListProposeSent() {
         }
     }
 
+    const setColumnVisible = () => {
+        if(user.account.userId === user.account.departmentHead){
+            setColumnVisibilityModel(columnUnVisibilityModel);
+        }
+    }
+
     useEffect(()=> {
         if(done === true){
             fetchAllPropose();
             setDone(false);
         }
         fetchAllPropose();
+        setColumnVisible();
     }, [done])
 
     return(
@@ -120,9 +160,9 @@ function ListProposeSent() {
 
                             <div className="row mt-2">
                                 <div className='px-0' style={{ display: "block", zIndex: "100" }}>
-                                    <button className='btn btn-primary mt-1 mb-3 col-1 add-doc' style={{ paddingRight: "7.1rem" }} onClick={() => btnActiveModalPropose()} ><i className="fa fa-plus i-add"></i>Gửi đề xuất</button>
+                                    <button className='btn btn-primary mt-1 mb-3 col-1 add-doc' style={{ paddingRight: "7.1rem" }} onClick={() => btnActiveModalProposeActionCreate()} ><i className="fa fa-plus i-add"></i>Gửi đề xuất</button>
                                 </div>
-                                <Box className="px-0 py-0 mt-2" sx={{ height: 670, width: '100%' }}>
+                                <Box className="px-0 py-0 mt-2" sx={{ height: 'auto', width: '100%' }}>
                                     <DataGrid
                                         style={{fontSize: '15px'}}
                                         localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
@@ -130,16 +170,26 @@ function ListProposeSent() {
                                             ...row,
                                             stt: index + 1,
                                         }))} 
-                                        columns={columns} 
+                                        columns={columns}
+                                        columnVisibilityModel={columnVisibilityModel}
+                                        getRowHeight={() => 'auto'} 
                                         components={{Toolbar: GridToolbar}}
                                         //autoPageSize={true}
+                                        autoHeight={true}
                                         pagination={true}
                                         pageSize={pageSize}
                                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                                        rowsPerPageOptions={[5, 10, 20, 30, 50, 100]}
+                                        rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
                                         getRowId={(row) => row.document_Incomming_Id}
-                                        //onRowClick={(value) => btnInfo(value.row)}
-                                        onRowDoubleClick={(value) => btnInfo(value.row)}
+                                        onRowDoubleClick={(value) => btnActiveModalProposeActionCreateInfo(value.row)}
+                                        sx={{
+                                            '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
+                                              py: '10px',
+                                            },
+                                            '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
+                                              py: '22px',
+                                            },
+                                        }}
                                     />
                                 </Box>
                             </div>
@@ -148,20 +198,18 @@ function ListProposeSent() {
                 </div>
             </div>
 
-            
+            <ModalProposeSentActionCreate
+                activeModalProposeSentActionCreate={showModalPropose}
+                closeModalProposeSentActionCreate={setShowModalPropose}
+                makeModalProposeSentActionCreateDoing={setDone}
+                dataModalProposeSentActionCreate={dataModalPropose}
+            />
 
-            <ModalProposeSent
-                active={showModalPropose}
-                close={setShowModalPropose}
-                setActionModalPropose={actionModal}
-                inactive={btnInActiveModalPropose}
-                dataModalPropose={dataModalPropose}
-                //reset lại data cho modal theo action edit
-                // inactive={btnInActiveModalAddDoc}
-                // close={setIsShowModalDoc}
-                // setActionModalDoc={actionModalDoc}
-                // assignDataDocEdit={dataDocEdit}
-                // assignDataDoc={dataDoc}
+            <ModalProposeSentActionInfo
+                activeModalProposeSentActionInfo={showModalPropose}
+                closeModalProposeSentActionInfo={setShowModalPropose}
+                makeModalProposeSentActionInfoDoing={setDone}
+                dataModalProposeSentActionInfo={dataModalPropose}            
             />
         </>
     )

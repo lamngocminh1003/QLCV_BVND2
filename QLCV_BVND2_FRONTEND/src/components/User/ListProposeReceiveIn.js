@@ -10,6 +10,7 @@ import { Button } from '@mui/material';
 
 import {Box, Typography} from "@mui/material";
 import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';
+import Link from '@mui/material/Link';
 
 import { getProposeReceiveIn } from '../../services/proposeService';
 import { toast } from 'react-toastify';
@@ -20,14 +21,36 @@ const ListPropose = () => {
     //config default number propose to display in gridview
     const [pageSize, setPageSize] = useState(10);
 
+    //config expand document_Incomming_Content
+    const ExpandableCell = ({ value }) => {
+        const [expanded, setExpanded] = useState(false);
+    
+        return (
+          <div>
+            {expanded ? value : value.slice(0, 100)}
+            {value.length > 100 && (
+              // eslint-disable-next-line jsx-a11y/anchor-is-valid
+              <Link
+                type="button"
+                component="button"
+                sx={{ fontSize: 'inherit' }}
+                onClick={() => setExpanded(!expanded)}
+              >
+                {expanded ? 'bớt' : 'thêm'}
+              </Link>
+            )}
+          </div>
+        );
+    }
+
     //config datagrid columns name
     const columns = [
         {field: "stt", headerName: "STT", width: 100, flex: 1, valueGetter: (params) => params.row.stt},
         {field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 300},
-        {field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 425},
+        {field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 420, renderCell: (params) => <ExpandableCell {...params} />},
         {field: "document_Incomming_UserSend_FullName", headerName: "Người gửi", width: 180},
         {field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 185, valueFormatter: (params) => moment(params.value).format('llll')},
-        {field: "document_Incomming_State", headerName: "Trạng thái", width: 115, renderCell: (params) => {
+        {field: "document_Incomming_State", headerName: "Trạng thái", width: 125, renderCell: (params) => {
             if(params.row.document_Incomming_State === 0){
                 return(
                     <><span className="status rounded-pill wait">Chờ duyệt</span></>
@@ -55,6 +78,7 @@ const ListPropose = () => {
             }
         }}
     ]
+
     const [listPropose, setListPropose] = useState([]);
 
     //config modal propose
@@ -105,24 +129,33 @@ const ListPropose = () => {
                             </div>
 
                             <div className="row mt-3">
-                                <Box className="px-0 py-0" sx={{ height: 146 + Math.min(pageSize) * 52 + 'px' , width: '100%' }}>
+                                <Box className="px-0 py-0 mt-2" sx={{ height: 'auto', width: '100%' }}>
                                     <DataGrid
-                                        style={{fontSize: '14.5px'}}
+                                        style={{fontSize: '15px'}}
                                         localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                                         rows={listPropose.map((row, index) => ({
                                             ...row,
                                             stt: index + 1,
                                         }))} 
-                                        columns={columns} 
+                                        columns={columns}
+                                        getRowHeight={() => 'auto'} 
                                         components={{Toolbar: GridToolbar}}
                                         //autoPageSize={true}
+                                        autoHeight={true}
                                         pagination={true}
                                         pageSize={pageSize}
                                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                                        rowsPerPageOptions={[5, 10, 20, 30, 50, 100]}
+                                        rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
                                         getRowId={(row) => row.document_Incomming_Id}
-                                        //onRowClick={(value) => btnInfo(value.row)}
                                         onRowDoubleClick={(value) => btnInfo(value.row)}
+                                        sx={{
+                                            '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
+                                              py: '10px',
+                                            },
+                                            '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
+                                              py: '22px',
+                                            },
+                                        }}
                                     />
                                 </Box>
                             </div>

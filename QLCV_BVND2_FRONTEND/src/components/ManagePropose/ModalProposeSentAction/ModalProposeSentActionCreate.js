@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import _, { cloneDeep, set } from 'lodash';
 import { toast } from 'react-toastify';
-import { UserContext } from '../../context/UserContext';
+import { UserContext } from '../../../context/UserContext';
 import Modal from 'react-bootstrap/Modal';
 //import some theme from mui
 import Typography from '@mui/material/Typography';
@@ -13,8 +13,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 //import some api
-import { createPropose, createProposeByHeader } from '../../services/proposeService';
-import { getAllDepartmentByType } from '../../services/departmentService'; 
+import { createPropose, createProposeByHeader } from '../../../services/proposeService';
+import { getAllDepartmentByType } from '../../../services/departmentService'; 
 
 const ModalPropose = (props) => {
     const { user, logoutContext } = useContext(UserContext);
@@ -71,6 +71,8 @@ const ModalPropose = (props) => {
         let response = await createPropose(dataPropose);
         if(response === 200){
             toast.success('Gửi đề xuất thành công!');
+            props.makeModalDoing(true); 
+            setDataPropose(dataProposeDefault);
         }else{
             toast.error('Đã có lỗi xảy ra ở server vui lòng liên hệ quản trị viên để kiểm tra lại!');
         }
@@ -89,6 +91,8 @@ const ModalPropose = (props) => {
         let result = await createProposeByHeader(dataPropose, selectedDepartmentId);
         if(result === 200){
             toast.success('Gửi đề xuất thành công!');
+            props.makeModalDoing(true);
+            setDataPropose(dataProposeDefault);
         }else{
             toast.error(result);
         }
@@ -163,7 +167,7 @@ const ModalPropose = (props) => {
                                             </div>
                                             <div className='col-sm-12 mt-3'>
                                                 <label className='form-label fs-5' htmlFor='document_Incomming_Content'>Nội dung đề xuất <span className='text-danger'>(*)</span></label>
-                                                <textarea className='form-control' id="document_Incomming_Content" rows="4" onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Content')} value={dataPropose.document_Incomming_Content || ""}></textarea>
+                                                <textarea className='form-control' id="document_Incomming_Content" rows="5" onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Content')} value={dataPropose.document_Incomming_Content || ""}></textarea>
                                             </div>
                                             {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ? 
                                                 <>

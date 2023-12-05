@@ -25,7 +25,7 @@ function ListProposeReceiveOut() {
         {field: "stt", headerName: "STT", width: 100, valueGetter: (params) => params.row.stt},
         {field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 300},
         {field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 400},
-        {field: "deparment_NameReceive", headerName: "Nơi gửi", width: 220},
+        {field: "deparment_NameSend", headerName: "Nơi gửi", width: 220},
         {field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 185, valueFormatter: (params) => moment(params.value).format('llll')},
         {field: "document_Incomming_State", headerName: "Trạng thái", width: 110, renderCell: (params) => {
             if(params.row.document_Incomming_State === 0){
@@ -106,6 +106,8 @@ function ListProposeReceiveOut() {
                                             stt: index + 1,
                                         }))} 
                                         columns={columns} 
+                                        getEstimatedRowHeight={() => 100}
+                                        getRowHeight={() => 'auto'}
                                         components={{Toolbar: GridToolbar}}
                                         //autoPageSize={true}
                                         pagination={true}
