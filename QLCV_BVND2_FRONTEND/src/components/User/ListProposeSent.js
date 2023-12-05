@@ -2,12 +2,7 @@ import React, { useState, useContext, useEffect, useCallback } from 'react'
 import { UserContext } from '../../context/UserContext';
 import ReactPaginate from 'react-paginate';
 
-//modal propose sent với action create
-import ModalProposeSentActionCreate from '../ManagePropose/ModalProposeSentAction/ModalProposeSentActionCreate';
-//modal propose sent với action info
-import ModalProposeSentActionInfo from '../ManagePropose/ModalProposeSentAction/ModalProposeSentActionInfo';
-//modal propose sent với action sửa
-//modal propose sent với action xóa
+import ModalProposeSent from '../ManagePropose/ModalProposeSent';
 
 import "./ListPropose.scss";
 
@@ -41,7 +36,7 @@ function ListProposeSent() {
     
         return (
           <div>
-            {expanded ? value : value.slice(0, 100)}
+            {expanded ? value : value.slice(0, 100)}&nbsp;
             {value.length > 100 && (
               // eslint-disable-next-line jsx-a11y/anchor-is-valid
               <Link
@@ -96,19 +91,22 @@ function ListProposeSent() {
     //config listPropose when useEffect
     const [listPropose, setListPropose] = useState([]);
 
-    //config for all modal propose
+    //config modal propose sent
     const [showModalPropose, setShowModalPropose] = useState(false);
     const [dataModalPropose, setDataModalPropose] = useState({});
+    const [actionModalPropose, setActionModalPropose] = useState('CREATE');
     const [done, setDone] = useState(false);
 
     //config
 
     const btnActiveModalProposeActionCreate = () => {
+        setActionModalPropose('CREATE');
         setShowModalPropose(true);
     }
 
-    const btnActiveModalProposeActionCreateInfo = (itemListPropose) => {
+    const btnActiveModalProposeActionInfo = (itemListPropose) => {
         setDataModalPropose(itemListPropose);
+        setActionModalPropose('INFO');
         setShowModalPropose(true);
     }
 
@@ -181,7 +179,7 @@ function ListProposeSent() {
                                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                                         rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
                                         getRowId={(row) => row.document_Incomming_Id}
-                                        onRowDoubleClick={(value) => btnActiveModalProposeActionCreateInfo(value.row)}
+                                        onRowDoubleClick={(value) => btnActiveModalProposeActionInfo(value.row)}
                                         sx={{
                                             '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
                                               py: '10px',
@@ -198,18 +196,12 @@ function ListProposeSent() {
                 </div>
             </div>
 
-            <ModalProposeSentActionCreate
-                activeModalProposeSentActionCreate={showModalPropose}
-                closeModalProposeSentActionCreate={setShowModalPropose}
-                makeModalProposeSentActionCreateDoing={setDone}
-                dataModalProposeSentActionCreate={dataModalPropose}
-            />
-
-            <ModalProposeSentActionInfo
-                activeModalProposeSentActionInfo={showModalPropose}
-                closeModalProposeSentActionInfo={setShowModalPropose}
-                makeModalProposeSentActionInfoDoing={setDone}
-                dataModalProposeSentActionInfo={dataModalPropose}            
+            <ModalProposeSent
+                activeModalProposeSent={showModalPropose}
+                closeModalProposeSent={setShowModalPropose}
+                actionModalProposeSent={actionModalPropose}
+                makeModalProposeSentDoing={setDone}
+                dataModalProposeSent={dataModalPropose}
             />
         </>
     )
