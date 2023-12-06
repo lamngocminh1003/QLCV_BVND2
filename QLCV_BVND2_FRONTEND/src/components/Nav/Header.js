@@ -11,6 +11,7 @@ import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { MenuItem } from '@mui/material';
+import NotifiIcon from './NotifiIcon';
 
 const Header = (props) => {
   const { user, logoutContext } = useContext(UserContext);
@@ -135,6 +136,8 @@ const Header = (props) => {
                   }
                 })()}
               </Nav>
+
+              <Nav><NotifiIcon/></Nav>
 
               <Nav>
                 {user && user.isAuthenticated === true ?
