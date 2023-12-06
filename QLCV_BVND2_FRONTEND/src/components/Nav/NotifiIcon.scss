@@ -1,4 +1,23 @@
 .notifiicon-bottom{
+    z-index: 2;
     position: absolute;
     transform: translate(-170px, 43px);
+}
+
+//hover item in notifiicon bottom
+.css-bshv44-MuiButtonBase-root-MuiListItem-root:hover{
+    border-radius: 10px!important;
+    background-color: rgba(0, 0, 0, 0.1)!important;
+}
+
+.css-1f57v5v-MuiButtonBase-root-MuiListItem-root:hover{
+    border-radius: 10px!important;
+    background-color: rgba(0, 0, 0, 0.1)!important;
+}
+
+.message-notifi{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* number of lines to show */
+    -webkit-box-orient: vertical;
 }
