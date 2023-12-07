@@ -6,8 +6,12 @@
     z-index: 2;
     position: absolute;
     transform: translate(-120px, -5px);
-    border-radius: 0.35rem;
-    height: auto;
+    border-radius: 0.45rem;
+    height: 91.5vh;   
+    width: 360px;
+    background-color: #fff;
+    box-shadow: rgba(0, 0, 0, 0.30) 0px 5px 15px;
+    overflow: hidden;
 }
 
 //hover item in notifiicon bottom don't have component avt

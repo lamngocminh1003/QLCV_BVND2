@@ -101,7 +101,7 @@ function NotifiIcon() {
 
   return (
     <>
-      <Box className='notifiicon' ref={menuRef}>
+      <Box className='notifiicon' ref={menuRef} sx={{borderRadius: '0.35rem'}}>
         <div className='notifiicon-header' >
           <Box>
             <IconButton size="large" style={{color: 'white'}} onClick={() => clickToShowNotifiIconBottom()} className={showNotifiIconBottom ? 'active' : ''}>
@@ -115,32 +115,34 @@ function NotifiIcon() {
         {showNotifiIconBottom ? 
           <>
             <div className='notifiicon-bottom'>
-              <Box sx={{ boxShadow: 2 }}>
-                <Paper square sx={{ width: '360px', backgroundColor: 'white', height: '91vh', overflow: 'auto'}}>
-                  <Typography variant="h5" className='py-2 text-dark' sx={{fontFamily: 'Inter, sans-serif', fontWeight: 'bolder', fontSize: '24.5px', marginLeft: '0.75rem'}}>Thông báo</Typography>
-                  <Stack direction="row" sx={{ml: 1.5}} spacing={1}>
-                    {/* spacing dùng để giãn cách giữa các chip */}
-                    <Chip label="Đề xuất" variant="outlined" onClick={handleClick} />
-                    <Chip label="Bàn giao" variant="outlined" onClick={handleClick} />
-                    <Chip label="Công việc" variant="outlined" onClick={handleClick} />
-                    <Chip label="Thảo luận" variant="outlined" onClick={handleClick} />
-                  </Stack>
-                  <List>
-                  {dataNotifi.map(({ id, department, message }) => (
-                    <>
-                      <ListItem button alignItems="flex-start">
-                        <ListItemAvatar>
-                          <Avatar alt="Profile Picture" src={logo}/>
-                        </ListItemAvatar>
-                        <ListItemText sx={{marginTop: '0px'}} 
-                          primary={<><Typography sx={{ display: 'inline', fontSize: '1.1rem', color: '#000'}}>{`Đề xuất từ ${department}`}</Typography></>} 
-                          secondary={<><div className='message-notifi'>{message}</div></>}/>
-                      </ListItem>
-                    </>
-                  ))}
-                  </List>
-                </Paper>
-              </Box>
+              <div>
+                <Box sx={{ height: '91.5vh', overflow: 'auto', transition: 'all 0.5s ease-in-out'}} id="notifiicon-bottom-box">
+                  <div>
+                    <Typography variant="h5" className='py-2 text-dark' sx={{fontFamily: 'Inter, sans-serif', fontWeight: 'bolder', fontSize: '24.5px', marginLeft: '0.75rem'}}>Thông báo</Typography>
+                    <Stack direction="row" sx={{ml: 1.5}} spacing={1}>
+                        {/* spacing dùng để giãn cách giữa các chip */}
+                        <Chip label="Đề xuất" variant="outlined" onClick={handleClick} />
+                        <Chip label="Bàn giao" variant="outlined" onClick={handleClick} />
+                        <Chip label="Công việc" variant="outlined" onClick={handleClick} />
+                        <Chip label="Thảo luận" variant="outlined" onClick={handleClick} />
+                    </Stack>
+                    <List>
+                      {dataNotifi.map(({ id, department, message }) => (
+                        <>
+                          <ListItem button alignItems="flex-start">
+                            <ListItemAvatar>
+                              <Avatar alt="Profile Picture" src={logo}/>
+                            </ListItemAvatar>
+                            <ListItemText sx={{marginTop: '0px'}} 
+                              primary={<><Typography sx={{ display: 'inline', fontSize: '1.1rem', color: '#000'}}>{`Đề xuất từ ${department}`}</Typography></>} 
+                              secondary={<><div className='message-notifi'>{message}</div></>}/>
+                          </ListItem>
+                        </>
+                      ))}
+                    </List>
+                  </div>
+                </Box>
+              </div>
             </div>
           </>
         : 
