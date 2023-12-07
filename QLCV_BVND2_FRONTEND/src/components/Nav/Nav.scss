@@ -39,3 +39,12 @@
         }      
     }
 }
+
+//dropdown menu 1
+#dropdown-menu-1{
+    &.show{
+        &.nav-link{
+            color: #61dafb !important;
+        }
+    }
+}

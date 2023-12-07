@@ -1,17 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { UserContext } from '../../context/UserContext';
 import ReactPaginate from 'react-paginate';
-
-import ModalProposeReceive from '../ManagePropose/ModalProposeReceive';
+import ModalProposeReceiveIn from '../ManagePropose/ModalProposeReceiveIn';
 import "./ListPropose.scss";
-
 import moment from 'moment';
-import { Button } from '@mui/material';
-
 import {Box, Typography} from "@mui/material";
 import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';
 import Link from '@mui/material/Link';
-
 import { getProposeReceiveIn } from '../../services/proposeService';
 import { toast } from 'react-toastify';
 
@@ -81,15 +76,15 @@ const ListPropose = () => {
 
     const [listPropose, setListPropose] = useState([]);
 
-    //config modal propose
+    //config modal propose receive in
     const [showModalPropose, setShowModalPropose] = useState(false);
-    const [actionModal, setActionModal] = useState("CREATE");
     const [dataModalPropose, setDataModalPropose] = useState({});
+    const [actionModalPropose, setActionModalPropose] = useState("INFO");
     const [done, setDone] = useState(false);
 
-    const btnInfo = (value) => {
-        setActionModal("INFO");
-        setDataModalPropose(value);
+    const btnActiveModalProposeActionInfo = (itemListPropose) => {
+        setActionModalPropose("INFO");
+        setDataModalPropose(itemListPropose);
         setShowModalPropose(true);
     }
 
@@ -118,17 +113,9 @@ const ListPropose = () => {
                                 <div className='col-4'>
                                     <h3 className="row text-primary text-uppercase mb-2">Đề xuất nhận từ nhân viên</h3>
                                 </div>
-                                {/* dùng mui data gridview nên bỏ đoạn này */}
-                                {/* <div className='col-4 mt-1'>
-                                    <form method='GET' autoComplete='off'>
-                                        <div className='d-flex'>
-                                            <input type="text" className="form-control fa py-2" placeholder="&#xF002; Tìm đề xuất..." name="keyDoc" onChange={(e) => setSearchValue(e.target.value)} style={{ fontFamily: "Arial, FontAwesome" }} />
-                                        </div>
-                                    </form>
-                                </div> */}
                             </div>
 
-                            <div className="row mt-3">
+                            <div className="row mt-2">
                                 <Box className="px-0 py-0 mt-2" sx={{ height: 'auto', width: '100%' }}>
                                     <DataGrid
                                         style={{fontSize: '15px'}}
@@ -147,7 +134,7 @@ const ListPropose = () => {
                                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                                         rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
                                         getRowId={(row) => row.document_Incomming_Id}
-                                        onRowDoubleClick={(value) => btnInfo(value.row)}
+                                        onRowDoubleClick={(value) => btnActiveModalProposeActionInfo(value.row)}
                                         sx={{
                                             '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
                                               py: '10px',
@@ -164,18 +151,12 @@ const ListPropose = () => {
                 </div>
             </div>
 
-            <ModalProposeReceive
-                active={showModalPropose}
-                close={setShowModalPropose}
-                actionModal={actionModal}
-                makeModalDoing={setDone}
-                dataModalPropose={dataModalPropose}
-                //reset lại data cho modal theo action edit
-                // inactive={btnInActiveModalAddDoc}
-                // close={setIsShowModalDoc}
-                // setActionModalDoc={actionModalDoc}
-                // assignDataDocEdit={dataDocEdit}
-                // assignDataDoc={dataDoc}
+            <ModalProposeReceiveIn
+                activeModalProposeReceiveIn={showModalPropose}
+                closeModalProposeReceiveIn={setShowModalPropose}
+                actionModalProposeReceiveIn={actionModalPropose}
+                makeModalProposeReceiveInDoing={setDone}
+                dataModalProposeReceiveIn={dataModalPropose}
             />
         </>
     )

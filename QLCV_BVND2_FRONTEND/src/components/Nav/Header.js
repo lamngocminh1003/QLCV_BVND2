@@ -10,12 +10,11 @@ import { handleLoginRedux, handleLogoutRedux } from "../redux/actions/userAction
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { MenuItem } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import NotifiIcon from './NotifiIcon';
 
 const Header = (props) => {
   const { user, logoutContext } = useContext(UserContext);
-  const [classActive, setClassActive] = useState(false);
 
   const location = useLocation();
   const history = useHistory();
@@ -26,8 +25,6 @@ const Header = (props) => {
     toast.success('Đăng xuất thành công!');
     history.push('/login-user');
   }
-
-  const classNameFunc = ({ isActive }) => (isActive ? "active_link" : "");
 
   if (user && user.isAuthenticated === true || location.pathname === '/') {
     return (
@@ -73,13 +70,10 @@ const Header = (props) => {
                     //hiện khi người login là trưởng phòng ở các phòng chức năng
                     return(
                       <>
-                        <NavDropdown title="Đề xuất nhận" className={classActive ? 'active' : ''} onClick={() => setClassActive(true)}>
-                          <MenuItem> 
-                            <NavLink exact to="/list-propose-recive-out-department" className="nav-link nav-link-item">Nhận từ phòng khoa</NavLink>
-                          </MenuItem>
-                          <MenuItem>
-                            <NavLink exact to="/list-propose-recive-in-department" className="nav-link nav-link-item">Nhận từ nhân viên</NavLink>
-                          </MenuItem>
+                        <NavDropdown title="Đề xuất nhận">
+                          <NavDropdown.Item as={NavLink} exact to="/list-propose-recive-out-department">Nhận từ phòng khoa</NavDropdown.Item> 
+                          <NavDropdown.Item as={NavLink} exact to="/list-propose-recive-in-department">Nhận từ nhân viên</NavDropdown.Item>
+                          
                         </NavDropdown>
                         <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
                       </>
@@ -137,7 +131,13 @@ const Header = (props) => {
                 })()}
               </Nav>
 
-              <Nav><NotifiIcon/></Nav>
+              <Nav>
+                {user && user.isAuthenticated === true ?
+                  <><NotifiIcon/></>
+                :
+                  null
+                }
+              </Nav>
 
               <Nav>
                 {user && user.isAuthenticated === true ?

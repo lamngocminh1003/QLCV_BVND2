@@ -97,8 +97,6 @@ function ListProposeSent() {
     const [actionModalPropose, setActionModalPropose] = useState('CREATE');
     const [done, setDone] = useState(false);
 
-    //config
-
     const btnActiveModalProposeActionCreate = () => {
         setActionModalPropose('CREATE');
         setShowModalPropose(true);
@@ -157,7 +155,7 @@ function ListProposeSent() {
                             </div>
 
                             <div className="row mt-2">
-                                <div className='px-0' style={{ display: "block", zIndex: "100" }}>
+                                <div className='px-0 col-6' style={{ display: "block"}}>
                                     <button className='btn btn-primary mt-1 mb-3 col-1 add-doc' style={{ paddingRight: "7.1rem" }} onClick={() => btnActiveModalProposeActionCreate()} ><i className="fa fa-plus i-add"></i>Gửi đề xuất</button>
                                 </div>
                                 <Box className="px-0 py-0 mt-2" sx={{ height: 'auto', width: '100%' }}>

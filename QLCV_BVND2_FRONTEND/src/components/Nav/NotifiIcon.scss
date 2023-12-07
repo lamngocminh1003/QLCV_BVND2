@@ -1,15 +1,22 @@
+.active{
+    color: #61dafb !important;
+}
+
 .notifiicon-bottom{
     z-index: 2;
     position: absolute;
-    transform: translate(-170px, 43px);
+    transform: translate(-120px, -5px);
+    border-radius: 0.35rem;
+    height: auto;
 }
 
-//hover item in notifiicon bottom
+//hover item in notifiicon bottom don't have component avt
 .css-bshv44-MuiButtonBase-root-MuiListItem-root:hover{
     border-radius: 10px!important;
     background-color: rgba(0, 0, 0, 0.1)!important;
 }
 
+//hover item in notifiicon bottom have component avt
 .css-1f57v5v-MuiButtonBase-root-MuiListItem-root:hover{
     border-radius: 10px!important;
     background-color: rgba(0, 0, 0, 0.1)!important;

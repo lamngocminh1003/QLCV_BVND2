@@ -79,7 +79,7 @@ const ModalPropose = (props) => {
         let response = await createPropose(dataModalProposeSent);
         if(response === 200){
             toast.success('Gửi đề xuất thành công!');
-            props.makeModalDoing(true); 
+            props.makeModalProposeSentDoing(true); 
             setDataModalProposeSent(dataProposeSentDefault);
         }else{
             toast.error('Đã có lỗi xảy ra ở server vui lòng liên hệ quản trị viên để kiểm tra lại!');
@@ -99,7 +99,7 @@ const ModalPropose = (props) => {
         let result = await createProposeByHeader(dataModalProposeSent, selectedDepartmentId);
         if(result === 200){
             toast.success('Gửi đề xuất thành công!');
-            props.makeModalDoing(true);
+            props.makeModalProposeSentDoing(true);
             setDataModalProposeSent(dataProposeSentDefault);
         }else{
             toast.error(result);

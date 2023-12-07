@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Box } from '@mui/material';
 //notifi icon
 import IconButton from '@mui/material/IconButton';
@@ -74,9 +74,9 @@ function NotifiIcon() {
     },
   ]
 
-  const urlImg = 'https://www.google.com/url?sa=i&url=http%3A%2F%2Fwww.benhviennhi.org.vn%2Fnews%2Fdetail%2F5496%2FY-nghia-cua-logo-benh-vien-nhi-dong-2.html&psig=AOvVaw35A7dJ7HtSzHk8cJzoNxmN&ust=1701963144694000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCMC9zPiQ-4IDFQAAAAAdAAAAABAY';
-
   const [showNotifiIconBottom, setShowNotifiIconBottom] = useState(false);
+  //config detect ref
+  const menuRef = useRef();
 
   const handleClick = () => {
 
@@ -86,52 +86,67 @@ function NotifiIcon() {
     showNotifiIconBottom ? setShowNotifiIconBottom(false) : setShowNotifiIconBottom(true)
   }
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if(!menuRef.current.contains(e.target)){
+        setShowNotifiIconBottom(false)
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside)
+
+    return() => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+  })
+
   return (
     <>
-      <div className='notifiicon-header'>
-        <Box>
-          <IconButton size="large" style={{color: 'white'}} onClick={() => clickToShowNotifiIconBottom()} >
-            <Badge badgeContent={17} color="error">
-                <NotificationsIcon sx={{overflow: 'auto'}}/>
-            </Badge>
-          </IconButton>
-        </Box>
-      </div>
+      <Box className='notifiicon' ref={menuRef}>
+        <div className='notifiicon-header' >
+          <Box>
+            <IconButton size="large" style={{color: 'white'}} onClick={() => clickToShowNotifiIconBottom()} className={showNotifiIconBottom ? 'active' : ''}>
+              <Badge badgeContent={17} color="error">
+                  <NotificationsIcon sx={{overflow: 'auto'}}/>
+              </Badge>
+            </IconButton>
+          </Box>
+        </div>
 
-      {showNotifiIconBottom ? 
-        <>
-          <div className='notifiicon-bottom'>
-            <Box sx={{ boxShadow: 2 }}>
-              <Paper square sx={{ borderRadius: '0.35rem', width: '360px', backgroundColor: 'white', overflow: 'auto', height: '43rem'}}>
-                <Typography variant="h5" className='py-2 text-dark' sx={{fontFamily: 'Inter, sans-serif', fontWeight: 'bolder', fontSize: '24.5px', marginLeft: '0.75rem'}}>Thông báo</Typography>
-                <Stack direction="row" sx={{ml: 1.5}} spacing={1}>
-                  {/* spacing dùng để giãn cách giữa các chip */}
-                  <Chip label="Đề xuất" variant="outlined" onClick={handleClick} />
-                  <Chip label="Bàn giao" variant="outlined" onClick={handleClick} />
-                  <Chip label="Công việc" variant="outlined" onClick={handleClick} />
-                  <Chip label="chưa biết" variant="outlined" onClick={handleClick} />
-                </Stack>
-                <List>
-                {dataNotifi.map(({ id, department, message }) => (
-                  <>
-                    <ListItem button alignItems="flex-start">
-                      <ListItemAvatar>
-                        <Avatar alt="Profile Picture" src={logo}/>
-                      </ListItemAvatar>
-                      <ListItemText sx={{marginTop: '0px'}} 
-                        primary={<><Typography sx={{ display: 'inline', fontSize: '1.1rem', color: '#000'}}>{`Đề xuất từ ${department}`}</Typography></>} 
-                        secondary={<><div className='message-notifi'>{message}</div></>}/>
-                    </ListItem>
-                  </>
-                ))}
-                </List>
-              </Paper>
-            </Box>
-          </div>
-        </>
-      : 
-        <></>
-      }
+        {showNotifiIconBottom ? 
+          <>
+            <div className='notifiicon-bottom'>
+              <Box sx={{ boxShadow: 2 }}>
+                <Paper square sx={{ width: '360px', backgroundColor: 'white', height: '91vh', overflow: 'auto'}}>
+                  <Typography variant="h5" className='py-2 text-dark' sx={{fontFamily: 'Inter, sans-serif', fontWeight: 'bolder', fontSize: '24.5px', marginLeft: '0.75rem'}}>Thông báo</Typography>
+                  <Stack direction="row" sx={{ml: 1.5}} spacing={1}>
+                    {/* spacing dùng để giãn cách giữa các chip */}
+                    <Chip label="Đề xuất" variant="outlined" onClick={handleClick} />
+                    <Chip label="Bàn giao" variant="outlined" onClick={handleClick} />
+                    <Chip label="Công việc" variant="outlined" onClick={handleClick} />
+                    <Chip label="Thảo luận" variant="outlined" onClick={handleClick} />
+                  </Stack>
+                  <List>
+                  {dataNotifi.map(({ id, department, message }) => (
+                    <>
+                      <ListItem button alignItems="flex-start">
+                        <ListItemAvatar>
+                          <Avatar alt="Profile Picture" src={logo}/>
+                        </ListItemAvatar>
+                        <ListItemText sx={{marginTop: '0px'}} 
+                          primary={<><Typography sx={{ display: 'inline', fontSize: '1.1rem', color: '#000'}}>{`Đề xuất từ ${department}`}</Typography></>} 
+                          secondary={<><div className='message-notifi'>{message}</div></>}/>
+                      </ListItem>
+                    </>
+                  ))}
+                  </List>
+                </Paper>
+              </Box>
+            </div>
+          </>
+        : 
+          null
+        }
+      </Box>
     </>
   )
 }

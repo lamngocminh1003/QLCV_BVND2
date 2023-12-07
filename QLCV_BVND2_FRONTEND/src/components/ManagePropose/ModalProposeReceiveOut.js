@@ -14,6 +14,7 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 //import api for propose
 import { updateProposeState, moveupProposeByHeader } from '../../services/proposeService';
+import { getAllDepartmentByType } from '../../services/departmentService';
 
 function ModalProposeReceive(props) {
     const { user, logoutContext } = useContext(UserContext);
@@ -35,7 +36,8 @@ function ModalProposeReceive(props) {
     }
 
     const [dataModalProposeReceive, setDataModalProposeReceive] = useState(dataModalProposeReceiveDefault);
-    const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
+    const [listDepartmentByType, setListDepartmentByType] = useState([]);
+    const [selectedDepartment, setSelectedDepartment] = useState([]);
 
     const handleOnchange = (value, inputName) => {
         let _dataModalProposeReceive = cloneDeep(dataModalProposeReceive);
@@ -44,15 +46,14 @@ function ModalProposeReceive(props) {
     }
  
     const handleChangeSelectedDepartment = (e, value) => {
-        setSelectedDepartmentId(value);
+        setSelectedDepartment(value);
     };
     
     const proposeCheck = async (dataModalProposeReceive) => {
         let response = await updateProposeState(dataModalProposeReceive, 3)
         if(response === 200){
             toast.success('Đã duyệt đề xuất!');
-            props.makeModalDoing(true);
-            props.close(false);
+            props.makeModalProposeReceiveOutDoing(true);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);
         }
     }
@@ -61,8 +62,7 @@ function ModalProposeReceive(props) {
         let response = await updateProposeState(dataModalProposeReceive, 1)
         if(response === 200){
             toast.error('Đã từ chối đề xuất!');
-            props.makeModalDoing(true);
-            props.close(false);
+            props.makeModalProposeReceiveOutDoing(true);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);
         }
     }
@@ -71,37 +71,40 @@ function ModalProposeReceive(props) {
         let response = await updateProposeState(dataModalProposeReceive, 2)
         if(response === 200){
             toast.warning('Đã trả đề xuất về!');
-            props.makeModalDoing(true);
-            props.close(false);
+            props.makeModalProposeReceiveOutDoing(true);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);
         }
     }
 
     const proposeMoveUp = async (dataModalProposeReceive) => {
-        let response = await moveupProposeByHeader(dataModalProposeReceive, selectedDepartmentId.idPhongKhoa)
+        let response = await moveupProposeByHeader(dataModalProposeReceive, selectedDepartment.department_ID)
         if(response === 200){
-            toast.info(`Đã chuyển đề xuất lên! ${selectedDepartmentId.tenPhongKhoa}`);
-            props.makeModalDoing(true);
-            props.close(false);
+            toast.info(`Đã chuyển đề xuất lên ${selectedDepartment.department_Name}!`);
+            props.makeModalProposeReceiveOutDoing(true);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);
         }
     }
 
     const handleHideModal = () => {
-        props.close(false);
+        props.closeModalProposeReceiveOut(false);
         setDataModalProposeReceive(dataModalProposeReceiveDefault);
     }
 
+    const getDepartmentByType = async () => {
+        let resultListDepartment = await getAllDepartmentByType(2);
+        if(resultListDepartment.length !== 0){
+            setListDepartmentByType(resultListDepartment);
+        }   
+    } 
+
     useEffect(() => {
-        if(props.actionModal === "INFO"){
-            setDataModalProposeReceive({...props.dataModalPropose});
-        }
-    }, [props.dataModalPropose])
+        setDataModalProposeReceive({...props.dataModalProposeReceiveOut});
+    }, [props.dataModalProposeReceiveOut])
 
     return (
         <>
             <div>
-                <Modal show={props.active} onHide={() => handleHideModal()} size='lg' className='mt-4'>
+                <Modal show={props.activeModalProposeReceiveOut} onHide={() => handleHideModal()} size='lg' className='mt-4'>
                     <Modal.Header closeButton>
                         <Modal.Title><div className='text-primary text-uppercase'>Thông tin đề xuất</div></Modal.Title>
                     </Modal.Header>
@@ -134,8 +137,8 @@ function ModalProposeReceive(props) {
                                                     <div className="col-sm-12 mt-3 mb-3">
                                                         <Typography variant='body1' fontSize={17} color='FireBrick'>Gửi lên phòng chức năng</Typography>
                                                         <Autocomplete
-                                                            options={dataPhongChucNang}
-                                                            getOptionLabel={(option) => option.tenPhongKhoa}
+                                                            options={listDepartmentByType}
+                                                            getOptionLabel={(option) => option.department_Name}
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
                                                                 <Checkbox
@@ -144,7 +147,7 @@ function ModalProposeReceive(props) {
                                                                     style={{ marginRight: 8 }}
                                                                     checked={selected}
                                                                 />
-                                                                {option.tenPhongKhoa}
+                                                                {option.department_Name}
                                                                 </li>
                                                             )}
                                                             style={{ width: 718 }}
@@ -207,48 +210,5 @@ function ModalProposeReceive(props) {
         </>
     )
 }
-
-const dataPhongChucNang = [
-    {
-        "idPhongKhoa": 'KHTH',
-        "tenPhongKhoa": "Phòng Kế hoạch tổng hợp"
-    },
-    {
-        "idPhongKhoa": 'TCCB',
-        "tenPhongKhoa": "Phòng Tổ chức cán bộ"
-    },
-    {
-        "idPhongKhoa": 'TCKT',
-        "tenPhongKhoa": "Phòng Tài chính kế toán"
-    },
-    {
-        "idPhongKhoa": 'HCQT',
-        "tenPhongKhoa": "Phòng Hành chính quản trị"
-    },
-    {
-        "idPhongKhoa": 'ĐD',
-        "tenPhongKhoa": "Phòng Điều dưỡng"
-    },
-    {
-        "idPhongKhoa": 'CNTT',
-        "tenPhongKhoa": "Phòng Công nghệ thông tin"
-    },
-    {
-        "idPhongKhoa": 'QLCL',
-        "tenPhongKhoa": "Phòng Quản lý chất lượng"
-    },
-    {
-        "idPhongKhoa": 'CĐT',
-        "tenPhongKhoa": "Phòng Chỉ đạo tuyến"
-    },
-    {
-        "idPhongKhoa": 'VTYT',
-        "tenPhongKhoa": "Phòng Vật tư, trang thiết bị y tế"
-    },
-    {
-        "idPhongKhoa": 'CTXH',
-        "tenPhongKhoa": "Phòng Công tác xã hội"
-    },
-];
 
 export default ModalProposeReceive
