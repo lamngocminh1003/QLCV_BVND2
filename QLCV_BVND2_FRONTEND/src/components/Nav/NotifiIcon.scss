@@ -7,11 +7,28 @@
     position: absolute;
     transform: translate(-120px, -5px);
     border-radius: 0.45rem;
-    height: 91.5vh;   
+    height: 55.9rem;   
     width: 360px;
     background-color: #fff;
     box-shadow: rgba(0, 0, 0, 0.30) 0px 5px 15px;
-    overflow: hidden;
+
+    #notifiicon-bottom-box:active::-webkit-scrollbar-thumb,
+    #notifiicon-bottom-box:focus::-webkit-scrollbar-thumb,
+    #notifiicon-bottom-box:hover::-webkit-scrollbar-thumb
+    {
+        //visibility: hidden;
+        visibility: visible;
+    }   
+
+    #notifiicon-bottom-box::-webkit-scrollbar-thumb{
+        background-color: darkgrey;
+        visibility: hidden;
+        border-radius: 0.45rem;
+    }
+
+    #notifiicon-bottom-box::-webkit-scrollbar{
+        width: 7px;
+    }
 }
 
 //hover item in notifiicon bottom don't have component avt
@@ -29,6 +46,6 @@
 .message-notifi{
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 4; /* number of lines to show */
+    -webkit-line-clamp: 3; /* number of lines to show */
     -webkit-box-orient: vertical;
 }

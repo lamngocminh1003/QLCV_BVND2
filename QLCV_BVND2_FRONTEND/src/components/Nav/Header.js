@@ -19,6 +19,8 @@ const Header = (props) => {
   const location = useLocation();
   const history = useHistory();
 
+  const [isRightPath, setIsRightPath] = useState(false);
+
   const handleLogout = async () => {
     localStorage.removeItem('jwt'); //xóa localStorage
     logoutContext();
@@ -49,7 +51,7 @@ const Header = (props) => {
                   <></>
                 }
 
-                {user && user.isAuthenticated === true && user.account.departmentId === 'HCQT'  ?
+                {user && user.isAuthenticated === true && user.account.departmentId === 'HCQT' ?
                   <>
                     <NavLink to="/list-doc" className="nav-link">Văn bản</NavLink>
                   </>
@@ -57,40 +59,39 @@ const Header = (props) => {
                   <></>
                 }
 
-                {user && user.isAuthenticated === true ? 
-                <>
-                  <NavLink exact to="/list-propose-sent" className="nav-link">Đề xuất gửi</NavLink>
-                </> 
-                : 
-                <></>
+                {user && user.isAuthenticated === true ?
+                  <>
+                    <NavLink exact to="/list-propose-sent" className="nav-link">Đề xuất gửi</NavLink>
+                  </>
+                  :
+                  <></>
                 }
 
                 {(() => {
-                  if(user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead && user.account.departmentType === 2){
+                  if (user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead && user.account.departmentType === 2) {
                     //hiện khi người login là trưởng phòng ở các phòng chức năng
-                    return(
+                    return (
                       <>
-                        <NavDropdown title="Đề xuất nhận">
-                          <NavDropdown.Item as={NavLink} exact to="/list-propose-recive-out-department">Nhận từ phòng khoa</NavDropdown.Item> 
+                        <NavDropdown title="Đề xuất nhận" className={location.pathname === '/list-propose-recive-out-department' || location.pathname === '/list-propose-recive-in-department' ? 'active' : ''}>
+                          <NavDropdown.Item as={NavLink} exact to="/list-propose-recive-out-department">Nhận từ phòng khoa</NavDropdown.Item>
                           <NavDropdown.Item as={NavLink} exact to="/list-propose-recive-in-department">Nhận từ nhân viên</NavDropdown.Item>
-                          
                         </NavDropdown>
                         <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
                       </>
                     )
                   }
-                  else if(user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead && user.account.departmentType === 3){
+                  else if (user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead && user.account.departmentType === 3) {
                     //hiện khi người login là trưởng phòng ở các khoa bình thường
-                    return(
+                    return (
                       <>
                         <NavLink exact to="/list-propose-recive-in-department" className="nav-link">Đề xuất nhận</NavLink>
                         <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
                       </>
                     )
                   }
-                  else{
+                  else {
                     //hiện khi người login là nhân viên ở các khoa bình thường lẫn các phòng chức năng
-                    return(
+                    return (
                       null
                     )
                   }
@@ -98,7 +99,7 @@ const Header = (props) => {
 
                 {(() => {
                   if (user && user.isAuthenticated === true && user.account.departmentId === 'GD'
-                  || user && user.isAuthenticated === true && user.account.departmentId === 'HCQT') {
+                    || user && user.isAuthenticated === true && user.account.departmentId === 'HCQT') {
                     return (
                       <></>
                     )
@@ -113,9 +114,9 @@ const Header = (props) => {
                       <></>
                     )
                   }
-                  else if(user && user.isAuthenticated === true && user.account.departmentName !== 'GD' && user.account.userId === user.account.departmentHead
-                  || user && user.isAuthenticated === true && user.account.departmentName !== 'HCQT' && user.account.userId === user.account.departmentHead ) {
-                    return(
+                  else if (user && user.isAuthenticated === true && user.account.departmentName !== 'GD' && user.account.userId === user.account.departmentHead
+                    || user && user.isAuthenticated === true && user.account.departmentName !== 'HCQT' && user.account.userId === user.account.departmentHead) {
+                    return (
                       //hiện khi người login là trưởng phòng của các khoa
                       <>
                         <NavLink exact to="/list-doc-department" className="nav-link">Văn bản</NavLink>
@@ -133,8 +134,8 @@ const Header = (props) => {
 
               <Nav>
                 {user && user.isAuthenticated === true ?
-                  <><NotifiIcon/></>
-                :
+                  <><NotifiIcon /></>
+                  :
                   null
                 }
               </Nav>

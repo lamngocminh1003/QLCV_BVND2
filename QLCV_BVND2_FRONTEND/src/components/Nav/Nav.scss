@@ -23,7 +23,7 @@
                 &.active{
                     color: #61dafb !important;
                 }
-            }&:hover {
+            }&:hover,&:active {
                 color: #61dafb !important;
             }
         }
@@ -36,15 +36,9 @@
     {   
         a{
             color: #212529 !important
-        }      
-    }
-}
-
-//dropdown menu 1
-#dropdown-menu-1{
-    &.show{
-        &.nav-link{
-            color: #61dafb !important;
+        }
+        .dropdown-item.active{
+            background-color: #fff!important;
         }
     }
 }

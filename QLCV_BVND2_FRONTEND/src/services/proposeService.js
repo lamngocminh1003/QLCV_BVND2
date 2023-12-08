@@ -3,49 +3,49 @@ import axios from "axios";
 const backendURL = 'http://146.190.89.3:9090';
 
 const createConfig = () => {
-  const token = localStorage.getItem("jwt");
-  // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  return config;
+    const token = localStorage.getItem("jwt");
+    // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    };
+    return config;
 }
 
 const createPropose = async (dataObj) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`, 
-    dataObj.proposeFile, {
+    return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`,
+        dataObj.proposeFile, {
         headers: {
             "content-type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
-          }
+        }
+    })
+        .then(function (response) {
+            return response.status
         })
-    .then(function(response){
-        return response.status
-    })
-    .catch(function(error){
-        return error.response.status
-    })
+        .catch(function (error) {
+            return error.response.status
+        })
 }
 
 const createProposeByHeader = async (dataObj, idDepartment) => {
     const token = localStorage.getItem("jwt");
     return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}
-    &DepartmentIdReceive=${idDepartment}`, 
-    dataObj.proposeFile, {
+    &DepartmentIdReceive=${idDepartment}`,
+        dataObj.proposeFile, {
         headers: {
             "content-type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
-          }
+        }
+    })
+        .then(function (response) {
+            return response.status
         })
-    .then(function(response){
-        return response.status
-    })
-    .catch(function(error){
-        return error.response.data
-    })
+        .catch(function (error) {
+            return error.response.data
+        })
 }
 
 const moveupProposeByHeader = async (dataObj, idDepartment) => {
@@ -55,62 +55,84 @@ const moveupProposeByHeader = async (dataObj, idDepartment) => {
         headers: {
             "content-type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
-          }
+        }
+    })
+        .then(function (response) {
+            return response.status
         })
-    .then(function(response){
-        return response.status
-    })
-    .catch(function(error){
-        return error.response.status
-    })
-}   
+        .catch(function (error) {
+            return error.response.status
+        })
+}
 
 const getProposeSend = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocSendByUserLogin`, config)
-    .then(function(response){
-        return response.data
-    })
-    .catch(function(error){
-        return error.response.status
-    })
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
 }
 
 const getProposeReceiveIn = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocReceiveInDepartment`, config)
-    .then(function(response){
-        return response.data
-    })
-    .catch(function(error){
-        return error.response.status
-    })
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
 }
 
 const getProposeReceiveOut = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocReceiveOutDepartment`, config)
-    .then(function(response){
-        return response.data
-    })
-    .catch(function(error){
-        return error.response.status
-    })
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
+const getProposeReceiveNotification = async () => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/DocumentIncomming/GetListDocReceiveByUserNotification`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
 }
 
 const updateProposeState = async (dataObj, state) => {
     const config = createConfig();
     return await axios.put(`${backendURL}/api/DocumentIncomming/UpdateState?docId=${dataObj.document_Incomming_Id}&state=${state}&Comment=${dataObj.document_Incomming_Comment}`, '', config)
-    .then(function(response){
-        return response.status
-    })
-    .catch(function(error){
-        return error.response.status
-    })
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
+const updateProposeStateSeen = async (proposeId) => {
+    const config = createConfig();
+    return await axios.put(`${backendURL}/api/DocumentIncomming/UpdateSeenTrue/${proposeId}`, '', config)
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
 }
 
 export {
     createPropose, createProposeByHeader, moveupProposeByHeader,
-    getProposeSend, getProposeReceiveIn, getProposeReceiveOut, 
-    updateProposeState, 
+    getProposeSend, getProposeReceiveIn, getProposeReceiveOut, getProposeReceiveNotification,
+    updateProposeState, updateProposeStateSeen
 };
