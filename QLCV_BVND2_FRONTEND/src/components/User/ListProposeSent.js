@@ -55,7 +55,7 @@ function ListProposeSent() {
     //config datagrid columns name
     const columns = [
         { field: "stt", headerName: "STT", width: 100, valueGetter: (params) => params.row.stt },
-        { field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 320 },
+        { field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 205 },
         { field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 420, renderCell: (params) => <ExpandableCell {...params} /> },
         { field: "deparment_NameReceive", headerName: "Nơi nhận", width: 125 },
         { field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 190, valueFormatter: (params) => moment(params.value).format('llll') },
@@ -89,7 +89,7 @@ function ListProposeSent() {
             }
         },
         {
-            field: "department_Location", headerName: "Vị trí", width: 162, renderCell: (params) => {
+            field: "department_Location", headerName: "Vị trí", width: 150, renderCell: (params) => {
                 if (params.row.department_Location === null) {
                     return ("");
                 }

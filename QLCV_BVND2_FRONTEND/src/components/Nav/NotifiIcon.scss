@@ -2,12 +2,23 @@
     color: #61dafb !important;
 }
 
+//chip
+.MuiChip-labelMedium{
+    font-size: 13.2px;
+    color: rgb(5, 5, 5);
+    font-family: 'DM Sans', sans-serif;
+}
+
+// .active-type-chip{
+
+//     background-color: rgba(29, 133, 252, 0.2); //hover
+// }
+
 .notifiicon-bottom{
     z-index: 2;
     position: absolute;
     transform: translate(-120px, -5px);
     border-radius: 0.45rem;
-    height: 55.9rem;   
     width: 360px;
     background-color: #fff;
     box-shadow: rgba(0, 0, 0, 0.30) 0px 5px 15px;
@@ -24,10 +35,11 @@
         background-color: darkgrey;
         visibility: hidden;
         border-radius: 0.45rem;
+        height: 26vh;
     }
 
     #notifiicon-bottom-box::-webkit-scrollbar{
-        width: 7px;
+        width: 6px;
     }
 }
 

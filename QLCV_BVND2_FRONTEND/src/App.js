@@ -1,5 +1,5 @@
 import "./App.scss";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, Zoom } from "react-toastify";
 import React, { useEffect, useState, useContext } from "react";
 import Header from "./components/Nav/Header";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -36,7 +36,7 @@ function App() {
         }
 
         <ToastContainer
-          position="top-right"
+          position="bottom-center"
           autoClose={5000}
           hideProgressBar={false}
           newestOnTop={false}
@@ -45,7 +45,8 @@ function App() {
           pauseOnFocusLoss
           draggable
           pauseOnHover
-          theme="light"
+          theme="dark"
+          transition={Zoom}
         />
 
       </Router>
