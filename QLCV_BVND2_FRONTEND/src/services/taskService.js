@@ -24,6 +24,18 @@ const getTaskReceiveNotification = async () => {
         })
 }
 
+const updateTaskStateSeen = async (taskId) => {
+    const config = createConfig();
+    return await axios.put(`${backendURL}/api/Task/UpdateSendTaskTrue?TaskId=${taskId}`, '', config)
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 export {
-    getTaskReceiveNotification
+    getTaskReceiveNotification,
+    updateTaskStateSeen,
 };

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { fetchUserList, deleteUserById } from '../../services/userService';
 import ModalDeleteUser from '../ManageUsers/ModalDeleteUser';
 import ModalUser from '../ManageUsers/ModalUser';
 import ReactPaginate from 'react-paginate';
@@ -31,12 +30,7 @@ const ListUser = (props) => {
     }, [currentPage])
 
     const fetchUsers = async () => {
-        let response = await fetchUserList(currentPage, currentLimit);
-        if (response && response.EC === 0) {
-            setTotalPages(response.DT.totalPages)
-            setListUsers(response.DT.userList)
-            // console.log(response);
-        }
+
     }
 
     const handlePageClick = (event) => {
@@ -70,15 +64,15 @@ const ListUser = (props) => {
 
     //đồng ý xóa user
     const handleConfirmDeleteUser = async () => {
-        let response = await deleteUserById(dataModal)
-        if (response && response.data.EC === 0) {
-            toast.success(response.data.EM)
-            await fetchUsers();
-            setIsShowModalDelete(false);
-        }
-        else {
-            toast.error(response.data.EM)
-        }
+        // let response = await deleteUserById(dataModal)
+        // if (response && response.data.EC === 0) {
+        //     toast.success(response.data.EM)
+        //     await fetchUsers();
+        //     setIsShowModalDelete(false);
+        // }
+        // else {
+        //     toast.error(response.data.EM)
+        // }
     }
 
     return (
@@ -106,47 +100,47 @@ const ListUser = (props) => {
                     </div>
                     <div className='user-body'>
                         <div className="row">
-                        {listUsers && listUsers.length > 0 ?
-                            <table className="table table-hover table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope='col'>STT</th>
-                                        <th scope="col">Họ tên</th>
-                                        <th scope="col">Tên người dùng</th>
-                                        <th scope="col">Số điện thoại</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Vai trò</th>
-                                        <th scope="col">Vị trí</th>
-                                        <th scope="col">Khoa phòng</th>
-                                        <th scope="col">Thao tác</th>
-                                    </tr>
-                                </thead>  
-                                <tbody>
-                                    <>
-                                        {listUsers.map((itemUserList, indexUserList) => {
-                                            return (
-                                                <tr key={`row-${indexUserList}`}>
-                                                    <td>{(currentPage - 1) * currentLimit + indexUserList + 1}</td>
-                                                    <td>{itemUserList.fullName}</td>
-                                                    <td>{itemUserList.userName}</td>
-                                                    <td>{itemUserList.phone}</td>
-                                                    <td>{itemUserList.email}</td>
-                                                    <td>{itemUserList.role ? itemUserList.role.roleName : ''}</td>
-                                                    <td>{itemUserList.position ? itemUserList.position.positionName : ''}</td>
-                                                    <td>{itemUserList.department ? itemUserList.department.departmentName : ''}</td>
-                                                    <td>
-                                                        <button className="btn btn-warning" onClick={() => btnEditUserFunc(itemUserList)}> <i className="fa-solid fa-pen-to-square text-white"></i></button>
-                                                        <button className="btn btn-danger mx-2" onClick={() => btnDeleteFunc(itemUserList)}> <i className="fa-solid fa-trash"></i></button>
-                                                    </td>
-                                                </tr>
-                                            )
-                                        })}
-                                    </>
-                                </tbody>
-                            </table>
-                        :
-                            <><Typography variant='body1' fontSize={17} color='black' className='text-center'>Không tìm thấy danh sách người dùng, hãy thêm mới!</Typography></>
-                        }
+                            {listUsers && listUsers.length > 0 ?
+                                <table className="table table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope='col'>STT</th>
+                                            <th scope="col">Họ tên</th>
+                                            <th scope="col">Tên người dùng</th>
+                                            <th scope="col">Số điện thoại</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Vai trò</th>
+                                            <th scope="col">Vị trí</th>
+                                            <th scope="col">Khoa phòng</th>
+                                            <th scope="col">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <>
+                                            {listUsers.map((itemUserList, indexUserList) => {
+                                                return (
+                                                    <tr key={`row-${indexUserList}`}>
+                                                        <td>{(currentPage - 1) * currentLimit + indexUserList + 1}</td>
+                                                        <td>{itemUserList.fullName}</td>
+                                                        <td>{itemUserList.userName}</td>
+                                                        <td>{itemUserList.phone}</td>
+                                                        <td>{itemUserList.email}</td>
+                                                        <td>{itemUserList.role ? itemUserList.role.roleName : ''}</td>
+                                                        <td>{itemUserList.position ? itemUserList.position.positionName : ''}</td>
+                                                        <td>{itemUserList.department ? itemUserList.department.departmentName : ''}</td>
+                                                        <td>
+                                                            <button className="btn btn-warning" onClick={() => btnEditUserFunc(itemUserList)}> <i className="fa-solid fa-pen-to-square text-white"></i></button>
+                                                            <button className="btn btn-danger mx-2" onClick={() => btnDeleteFunc(itemUserList)}> <i className="fa-solid fa-trash"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })}
+                                        </>
+                                    </tbody>
+                                </table>
+                                :
+                                <><Typography variant='body1' fontSize={17} color='black' className='text-center'>Không tìm thấy danh sách người dùng, hãy thêm mới!</Typography></>
+                            }
                         </div>
                     </div>
                     {totalPages > 0 &&

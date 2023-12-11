@@ -24,6 +24,18 @@ const getDisscussReceiveNotification = async () => {
         })
 }
 
+const updateDiscussStateSeen = async (taskId) => {
+    const config = createConfig();
+    return await axios.put(`${backendURL}/api/Task/UpdateSendDiscussTrue?TaskId=${taskId}`, '', config)
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 export {
-    getDisscussReceiveNotification
+    getDisscussReceiveNotification,
+    updateDiscussStateSeen
 };

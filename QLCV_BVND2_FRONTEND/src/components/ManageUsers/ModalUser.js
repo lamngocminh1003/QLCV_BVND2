@@ -1,7 +1,6 @@
 import React from 'react'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { fetchRoleList, fetchPositionList, fetchDepartmentList, createNewUser, updateUserById } from '../../services/userService';
 import { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import _, { update } from "lodash";
@@ -55,33 +54,33 @@ const ModalUser = (props) => {
     }, [dataModalUser])
 
     const getListRole = async () => {
-        let resListRole = await fetchRoleList();
-        if (resListRole && resListRole.EC === 0) {
-            setListRole(resListRole.DT)
-        }
-        else {
-            toast.error(resListRole.EM)
-        }
+        // let resListRole = await fetchRoleList();
+        // if (resListRole && resListRole.EC === 0) {
+        //     setListRole(resListRole.DT)
+        // }
+        // else {
+        //     toast.error(resListRole.EM)
+        // }
     }
 
     const getListPosition = async () => {
-        let resListPosition = await fetchPositionList();
-        if (resListPosition && resListPosition.EC === 0) {
-            setListPosition(resListPosition.DT);
-        }
-        else {
-            toast.error(resListPosition.EM);
-        }
+        // let resListPosition = await fetchPositionList();
+        // if (resListPosition && resListPosition.EC === 0) {
+        //     setListPosition(resListPosition.DT);
+        // }
+        // else {
+        //     toast.error(resListPosition.EM);
+        // }
     }
 
     const getListDepartment = async () => {
-        let resListDepartment = await fetchDepartmentList();
-        if (resListDepartment && resListDepartment.EC === 0) {
-            setDepartment(resListDepartment.DT)
-        }
-        else {
-            toast.error(resListDepartment.EM);
-        }
+        // let resListDepartment = await fetchDepartmentList();
+        // if (resListDepartment && resListDepartment.EC === 0) {
+        //     setDepartment(resListDepartment.DT)
+        // }
+        // else {
+        //     toast.error(resListDepartment.EM);
+        // }
     }
 
     const handleOnchangeForm = (value, inputName) => {
@@ -193,37 +192,37 @@ const ModalUser = (props) => {
     }
 
     const handleBtnSubmit = async () => {
-        let check = checkValidateInput();
-        if (check === true) {
-            if (setActionModalUser === 'CREATE') {
-                let response = await createNewUser(userDataDefault)
-                if (response.EC === 1) {
-                    toast.warning(response.EM);
-                }
-                else if (response.EC === 2) {
-                    toast.error(response.EM);
-                }
-                else {
-                    toast.success(response.EM);
-                    props.onHide();
-                    setuserDataDefault(defaultUserData);
-                }
-            }
-            else {
-                let response = await updateUserById(userDataDefault)
-                if (response.EC === 1) {
-                    toast.warning(response.EM);
-                }
-                else if (response.EC === 2) {
-                    toast.error(response.EM);
-                }
-                else {
-                    toast.success(response.EM);
-                    props.onHide();
-                    setuserDataDefault(defaultUserData);
-                }
-            }
-        }
+        // let check = checkValidateInput();
+        // if (check === true) {
+        //     if (setActionModalUser === 'CREATE') {
+        //         let response = await createNewUser(userDataDefault)
+        //         if (response.EC === 1) {
+        //             toast.warning(response.EM);
+        //         }
+        //         else if (response.EC === 2) {
+        //             toast.error(response.EM);
+        //         }
+        //         else {
+        //             toast.success(response.EM);
+        //             props.onHide();
+        //             setuserDataDefault(defaultUserData);
+        //         }
+        //     }
+        //     else {
+        //         let response = await updateUserById(userDataDefault)
+        //         if (response.EC === 1) {
+        //             toast.warning(response.EM);
+        //         }
+        //         else if (response.EC === 2) {
+        //             toast.error(response.EM);
+        //         }
+        //         else {
+        //             toast.success(response.EM);
+        //             props.onHide();
+        //             setuserDataDefault(defaultUserData);
+        //         }
+        //     }
+        // }
     }
 
     const handleCloseModalUser = () => {

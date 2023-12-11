@@ -23,8 +23,8 @@ import logo from "../../assets/image/logo.png";
 import { getTotalNotification } from "../../services/userService";
 import { getProposeReceiveNotification, updateProposeStateSeen, } from "../../services/proposeService";
 import { getHandOverNotification, updateHandOverStateSeen } from "../../services/handoverService";
-import { getTaskReceiveNotification } from "../../services/taskService";
-import { getDisscussReceiveNotification } from "../../services/discussService";
+import { getTaskReceiveNotification, updateTaskStateSeen } from "../../services/taskService";
+import { getDisscussReceiveNotification, updateDiscussStateSeen } from "../../services/discussService";
 
 //cdn
 <style>
@@ -38,6 +38,7 @@ function NotifiIcon() {
   const [notificationType, setNotificationType] = useState("UNSET");
   const [showNotifiIconBottom, setShowNotifiIconBottom] = useState(false);
   const [getData, checkGetData] = useState(false);
+  const [doSomething, setDoSomething] = useState(false);
 
   //config detect ref
   const menuRef = useRef();
@@ -68,32 +69,56 @@ function NotifiIcon() {
     let listProposeNotSeen = await getProposeReceiveNotification();
     setDataNotification(listProposeNotSeen);
     checkGetData(true);
+    setDoSomething(false);
   };
 
   const getHandOverNotificationFunc = async () => {
     let listHandOverNotSeen = await getHandOverNotification();
     setDataNotification(listHandOverNotSeen);
     checkGetData(true);
+    setDoSomething(false);
   };
 
   const getTaskNotificationFunc = async () => {
     let listTask = await getTaskReceiveNotification();
     setDataNotification(listTask);
     checkGetData(true);
+    setDoSomething(false);
   }
 
   const getDiscussNotificationFunc = async () => {
     let listDiscuss = await getDisscussReceiveNotification();
     setDataNotification(listDiscuss);
     checkGetData(true);
+    setDoSomething(false);
   }
 
   const updateStateProposeSeen = async (proposeId) => {
-    await updateProposeStateSeen(proposeId);
+    let response = await updateProposeStateSeen(proposeId);
+    if (response === 200) {
+      setDoSomething(true);
+    }
   };
 
   const updateStateHandoverSeen = async (handoverId) => {
-    await updateHandOverStateSeen(handoverId);
+    let response = await updateHandOverStateSeen(handoverId);
+    if (response === 200) {
+      setDoSomething(true);
+    }
+  }
+
+  const updateTaskSeen = async (taskId) => {
+    let response = await updateTaskStateSeen(taskId);
+    if (response === 200) {
+      setDoSomething(true);
+    }
+  }
+
+  const updateDiscussSeen = async (taskId) => {
+    let response = await updateDiscussStateSeen(taskId);
+    if (response === 200) {
+      setDoSomething(true);
+    }
   }
 
   useEffect(() => {
@@ -123,7 +148,7 @@ function NotifiIcon() {
       getTotalNotificationFunc();
       getDiscussNotificationFunc();
     }
-  }, [notificationType]);
+  }, [notificationType, doSomething]);
 
   useEffect(() => {
     getTotalNotificationFunc();
@@ -145,7 +170,7 @@ function NotifiIcon() {
         {/* ẩn, hiện bottom của icon */}
         {showNotifiIconBottom ?
           <div className='notifiicon-bottom'>
-            <div id="notifiicon-bottom-box" style={{ overflowY: "auto", height: "92vh" }}>
+            <div id="notifiicon-bottom-box" style={{ overflowY: "auto", height: "92.2vh" }}>
               <Typography variant="h5" className="py-2 text-dark" sx={{ fontFamily: "Inter, sans-serif", fontWeight: "bolder", fontSize: "24.5px", marginLeft: "0.75rem", }}>Thông báo</Typography>
               <Stack direction="row" sx={{ ml: 1.2, mt: 0.3 }} spacing={1}>
                 {/* spacing dùng để giãn cách giữa các chip */} {/* hiện thông tổng số thông báo */}
@@ -286,7 +311,7 @@ function NotifiIcon() {
                           return (
                             Object.entries(dataNotification.task).map(([itemKey, itemValue]) => {
                               return (
-                                <ListItem button alignItems="flex-start" onClick={() => updateStateProposeSeen(itemValue.task_Id)}>
+                                <ListItem button alignItems="flex-start" onClick={() => updateTaskSeen(itemValue.task_Id)}>
                                   <ListItemAvatar><Avatar alt="Profile Picture" src={logo} /></ListItemAvatar>
                                   <ListItemText
                                     sx={{ marginTop: "0px" }}
@@ -330,7 +355,7 @@ function NotifiIcon() {
                           return (
                             Object.entries(dataNotification.discuss).map(([itemKey, itemValue]) => {
                               return (
-                                <ListItem button alignItems="flex-start" onClick={() => updateStateProposeSeen(itemValue.discuss_Task)}>
+                                <ListItem button alignItems="flex-start" onClick={() => updateDiscussSeen(itemValue.discuss_Task)}>
                                   <ListItemAvatar><Avatar alt="Profile Picture" src={logo} /></ListItemAvatar>
                                   <ListItemText
                                     sx={{ marginTop: "0px" }}
