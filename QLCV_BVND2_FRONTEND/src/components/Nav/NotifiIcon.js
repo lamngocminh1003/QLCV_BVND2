@@ -20,11 +20,11 @@ import Skeleton from "@mui/material/Skeleton";
 import "./NotifiIcon.scss";
 import logo from "../../assets/image/logo.png";
 //api
-import {
-  getProposeReceiveNotification,
-  updateProposeStateSeen,
-} from "../../services/proposeService";
-import { getHandOverNotification } from "../../services/handoverService";
+import { getTotalNotification } from "../../services/userService";
+import { getProposeReceiveNotification, updateProposeStateSeen, } from "../../services/proposeService";
+import { getHandOverNotification, updateHandOverStateSeen } from "../../services/handoverService";
+import { getTaskReceiveNotification } from "../../services/taskService";
+import { getDisscussReceiveNotification } from "../../services/discussService";
 
 //cdn
 <style>
@@ -32,11 +32,10 @@ import { getHandOverNotification } from "../../services/handoverService";
 </style>
 
 function NotifiIcon() {
+
   const [dataNotification, setDataNotification] = useState({});
-  const [notificationType, setNotificationType] = useState("NOTOPEN");
-  const [chipType, setChipType] = useState("UNSET");
-  const [chipPropose, setChipPropose] = useState(true);
-  const [chipHandOver, setChipHandOver] = useState(false);
+  const [totalNotificationEach, setTotalNotification] = useState({});
+  const [notificationType, setNotificationType] = useState("UNSET");
   const [showNotifiIconBottom, setShowNotifiIconBottom] = useState(false);
   const [getData, checkGetData] = useState(false);
 
@@ -51,10 +50,19 @@ function NotifiIcon() {
   });
 
   const clickToShowNotifiIconBottom = () => {
-    showNotifiIconBottom ? setShowNotifiIconBottom(false) : setShowNotifiIconBottom(true);
-    setNotificationType("PROPOSE");
-    setChipType("CHIP PROPOSE");
+    if (showNotifiIconBottom === false) {
+      setShowNotifiIconBottom(true);
+      setNotificationType("PROPOSE");
+    } else {
+      setShowNotifiIconBottom(false);
+      setNotificationType("UNSET");
+    }
   };
+
+  const getTotalNotificationFunc = async () => {
+    let listTotal = await getTotalNotification();
+    setTotalNotification(listTotal);
+  }
 
   const getProposeReceiveNotificationFunc = async () => {
     let listProposeNotSeen = await getProposeReceiveNotification();
@@ -68,9 +76,25 @@ function NotifiIcon() {
     checkGetData(true);
   };
 
+  const getTaskNotificationFunc = async () => {
+    let listTask = await getTaskReceiveNotification();
+    setDataNotification(listTask);
+    checkGetData(true);
+  }
+
+  const getDiscussNotificationFunc = async () => {
+    let listDiscuss = await getDisscussReceiveNotification();
+    setDataNotification(listDiscuss);
+    checkGetData(true);
+  }
+
   const updateStateProposeSeen = async (proposeId) => {
     await updateProposeStateSeen(proposeId);
   };
+
+  const updateStateHandoverSeen = async (handoverId) => {
+    await updateHandOverStateSeen(handoverId);
+  }
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -87,18 +111,23 @@ function NotifiIcon() {
 
   useEffect(() => {
     if (notificationType === "PROPOSE") {
+      getTotalNotificationFunc();
       getProposeReceiveNotificationFunc();
     } else if (notificationType === "HANDOVER") {
+      getTotalNotificationFunc();
       getHandOverNotificationFunc();
+    } else if (notificationType === "TASK") {
+      getTotalNotificationFunc();
+      getTaskNotificationFunc();
+    } else if (notificationType === "DISCUSS") {
+      getTotalNotificationFunc();
+      getDiscussNotificationFunc();
     }
   }, [notificationType]);
 
-  // console.log(Array.isArray(dataNotification))
-  // console.log(Object.prototype.toString.call(dataNotification))
-  //   color={chipType === "CHIP PROPOSE" ? "secondary" : null} variant={chipType === "CHIP PROPOSE" ? "filled" : "outlined"}
-  // color={chipType === "CHIP HANDOVER" ? "secondary" : null} variant={chipType === "CHIP HANDOVER" ? "filled" : "outlined"} 
-  //  color={chipType === "CHIP TASK" ? "secondary" : null} variant={chipType === "CHIP TASK" ? "filled" : "outlined"}
-  // color={chipType === "CHIP DISCUSS" ? "secondary" : null} variant={chipType === "CHIP DISCUSS" ? "filled" : "outlined"}
+  useEffect(() => {
+    getTotalNotificationFunc();
+  }, [])
 
   return (
     <>
@@ -106,7 +135,7 @@ function NotifiIcon() {
         <div className="notifiicon-header">
           <Box>
             <IconButton size="large" style={{ color: "white" }} onClick={() => clickToShowNotifiIconBottom()} className={showNotifiIconBottom ? "active" : ""}>
-              <Badge badgeContent={17} color="error">
+              <Badge badgeContent={totalNotificationEach.totalNumber} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
@@ -116,74 +145,331 @@ function NotifiIcon() {
         {/* ẩn, hiện bottom của icon */}
         {showNotifiIconBottom ?
           <div className='notifiicon-bottom'>
-            {/* ẩn hiện Skeleton */}
-            {getData ?
-              <div id="notifiicon-bottom-box" style={{ overflowY: "auto", height: "92vh" }}>
-                <div id="notifiicon-bottom-box" style={{ overflowY: "auto", height: "92vh" }}>
-                  <Typography variant="h5" className="py-2 text-dark" sx={{ fontFamily: "Inter, sans-serif", fontWeight: "bolder", fontSize: "24.5px", marginLeft: "0.75rem", }}>Thông báo</Typography>
-                  <Stack direction="row" sx={{ ml: 1.2, mt: 0.3 }} spacing={1}>
-                    {/* spacing dùng để giãn cách giữa các chip */} {/* hiện thông tổng số thông báo */}
-                    <Badge badgeContent={dataNotification.totalNotification} color="primary">
-                      <Chip color={chipType === "CHIP PROPOSE" ? "secondary" : null} variant={chipType === "CHIP PROPOSE" ? "filled" : "outlined"} label="Đề xuất" onClick={() => [setNotificationType("PROPOSE"), setChipType("CHIP PROPOSE")]} />
-                    </Badge>
-                    <Badge badgeContent={4} color="primary">
-                      <Chip label="Bàn giao" onClick={() => [setNotificationType("HANDOVER"), setChipType("CHIP HANDOVER")]} />
-                    </Badge>
-                    <Badge badgeContent={4} color="primary">
-                      <Chip label="Công việc" onClick={() => [setNotificationType("TASK"), setChipType("CHIP TASK")]} />
-                    </Badge>
-                    <Badge badgeContent={2} color="primary">
-                      <Chip label="Thảo luận" onClick={() => [setNotificationType("DISCUSS"), setChipType("CHIP DISCUSS")]} />
-                    </Badge>
-                  </Stack >
-                  {/* hiện các thông báo phụ thuộc type của chip */}
-                  {dataNotification.documents ?
-                    <List sx={{ pb: "0px", pl: "4px" }}>
-                      {Object.entries(dataNotification.documents).map(([itemKey, itemValue]) => {
-                        return (
-                          <ListItem button alignItems="flex-start" onClick={() => updateStateProposeSeen(itemValue.document_Incomming_Id)}>
-                            <ListItemAvatar><Avatar alt="Profile Picture" src={logo} /></ListItemAvatar>
-                            <ListItemText
-                              sx={{ marginTop: "0px" }}
-                              primary={
-                                <>
-                                  <Typography
-                                    sx={{ display: "inline", fontSize: "1.1rem", color: "#000", }}>
-                                    {itemValue.document_Incomming_UserSend_FullName}
-                                  </Typography>
-                                </>}
-                              secondary={
-                                <>
-                                  <div className="message-notifi">
-                                    <Typography sx={{ fontSize: "15px", color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif", }}>
-                                      {`Bạn nhận được đề xuất với tiêu đề: ${itemValue.document_Incomming_Title}`}</Typography>
-                                  </div>
-                                  <div>
-                                    <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
-                                      {moment(itemValue.document_Incomming_Time).startOf().fromNow()}
-                                    </Typography>
-                                  </div>
-                                </>
-                              }
-                            />
-                          </ListItem>
-                        )
-                      })}
-                    </List>
-                    :
-                    <Box className='mt-3 ml-2 mr-2'>
-                      <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Bạn không có thông báo nào, hãy quay lại sau.</Typography>
+            <div id="notifiicon-bottom-box" style={{ overflowY: "auto", height: "92vh" }}>
+              <Typography variant="h5" className="py-2 text-dark" sx={{ fontFamily: "Inter, sans-serif", fontWeight: "bolder", fontSize: "24.5px", marginLeft: "0.75rem", }}>Thông báo</Typography>
+              <Stack direction="row" sx={{ ml: 1.2, mt: 0.3 }} spacing={1}>
+                {/* spacing dùng để giãn cách giữa các chip */} {/* hiện thông tổng số thông báo */}
+                <Badge badgeContent={totalNotificationEach.numberDocIn} color="primary">
+                  <Chip color={notificationType === "PROPOSE" ? "secondary" : "default"} variant={notificationType === "PROPOSE" ? "filled" : "outlined"} label="Đề xuất"
+                    className={notificationType === "PROPOSE" ? "active-type-chip" : ""} onClick={() => [setNotificationType("PROPOSE"), notificationType === "PROPOSE" ? checkGetData(true) : checkGetData(false)]} />
+                </Badge>
+                <Badge badgeContent={totalNotificationEach.numberDocSend} color="primary">
+                  <Chip color={notificationType === "HANDOVER" ? "secondary" : "default"} variant={notificationType === "HANDOVER" ? "filled" : "outlined"} label="Bàn giao"
+                    className={notificationType === "HANDOVER" ? "active-type-chip" : ""} onClick={() => [setNotificationType("HANDOVER"), notificationType === "HANDOVER" ? checkGetData(true) : checkGetData(false)]} />
+                </Badge>
+                <Badge badgeContent={totalNotificationEach.numberTask} color="primary">
+                  <Chip color={notificationType === "TASK" ? "secondary" : "default"} variant={notificationType === "TASK" ? "filled" : "outlined"} label="Công việc"
+                    className={notificationType === "TASK" ? "active-type-chip" : ""} onClick={() => [setNotificationType("TASK"), notificationType === "TASK" ? checkGetData(true) : checkGetData(false)]} />
+                </Badge>
+                <Badge badgeContent={totalNotificationEach.numberDiscuss} color="primary">
+                  <Chip color={notificationType === "DISCUSS" ? "secondary" : "default"} variant={notificationType === "DISCUSS" ? "filled" : "outlined"} label="Thảo luận"
+                    className={notificationType === "DISCUSS" ? "active-type-chip" : ""} onClick={() => [setNotificationType("DISCUSS"), notificationType === "DISCUSS" ? checkGetData(true) : checkGetData(false)]} />
+                </Badge>
+              </Stack >
+              {/* ẩn hiện Skeleton */}
+              {getData ?
+                <>
+                  <List sx={{ pb: "0px", pl: "4px" }}>
+
+                    {(() => {
+                      //bắt đầu lặp tùy theo loại
+                      if (dataNotification.hasOwnProperty('documentIncomming')) {
+                        if (dataNotification.documentIncomming.length !== 0) {
+                          return (
+                            Object.entries(dataNotification.documentIncomming).map(([itemKey, itemValue]) => {
+                              return (
+                                <ListItem button alignItems="flex-start" onClick={() => updateStateProposeSeen(itemValue.document_Incomming_Id)}>
+                                  <ListItemAvatar><Avatar alt="Profile Picture" src={logo} /></ListItemAvatar>
+                                  <ListItemText
+                                    sx={{ marginTop: "0px" }}
+                                    primary={
+                                      <>
+                                        <Typography
+                                          sx={{ display: "inline", fontSize: "1.1rem", color: "#000", }}>
+                                          {itemValue.departmentSend_Name !== null ? itemValue.departmentSend_Name : `Nhân viên ${itemValue.document_Incomming_UserSend_FullName}`}
+                                        </Typography>
+                                      </>}
+                                    secondary={
+                                      <>
+                                        <div className="message-notifi">
+                                          <Typography sx={{ fontSize: "15px", color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif", }}>
+                                            {(() => {
+                                              if (itemValue.document_Incomming_State === 0) {
+                                                return (<>Bạn nhận được đề xuất với tiêu đề: <span className="result-notification-title">{`${itemValue.document_Incomming_Title}`}</span></>);
+                                              }
+                                              else if (itemValue.document_Incomming_State === 1) {
+                                                (<>Đề xuất <span className="result-notification-title">{`${itemValue.document_Incomming_Title}`}</span> đã bị từ chối</>);
+                                              }
+                                              else if (itemValue.document_Incomming_State === 2) {
+                                                return (<>Đề xuất <span className="result-notification-title">{`${itemValue.document_Incomming_Title}`}</span> đã bị trả về để chỉnh sửa</>);
+                                              }
+                                              else if (itemValue.document_Incomming_State === 3) {
+                                                return (<>Đề xuất <span className="result-notification-title">{`${itemValue.document_Incomming_Title}`}</span> đã được duyệt</>);
+                                              }
+                                              else if (itemValue.document_Incomming_State === 4) {
+                                                return (<>Đề xuất <span className="result-notification-title">{`${itemValue.document_Incomming_Title}`}</span> đã được chuyển lên</>);
+                                              }
+                                              else {
+                                                return (<>Đề xuất <span className="result-notification-title">{`${itemValue.document_Incomming_Title}`}</span> đã được xử lý</>);
+                                              }
+                                            })()}
+                                          </Typography>
+                                        </div>
+                                        <div>
+                                          <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
+                                            {moment(itemValue.document_Incomming_Time).startOf().fromNow()}
+                                          </Typography>
+                                        </div>
+                                      </>
+                                    }
+                                  />
+                                </ListItem>
+                              )
+                            })
+                          )
+                        } else {
+                          return (
+                            <Box className='mr-1 center-screen'>
+                              <NotificationsIcon sx={{ height: 70, width: 70 }} style={{ display: 'block', margin: 'auto', color: 'slategray' }} />
+                              <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Bạn không có thông báo nào, hãy quay lại sau.</Typography>
+                            </Box>
+                          )
+                        }
+                      }
+
+                      else if (dataNotification.hasOwnProperty('documentSend')) {
+                        if (dataNotification.documentSend.length !== 0) {
+                          return (
+                            Object.entries(dataNotification.documentSend).map(([itemKey, itemValue]) => {
+                              return (
+                                <ListItem button alignItems="flex-start" onClick={() => updateStateHandoverSeen(itemValue.document_Send_Id)}>
+                                  <ListItemAvatar><Avatar alt="Profile Picture" src={logo} /></ListItemAvatar>
+                                  <ListItemText
+                                    sx={{ marginTop: "0px" }}
+                                    primary={
+                                      <>
+                                        <Typography
+                                          sx={{ display: "inline", fontSize: "1.1rem", color: "#000", }}>
+                                          {itemValue.department_Name_Receive}
+                                        </Typography>
+                                      </>}
+                                    secondary={
+                                      <>
+                                        <div className="message-notifi">
+                                          <Typography sx={{ fontSize: "15px", color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif", }}>
+                                            {`Bạn nhận được văn bản với tiêu đề: ${itemValue.document_Send_Title}`}</Typography>
+                                        </div>
+                                        <div>
+                                          <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
+                                            {moment(itemValue.document_Send_Time).startOf().fromNow()}
+                                          </Typography>
+                                        </div>
+                                      </>
+                                    }
+                                  />
+                                </ListItem>
+                              )
+                            })
+                          )
+                        } else {
+                          return (
+                            <Box className='mr-1 center-screen'>
+                              <NotificationsIcon sx={{ height: 70, width: 70 }} style={{ display: 'block', margin: 'auto', color: 'slategray' }} />
+                              <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Bạn không có thông báo nào, hãy quay lại sau.</Typography>
+                            </Box>
+                          )
+                        }
+                      }
+
+                      else if (dataNotification.hasOwnProperty('task')) {
+                        if (dataNotification.task.length !== 0) {
+                          return (
+                            Object.entries(dataNotification.task).map(([itemKey, itemValue]) => {
+                              return (
+                                <ListItem button alignItems="flex-start" onClick={() => updateStateProposeSeen(itemValue.task_Id)}>
+                                  <ListItemAvatar><Avatar alt="Profile Picture" src={logo} /></ListItemAvatar>
+                                  <ListItemText
+                                    sx={{ marginTop: "0px" }}
+                                    primary={
+                                      <>
+                                        <Typography
+                                          sx={{ display: "inline", fontSize: "1.1rem", color: "#000", }}>
+                                          {itemValue.userSend_FullName}
+                                        </Typography>
+                                      </>}
+                                    secondary={
+                                      <>
+                                        <div className="message-notifi">
+                                          <Typography sx={{ fontSize: "15px", color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif", }}>
+                                            {`Bạn nhận được công việc với tiêu đề: ${itemValue.task_Title}`}</Typography>
+                                        </div>
+                                        <div>
+                                          <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
+                                            {moment(itemValue.task_DateSend).startOf().fromNow()}
+                                          </Typography>
+                                        </div>
+                                      </>
+                                    }
+                                  />
+                                </ListItem>
+                              )
+                            })
+                          )
+                        } else {
+                          return (
+                            <Box className='mr-1 center-screen'>
+                              <NotificationsIcon sx={{ height: 70, width: 70 }} style={{ display: 'block', margin: 'auto', color: 'slategray' }} />
+                              <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Bạn không có thông báo nào, hãy quay lại sau.</Typography>
+                            </Box>
+                          )
+                        }
+                      }
+
+                      else {
+                        if (dataNotification.discuss.length !== 0) {
+                          return (
+                            Object.entries(dataNotification.discuss).map(([itemKey, itemValue]) => {
+                              return (
+                                <ListItem button alignItems="flex-start" onClick={() => updateStateProposeSeen(itemValue.discuss_Task)}>
+                                  <ListItemAvatar><Avatar alt="Profile Picture" src={logo} /></ListItemAvatar>
+                                  <ListItemText
+                                    sx={{ marginTop: "0px" }}
+                                    secondary={
+                                      <>
+                                        <div className="message-notifi">
+                                          <Typography sx={{ fontSize: "15px", color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif", }}>
+                                            <span className="fw-bolder" style={{ fontFamily: "Arimo, sans-serif" }} >{`${itemValue.userSend_Fullname}`}</span> đã bình luận về một công việc mà bạn đang làm</Typography>
+                                        </div>
+                                        <div>
+                                          <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
+                                            {moment(itemValue.discuss_Time).startOf().fromNow()}
+                                          </Typography>
+                                        </div>
+                                      </>
+                                    }
+                                  />
+                                </ListItem>
+                              )
+                            })
+                          )
+                        } else {
+                          return (
+                            <Box className='mr-1 center-screen'>
+                              <NotificationsIcon sx={{ height: 70, width: 70 }} style={{ display: 'block', margin: 'auto', color: 'slategray' }} />
+                              <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Bạn không có thông báo nào, hãy quay lại sau.</Typography>
+                            </Box>
+                          )
+                        }
+                      }
+                    })()}
+
+                  </List>
+                </>
+                :
+                <>
+                  <Stack spacing={1.8} sx={{ pl: "4px" }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={260} height={15} />
+                      </Box>
                     </Box>
-                  }
-                </div>
-              </div>
-              :
-              <Stack spacing={1} sx={{ pl: "4px", pt: "5px" }}>
-                <Skeleton variant="rectangular" width={160} height={30} />
-                <Skeleton variant="rounded" width={350} height={30} />
-                <Skeleton variant="rounded" width={350} height={594} />
-              </Stack>
-            }
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={260} height={15} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={220} height={15} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={174} height={15} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={260} height={16} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={260} height={15} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={130} height={15} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={220} height={15} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={174} height={15} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={174} height={15} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={260} height={15} />
+                      </Box>
+                    </Box>
+                  </Stack>
+                </>
+              }
+            </div>
           </div>
           :
           null

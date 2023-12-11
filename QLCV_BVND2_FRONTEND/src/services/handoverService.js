@@ -24,6 +24,18 @@ const getHandOverNotification = async () => {
         })
 }
 
+const updateHandOverStateSeen = async (handoverId) => {
+    const config = createConfig();
+    return await axios.put(`${backendURL}/api/DocumentSend/UpdateSeenTrue/${handoverId}`, '', config)
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 export {
-    getHandOverNotification
+    getHandOverNotification,
+    updateHandOverStateSeen
 }

@@ -4,20 +4,48 @@
 
 //chip
 .MuiChip-labelMedium{
-    font-size: 13.2px;
+    font-size: 13px;
     color: rgb(5, 5, 5);
     font-family: 'DM Sans', sans-serif;
 }
 
-// .active-type-chip{
+.active-type-chip{
+    //rgb(214, 145, 170)
+    //rgb(238, 51, 135)
+    background-color: rgb(255, 51, 143)!important;
+    .MuiChip-labelMedium{
+        font-size: 13px;
+        color: rgb(255, 255, 240);
+        font-weight:lighter;
+        font-family: 'DM Sans', sans-serif;
+    }
+}
 
-//     background-color: rgba(29, 133, 252, 0.2); //hover
-// }
+.css-1r3mz6a-MuiButtonBase-root-MuiChip-root:hover{
+    background-color: rgb(225, 222, 237)!important;
+}
+
+.result-notification-title{
+    font-weight: bolder;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15.5px;
+    color: rgb(5, 5, 5);
+}
+
+.center-screen{
+    position: absolute;
+    top: 20vh;
+    margin-left: 0.60rem;
+    //left: 50%;
+    // margin-top: -50px;
+    // margin-left: -50px;
+}
 
 .notifiicon-bottom{
     z-index: 2;
     position: absolute;
-    transform: translate(-120px, -5px);
+    right: 2%;
+    top: 78%;
     border-radius: 0.45rem;
     width: 360px;
     background-color: #fff;
