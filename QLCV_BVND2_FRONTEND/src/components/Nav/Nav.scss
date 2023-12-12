@@ -43,18 +43,18 @@
     }
 }
 
-#menu-dropdown-task{
-    .dropdown-toggle{
-        &.show{
-            color: #61dafb !important;
-        }
-    }
-    .dropdown-menu{
-        min-width: 6rem!important;
-    }
-}
+// #menu-dropdown-task{
+//     .dropdown-toggle{
+//         &.show{
+//             color: #61dafb !important;
+//         }
+//     }
+//     .dropdown-menu{
+//         min-width: 6rem!important;
+//     }
+// }
 
-.nav-itemm{
+.nav-item-replace{
     .dropdown-toggle {
         &.nav-link{
             color: #61dafb !important;

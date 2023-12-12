@@ -7,7 +7,7 @@ import { UserContext } from '../../context/UserContext';
 import './Nav.scss';
 import logo from '../../assets/image/logo.png';
 import { handleLoginRedux, handleLogoutRedux } from "../redux/actions/userAction";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { Box, Menu, MenuItem } from '@mui/material';
@@ -19,23 +19,11 @@ const Header = (props) => {
   const location = useLocation();
   const history = useHistory();
 
-  const [isRightPath, setIsRightPath] = useState(false);
-  let path = ['/list-propose-recive-out-department', '/list-propose-recive-in-department', '/member-task-out-department', '/member-task-department'];
+  const [activeProposeDropDown, setActiveProposeDropDown] = useState(false);
+  const [activeTaskDropDown, setActiveTaskDropDown] = useState(false);
 
-  const getNavLinkClass = () => {
-
-  }
-
-  if (path.includes(location.pathname)) {
-    if (isRightPath === true) {
-      setIsRightPath(false);
-    }
-    else {
-      setIsRightPath(true);
-    }
-  } else {
-
-  }
+  const handleTogglePropose = () => setActiveProposeDropDown(!activeProposeDropDown);
+  const handleToggleTask = () => setActiveTaskDropDown(!activeTaskDropDown);
 
   const handleLogout = async () => {
     localStorage.removeItem('jwt'); //xóa localStorage
@@ -88,7 +76,8 @@ const Header = (props) => {
                     //hiện khi người login là trưởng phòng ở các phòng chức năng
                     return (
                       <>
-                        <NavDropdown title="Đề xuất nhận" id="menu-dropdown-propose">
+                        <NavDropdown title="Đề xuất nhận" active={activeProposeDropDown} onToggle={handleTogglePropose}
+                          className={location.pathname === '/list-propose-recive-out-department' || location.pathname === '/list-propose-recive-in-department' ? "nav-item-replace" : ""}>
                           <NavDropdown.Item as={NavLink} exact to="/list-propose-recive-out-department">Nhận từ phòng khoa</NavDropdown.Item>
                           <NavDropdown.Item as={NavLink} exact to="/list-propose-recive-in-department">Nhận từ nhân viên</NavDropdown.Item>
                         </NavDropdown>
@@ -112,12 +101,13 @@ const Header = (props) => {
                 })()}
 
                 {user && user.isAuthenticated === true ?
-                  <Box id="menu-dropdown-task">
-                    <NavDropdown className={isRightPath ? 'nav-itemm' : ''} title="Công việc">
+                  <>
+                    <NavDropdown title="Công việc" active={activeTaskDropDown} onToggle={handleToggleTask}
+                      className={location.pathname === '/member-task-out-department' || location.pathname === '/member-task-in-department' ? "nav-item-replace" : ""}>
                       <NavDropdown.Item as={NavLink} exact to="/member-task-out-department">Ngoại bộ</NavDropdown.Item>
-                      <NavDropdown.Item as={NavLink} exact to="/member-task-department">Nội bộ</NavDropdown.Item>
+                      <NavDropdown.Item as={NavLink} exact to="/member-task-in-department">Nội bộ</NavDropdown.Item>
                     </NavDropdown>
-                  </Box>
+                  </>
                   :
                   null
                 }
