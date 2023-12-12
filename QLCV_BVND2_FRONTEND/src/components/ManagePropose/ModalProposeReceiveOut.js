@@ -44,14 +44,14 @@ function ModalProposeReceive(props) {
         _dataModalProposeReceive[inputName] = value;
         setDataModalProposeReceive(_dataModalProposeReceive);
     }
- 
+
     const handleChangeSelectedDepartment = (e, value) => {
         setSelectedDepartment(value);
     };
-    
+
     const proposeCheck = async (dataModalProposeReceive) => {
         let response = await updateProposeState(dataModalProposeReceive, 3)
-        if(response === 200){
+        if (response === 200) {
             toast.success('Đã duyệt đề xuất!');
             props.makeModalProposeReceiveOutDoing(true);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);
@@ -60,7 +60,7 @@ function ModalProposeReceive(props) {
 
     const proposeRefuse = async (dataModalProposeReceive) => {
         let response = await updateProposeState(dataModalProposeReceive, 1)
-        if(response === 200){
+        if (response === 200) {
             toast.error('Đã từ chối đề xuất!');
             props.makeModalProposeReceiveOutDoing(true);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);
@@ -69,7 +69,7 @@ function ModalProposeReceive(props) {
 
     const proposeReturn = async (dataModalProposeReceive) => {
         let response = await updateProposeState(dataModalProposeReceive, 2)
-        if(response === 200){
+        if (response === 200) {
             toast.warning('Đã trả đề xuất về!');
             props.makeModalProposeReceiveOutDoing(true);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);
@@ -78,7 +78,7 @@ function ModalProposeReceive(props) {
 
     const proposeMoveUp = async (dataModalProposeReceive) => {
         let response = await moveupProposeByHeader(dataModalProposeReceive, selectedDepartment.department_ID)
-        if(response === 200){
+        if (response === 200) {
             toast.info(`Đã chuyển đề xuất lên ${selectedDepartment.department_Name}!`);
             props.makeModalProposeReceiveOutDoing(true);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);
@@ -92,13 +92,13 @@ function ModalProposeReceive(props) {
 
     const getDepartmentByType = async () => {
         let resultListDepartment = await getAllDepartmentByType(2);
-        if(resultListDepartment.length !== 0){
+        if (resultListDepartment.length !== 0) {
             setListDepartmentByType(resultListDepartment);
-        }   
-    } 
+        }
+    }
 
     useEffect(() => {
-        setDataModalProposeReceive({...props.dataModalProposeReceiveOut});
+        setDataModalProposeReceive({ ...props.dataModalProposeReceiveOut });
     }, [props.dataModalProposeReceiveOut])
 
     return (
@@ -117,7 +117,7 @@ function ModalProposeReceive(props) {
                                             <div className='col-sm-12'>
                                                 <Typography variant='body1' fontSize={17} color='FireBrick'>Tên đề xuất</Typography>
                                                 <Typography variant='body1' className='form-control mt-1'>{dataModalProposeReceive.document_Incomming_Title}</Typography>
-                                            </div>   
+                                            </div>
                                             <div className='col-sm-12 mt-3'>
                                                 <Typography variant='body1' fontSize={17} color='FireBrick'>Nội dung đề xuất</Typography>
                                                 <Typography variant='body1' className='form-control mt-1'>{dataModalProposeReceive.document_Incomming_Content}</Typography>
@@ -127,12 +127,12 @@ function ModalProposeReceive(props) {
                                                     <div className='col-sm-12 mt-3 mb-3'>
                                                         <Typography variant='body1' fontSize={17} color='FireBrick'>Ý kiến giải quyết</Typography>
                                                         <Typography >
-                                                            <textarea className='form-control mt-1 fs-6' id="document_Incomming_Comment" rows="4" 
-                                                            onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Comment')} value={dataModalProposeReceive.document_Incomming_Comment || ""}></textarea>
+                                                            <textarea className='form-control mt-1 fs-6' id="document_Incomming_Comment" rows="4"
+                                                                onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Comment')} value={dataModalProposeReceive.document_Incomming_Comment || ""}></textarea>
                                                         </Typography>
                                                     </div>
                                                 </>
-                                            :
+                                                :
                                                 <>
                                                     <div className="col-sm-12 mt-3 mb-3">
                                                         <Typography variant='body1' fontSize={17} color='FireBrick'>Gửi lên phòng chức năng</Typography>
@@ -141,13 +141,13 @@ function ModalProposeReceive(props) {
                                                             getOptionLabel={(option) => option.department_Name}
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
-                                                                <Checkbox
-                                                                    icon={icon}
-                                                                    checkedIcon={checkedIcon}
-                                                                    style={{ marginRight: 8 }}
-                                                                    checked={selected}
-                                                                />
-                                                                {option.department_Name}
+                                                                    <Checkbox
+                                                                        icon={icon}
+                                                                        checkedIcon={checkedIcon}
+                                                                        style={{ marginRight: 8 }}
+                                                                        checked={selected}
+                                                                    />
+                                                                    {option.department_Name}
                                                                 </li>
                                                             )}
                                                             style={{ width: 718 }}
@@ -157,7 +157,7 @@ function ModalProposeReceive(props) {
                                                             )}
                                                         />
                                                     </div>
-                                                </> 
+                                                </>
                                             }
                                             <div className='col-sm-12'>
                                                 <Typography variant='body1' fontSize={17} color='FireBrick'>File đính kèm</Typography>
@@ -172,8 +172,8 @@ function ModalProposeReceive(props) {
                     </Modal.Body>
                     <Modal.Footer className='mb-2'>
                         {(() => {
-                            if(dataModalProposeReceive.document_Incomming_State === 0){
-                                return(
+                            if (dataModalProposeReceive.document_Incomming_State === 0) {
+                                return (
                                     <>
                                         <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
                                         <Button variant="danger" onClick={() => proposeRefuse(dataModalProposeReceive)}>Từ chối đề xuất</Button>
@@ -181,28 +181,31 @@ function ModalProposeReceive(props) {
                                     </>
                                 )
                             }
-                            else if(dataModalProposeReceive.document_Incomming_State === 1){
-                                return(
+                            else if (dataModalProposeReceive.document_Incomming_State === 1) {
+                                return (
                                     <>
                                         <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
                                         <Button variant="warning" onClick={() => proposeReturn(dataModalProposeReceive)}>Trả đề xuất về</Button>
                                     </>
                                 )
                             }
-                            else if(dataModalProposeReceive.document_Incomming_State === 2){
-                                return(
+                            else if (dataModalProposeReceive.document_Incomming_State === 2) {
+                                return (
                                     <>
                                         <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
                                         <Button variant="danger" onClick={() => proposeRefuse(dataModalProposeReceive)}>Từ chối đề xuất</Button>
                                     </>
                                 )
                             }
-                            else{
-                                return(
-                                    <><Button variant="info" onClick={() => proposeMoveUp(dataModalProposeReceive)}>Chuyển tiếp đề xuất </Button></>
+                            else {
+                                return (
+                                    <>
+                                        <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Tiếp nhận đề xuất</Button>
+                                        <Button variant="info" onClick={() => proposeMoveUp(dataModalProposeReceive)}>Chuyển tiếp đề xuất </Button>
+                                    </>
                                 )
                             }
-                        })()}                                      
+                        })()}
                         <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
                     </Modal.Footer>
                 </Modal>

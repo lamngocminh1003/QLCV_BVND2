@@ -10,7 +10,7 @@ import { handleLoginRedux, handleLogoutRedux } from "../redux/actions/userAction
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { Menu, MenuItem } from '@mui/material';
+import { Box, Menu, MenuItem } from '@mui/material';
 import NotifiIcon from './NotifiIcon';
 
 const Header = (props) => {
@@ -20,6 +20,22 @@ const Header = (props) => {
   const history = useHistory();
 
   const [isRightPath, setIsRightPath] = useState(false);
+  let path = ['/list-propose-recive-out-department', '/list-propose-recive-in-department', '/member-task-out-department', '/member-task-department'];
+
+  const getNavLinkClass = () => {
+
+  }
+
+  if (path.includes(location.pathname)) {
+    if (isRightPath === true) {
+      setIsRightPath(false);
+    }
+    else {
+      setIsRightPath(true);
+    }
+  } else {
+
+  }
 
   const handleLogout = async () => {
     localStorage.removeItem('jwt'); //xóa localStorage
@@ -72,11 +88,10 @@ const Header = (props) => {
                     //hiện khi người login là trưởng phòng ở các phòng chức năng
                     return (
                       <>
-                        <NavDropdown title="Đề xuất nhận" className={location.pathname === '/list-propose-recive-out-department' || location.pathname === '/list-propose-recive-in-department' ? 'active' : ''}>
+                        <NavDropdown title="Đề xuất nhận" id="menu-dropdown-propose">
                           <NavDropdown.Item as={NavLink} exact to="/list-propose-recive-out-department">Nhận từ phòng khoa</NavDropdown.Item>
                           <NavDropdown.Item as={NavLink} exact to="/list-propose-recive-in-department">Nhận từ nhân viên</NavDropdown.Item>
                         </NavDropdown>
-                        <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
                       </>
                     )
                   }
@@ -85,7 +100,6 @@ const Header = (props) => {
                     return (
                       <>
                         <NavLink exact to="/list-propose-recive-in-department" className="nav-link">Đề xuất nhận</NavLink>
-                        <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
                       </>
                     )
                   }
@@ -96,6 +110,23 @@ const Header = (props) => {
                     )
                   }
                 })()}
+
+                {user && user.isAuthenticated === true ?
+                  <Box id="menu-dropdown-task">
+                    <NavDropdown className={isRightPath ? 'nav-itemm' : ''} title="Công việc">
+                      <NavDropdown.Item as={NavLink} exact to="/member-task-out-department">Ngoại bộ</NavDropdown.Item>
+                      <NavDropdown.Item as={NavLink} exact to="/member-task-department">Nội bộ</NavDropdown.Item>
+                    </NavDropdown>
+                  </Box>
+                  :
+                  null
+                }
+
+                {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ?
+                  <NavLink exact to="/list-user" className="nav-link">Người dùng</NavLink>
+                  :
+                  null
+                }
 
                 {(() => {
                   if (user && user.isAuthenticated === true && user.account.departmentId === 'GD'
@@ -126,7 +157,7 @@ const Header = (props) => {
                   else {
                     return (
                       //ẩn khi người login là các thành viên trong khoa
-                      <><NavLink exact to="/member-task-department" className="nav-link">Công việc</NavLink></>
+                      <></>
                     )
                   }
                 })()}

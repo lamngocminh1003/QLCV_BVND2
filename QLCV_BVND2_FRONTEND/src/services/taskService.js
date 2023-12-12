@@ -37,5 +37,5 @@ const updateTaskStateSeen = async (taskId) => {
 
 export {
     getTaskReceiveNotification,
-    updateTaskStateSeen,
+    updateTaskStateSeen
 };
