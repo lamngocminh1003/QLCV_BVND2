@@ -430,7 +430,7 @@ function NotifiIcon() {
                 </>
                 :
                 <>
-                  <Stack spacing={1.8} sx={{ pl: "4px" }}>
+                  <Stack spacing={1.28} sx={{ pl: "4px", my: 0.7 }} id="skeleton">
                     <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
                       <Box sx={{ marginRight: '11px' }}>
                         <Skeleton variant="circular" width={56} height={56} />

@@ -95,3 +95,20 @@
     -webkit-line-clamp: 3; /* number of lines to show */
     -webkit-box-orient: vertical;
 }
+
+@media (min-height: 700px) {
+    #skeleton {
+        //n tượng trưng cho cấp số cộng 3n (=) 3 + 3 tăng dần lên
+        .MuiBox-root:nth-child(1n + 10){
+            display: none;
+            // background-color: red;
+        }
+        // .MuiBox-root:nth-child(10n){
+            
+        //     display: none;
+        // }
+        // .MuiBox-root:nth-child(11n){
+        //     display: none;
+        // }
+    }
+  }
