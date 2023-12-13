@@ -65,6 +65,25 @@ const moveupProposeByHeader = async (dataObj, idDepartment) => {
         })
 }
 
+//chuyển tiếp đề xuất từ DP type = 2 sang DP type = 2 khác
+const moveupProposeDepartmentOut = async (dataObj, idDepartment) => {
+    const token = localStorage.getItem("jwt");
+    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}
+    &Comment=${dataObj.document_Incomming_Transition_Reason}&DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.document_Incomming_Id}`,
+        dataObj.proposeFile, {
+        headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+        }
+    })
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 const getProposeSend = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocSendByUserLogin`, config)
@@ -132,7 +151,7 @@ const updateProposeStateSeen = async (proposeId) => {
 }
 
 export {
-    createPropose, createProposeByHeader, moveupProposeByHeader,
+    createPropose, createProposeByHeader, moveupProposeByHeader, moveupProposeDepartmentOut,
     getProposeSend, getProposeReceiveIn, getProposeReceiveOut, getProposeReceiveNotification,
     updateProposeState, updateProposeStateSeen
 };

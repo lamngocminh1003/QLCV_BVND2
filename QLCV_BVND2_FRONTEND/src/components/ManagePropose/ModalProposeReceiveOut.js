@@ -12,8 +12,10 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-//import api for propose
-import { updateProposeState, moveupProposeByHeader } from '../../services/proposeService';
+//modal
+import ModalCofirmCreateTask from '../ManageTask/ModalCofirmCreateTask';
+//import api
+import { updateProposeState, moveupProposeByHeader, moveupProposeDepartmentOut } from '../../services/proposeService';
 import { getAllDepartmentByType } from '../../services/departmentService';
 
 function ModalProposeReceive(props) {
@@ -32,12 +34,20 @@ function ModalProposeReceive(props) {
         document_Incomming_UserReceive: '',
         document_Incomming_State: '',
         document_Incomming_Comment: '',
+        document_Incomming_Transition_Reason: '',
         document_Incomming_Time: '',
     }
 
     const [dataModalProposeReceive, setDataModalProposeReceive] = useState(dataModalProposeReceiveDefault);
     const [listDepartmentByType, setListDepartmentByType] = useState([]);
     const [selectedDepartment, setSelectedDepartment] = useState([]);
+
+    //config modal confirm create task
+    const [showModalConfirmCreateTask, setShowModalConfirmCreateTask] = useState(false);
+    //nếu click vào đồng ý ở modal confirm create task data này sẽ gửi từ modal hiện tại -> confirm create task -> modal create task public/private
+    const [dataModalConfirmCreateTask, setDataModalConfirmCreateTask] = useState({});
+    //set loại confirm create task public/private
+    const [typeModalConfirmCreateTask, setTypeModalConfirmCreateTask] = useState("UNSET");
 
     const handleOnchange = (value, inputName) => {
         let _dataModalProposeReceive = cloneDeep(dataModalProposeReceive);
@@ -76,10 +86,10 @@ function ModalProposeReceive(props) {
         }
     }
 
-    const proposeMoveUp = async (dataModalProposeReceive) => {
-        let response = await moveupProposeByHeader(dataModalProposeReceive, selectedDepartment.department_ID)
+    const handleMoveupProposeDepartmentOut = async (dataModalProposeReceive) => {
+        let response = await moveupProposeDepartmentOut(dataModalProposeReceive, selectedDepartment.department_ID)
         if (response === 200) {
-            toast.info(`Đã chuyển đề xuất lên ${selectedDepartment.department_Name}!`);
+            toast.info(`Đã chuyển tiếp đề xuất qua ${selectedDepartment.department_Name}!`);
             props.makeModalProposeReceiveOutDoing(true);
             setDataModalProposeReceive(dataModalProposeReceiveDefault);
         }
@@ -90,6 +100,13 @@ function ModalProposeReceive(props) {
         setDataModalProposeReceive(dataModalProposeReceiveDefault);
     }
 
+    //gọi modal confirm create task
+    const btnOpenModalConfirmCreateTask = (dataModalProposeReceive) => {
+        setTypeModalConfirmCreateTask("PUBLIC");
+        setDataModalConfirmCreateTask(dataModalProposeReceive);
+        setShowModalConfirmCreateTask(true);
+    }
+
     const getDepartmentByType = async () => {
         let resultListDepartment = await getAllDepartmentByType(2);
         if (resultListDepartment.length !== 0) {
@@ -98,7 +115,12 @@ function ModalProposeReceive(props) {
     }
 
     useEffect(() => {
-        setDataModalProposeReceive({ ...props.dataModalProposeReceiveOut });
+        if (Object.keys(props.dataModalProposeReceiveOut).length !== 0) {
+            setDataModalProposeReceive({ ...props.dataModalProposeReceiveOut });
+            if (props.dataModalProposeReceiveOut.document_Incomming_State === 3) {
+                getDepartmentByType();
+            }
+        }
     }, [props.dataModalProposeReceiveOut])
 
     return (
@@ -110,7 +132,7 @@ function ModalProposeReceive(props) {
                     </Modal.Header>
                     <Modal.Body>
                         <div className="user-info-container col-xs-12">
-                            <form method="POST" action="/user/create-user" autoComplete='off'>
+                            <form autoComplete='off'>
                                 <div className="container" style={{ overflow: "visible" }}>
                                     <div className="row d-flex justify-content-center form-group">
                                         <div className="row">
@@ -134,8 +156,15 @@ function ModalProposeReceive(props) {
                                                 </>
                                                 :
                                                 <>
+                                                    <div className='col-sm-12 mt-3 mb-3'>
+                                                        <Typography variant='body1' fontSize={17} color='FireBrick'>Lý do chuyển tiếp</Typography>
+                                                        <Typography >
+                                                            <textarea className='form-control mt-1 fs-6' id="document_Incomming_Transition_Reason" rows="4"
+                                                                onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Transition_Reason')} value={dataModalProposeReceive.document_Incomming_Transition_Reason || ""}></textarea>
+                                                        </Typography>
+                                                    </div>
                                                     <div className="col-sm-12 mt-3 mb-3">
-                                                        <Typography variant='body1' fontSize={17} color='FireBrick'>Gửi lên phòng chức năng</Typography>
+                                                        <Typography variant='body1' fontSize={17} color='FireBrick'>Chuyển tiếp qua phòng chức năng</Typography>
                                                         <Autocomplete
                                                             options={listDepartmentByType}
                                                             getOptionLabel={(option) => option.department_Name}
@@ -200,8 +229,8 @@ function ModalProposeReceive(props) {
                             else {
                                 return (
                                     <>
-                                        <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Tiếp nhận đề xuất</Button>
-                                        <Button variant="info" onClick={() => proposeMoveUp(dataModalProposeReceive)}>Chuyển tiếp đề xuất </Button>
+                                        <Button variant="success" onClick={() => btnOpenModalConfirmCreateTask(dataModalProposeReceive)}>Tiếp nhận đề xuất</Button>
+                                        <Button variant="info" onClick={() => handleMoveupProposeDepartmentOut(dataModalProposeReceive)}>Chuyển tiếp đề xuất </Button>
                                     </>
                                 )
                             }
@@ -210,6 +239,16 @@ function ModalProposeReceive(props) {
                     </Modal.Footer>
                 </Modal>
             </div>
+
+            <ModalCofirmCreateTask
+                activeModalConfirmCreateTask={showModalConfirmCreateTask}
+                closeModalConfirmCreateTask={setShowModalConfirmCreateTask}
+                typeModalConfirmCreateTask={typeModalConfirmCreateTask}
+                dataModalConfirmCreateTask={dataModalConfirmCreateTask}
+
+                //truyền props qua modal confirm để đóng modal propseReceiveOut
+                closeModalProposeReceiveOut={props.closeModalProposeReceiveOut}
+            />
         </>
     )
 }

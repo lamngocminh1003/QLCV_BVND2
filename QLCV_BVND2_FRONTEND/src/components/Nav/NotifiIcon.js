@@ -218,11 +218,32 @@ function NotifiIcon() {
                                       <>
                                         <Typography
                                           sx={{ display: "inline", fontSize: "1rem", color: "rgb(252, 95, 106)", fontWeight: "600" }}>
-                                          {user.account.userId === user.account.departmentHead ?
-                                            itemValue.departmentSend_Name !== null ? itemValue.departmentSend_Name : `Nhân viên ${itemValue.document_Incomming_UserSend_FullName}`
-                                            :
-                                            null
-                                          }
+                                          {(() => {
+                                            if (user.account.userId === user.account.departmentHead && user.account.departmentType === 2) {
+                                              //trưởng phòng chức năng gửi qua phòng chức năng khác
+                                              if (itemValue.departmentSend_Name === user.account.departmentName && itemValue.document_Incomming_State === 3) {
+                                                return null
+                                              }
+                                              //các nhân viên trong phòng chức năng gửi đến trưởng phòng
+                                              else if (itemValue.departmentSend_Name === null) {
+                                                return (`Nhân viên ${itemValue.document_Incomming_UserSend_FullName}`)
+                                              }
+                                              //các khoa phòng khác gửi đến
+                                              else if (itemValue.departmentSend_Name !== null) {
+                                                return (itemValue.departmentSend_Name)
+                                              }
+                                            }
+                                            else if (user.account.userId === user.account.departmentHead && user.account.departmentType === 3) {
+                                              if (itemValue.departmentSend_Name === null) {
+                                                return (`Nhân viên ${itemValue.document_Incomming_UserSend_FullName}`)
+                                              }
+                                              else if (itemValue.departmentSend_Name === user.account.departmentName && itemValue.document_Incomming_State === 3) {
+                                                return null
+                                              }
+                                            } else {
+                                              return null
+                                            }
+                                          })()}
                                         </Typography>
                                       </>}
                                     secondary={
@@ -253,7 +274,11 @@ function NotifiIcon() {
                                         </div>
                                         <div>
                                           <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
-                                            {moment(itemValue.document_Incomming_Time).startOf().fromNow()}
+                                            {itemValue.document_Incomming_State === 0 ?
+                                              moment(itemValue.document_Incomming_Time).startOf().fromNow()
+                                              :
+                                              moment(itemValue.document_Incomming_TimeUpdate).startOf().fromNow()
+                                            }
                                           </Typography>
                                         </div>
                                       </>

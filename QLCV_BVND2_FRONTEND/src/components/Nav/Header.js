@@ -102,11 +102,13 @@ const Header = (props) => {
 
                 {user && user.isAuthenticated === true ?
                   <>
-                    <NavDropdown title="Công việc" active={activeTaskDropDown} onToggle={handleToggleTask}
-                      className={location.pathname === '/member-task-out-department' || location.pathname === '/member-task-in-department' ? "nav-item-replace" : ""}>
-                      <NavDropdown.Item as={NavLink} exact to="/member-task-out-department">Ngoại bộ</NavDropdown.Item>
-                      <NavDropdown.Item as={NavLink} exact to="/member-task-in-department">Nội bộ</NavDropdown.Item>
-                    </NavDropdown>
+                    <Box id="menu-dropdown-task">
+                      <NavDropdown title="Công việc" active={activeTaskDropDown} onToggle={handleToggleTask}
+                        className={location.pathname === '/member-task-out-department' || location.pathname === '/member-task-in-department' ? "nav-item-replace" : ""}>
+                        <NavDropdown.Item as={NavLink} exact to="/member-task-out-department">Ngoại bộ</NavDropdown.Item>
+                        <NavDropdown.Item as={NavLink} exact to="/member-task-in-department">Nội bộ</NavDropdown.Item>
+                      </NavDropdown>
+                    </Box>
                   </>
                   :
                   null
