@@ -1,8 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { UserContext } from '../../context/UserContext';
-import ReactPaginate from 'react-paginate';
 import ModalProposeReceiveOut from '../ManagePropose/ModalProposeReceiveOut';
-import "./ListPropose.scss";
+import "./SCSS/ListPropose.scss";
 import moment from 'moment';
 import { Box, Typography } from "@mui/material";
 import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';
@@ -43,10 +42,10 @@ function ListProposeReceiveOut() {
         { field: "stt", headerName: "STT", width: 100, valueGetter: (params) => params.row.stt },
         { field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 280 },
         { field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 410, renderCell: (params) => <ExpandableCell {...params} /> },
-        { field: "deparment_NameSend", headerName: "Nơi gửi", width: 211 },
-        { field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 185, valueFormatter: (params) => moment(params.value).format('llll') },
+        { field: "deparment_NameSend", headerName: "Nơi gửi", width: 205 },
+        { field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 190, valueFormatter: (params) => moment(params.value).format('llll') },
         {
-            field: "document_Incomming_State", headerName: "Trạng thái", width: 132, renderCell: (params) => {
+            field: "document_Incomming_State", headerName: "Trạng thái", headerAlign: 'center', width: 132, renderCell: (params) => {
                 if (params.row.document_Incomming_State === 0) {
                     return (
                         <><span className="status rounded-pill wait">Chờ duyệt</span></>
@@ -67,9 +66,24 @@ function ListProposeReceiveOut() {
                         <><span className="status rounded-pill browse">Đã duyệt</span></>
                     )
                 }
-                else {
+                else if (params.row.document_Incomming_State === 4) {
                     return (
                         <><span className="status rounded-pill move-up">Chuyển tiếp</span></>
+                    )
+                }
+                else if (params.row.document_Incomming_State === 5) {
+                    return (
+                        <><span className="status rounded-pill processing">Đang xử lý...</span></>
+                    )
+                }
+                else if (params.row.document_Incomming_State === 6) {
+                    return (
+                        <><span className="status rounded-pill processed">Đã xử lý <i className="fa">&#xf00c;</i></span></>
+                    )
+                }
+                else {
+                    return (
+                        <><span className="status rounded-pill wait">TH này chưa biết</span></>
                     )
                 }
             }

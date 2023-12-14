@@ -96,19 +96,44 @@
     -webkit-box-orient: vertical;
 }
 
-@media (min-height: 700px) {
-    #skeleton {
-        //n tượng trưng cho cấp số cộng 3n (=) 3 + 3 tăng dần lên
-        .MuiBox-root:nth-child(1n + 10){
-            display: none;
-            // background-color: red;
-        }
-        // .MuiBox-root:nth-child(10n){
-            
-        //     display: none;
-        // }
-        // .MuiBox-root:nth-child(11n){
-        //     display: none;
-        // }
+@media (min-width: 576px) { 
+    #notifiicon-bottom-box{
+        overflow-y: hidden!important;
     }
-  }
+ }
+
+// @media (max-width: 991.98px) { 
+//     #skeleton {
+//         //n tượng trưng cho cấp số cộng 3n (=) 3 + 3 tăng dần lên
+//         .MuiBox-root:nth-child(1n + 10){
+//             display: none;
+//             // background-color: red;
+//         }
+//     }
+// }
+
+//   // X-Large devices (large desktops, 1200px and up)
+// @media (max-width: 1199.98px) {
+//     #skeleton {
+//         //n tượng trưng cho cấp số cộng 3n (=) 3 + 3 tăng dần lên
+//         .MuiBox-root:nth-child(1n + 10){
+//             display: none;
+//             // background-color: red;
+//         }
+//     }
+// }
+
+// @media (min-width: 1200px) { 
+//     #notifiicon-bottom-box{
+//         overflow-y: hidden!important;
+//     }
+//     #skeleton {
+//         //n tượng trưng cho cấp số cộng 3n (=) 3 + 3 tăng dần lên
+//         .MuiBox-root:nth-child(1n){
+//             margin-top: 5px;
+//             //display: none;
+//             //background-color: red;
+//             //overflow-y:visible;
+//         }
+//     }
+// }

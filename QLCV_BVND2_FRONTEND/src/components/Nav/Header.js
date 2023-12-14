@@ -4,13 +4,11 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Link, NavLink, useHistory } from "react-router-dom";
 import { UserContext } from '../../context/UserContext';
-import './Nav.scss';
-import logo from '../../assets/image/logo.png';
-import { handleLoginRedux, handleLogoutRedux } from "../redux/actions/userAction";
+import './SCSS/Nav.scss';
 import { useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { Box, Menu, MenuItem } from '@mui/material';
+import { Box } from '@mui/material';
 import NotifiIcon from './NotifiIcon';
 
 const Header = (props) => {

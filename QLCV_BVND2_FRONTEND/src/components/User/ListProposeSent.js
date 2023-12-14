@@ -4,7 +4,7 @@ import ReactPaginate from 'react-paginate';
 
 import ModalProposeSent from '../ManagePropose/ModalProposeSent';
 
-import "./ListPropose.scss";
+import "./SCSS/ListPropose.scss";
 
 import moment from 'moment';
 import { Button } from '@mui/material';

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import ModalDeleteUser from '../ManageUsers/ModalDeleteUser';
 import ModalUser from '../ManageUsers/ModalUser';
 import ReactPaginate from 'react-paginate';
-import './ListUser.scss';
+import './SCSS/ListUser.scss';
 import { toast, ToastContainer } from 'react-toastify';
 import { UserContext } from '../../context/UserContext';
 import Typography from '@mui/material/Typography';

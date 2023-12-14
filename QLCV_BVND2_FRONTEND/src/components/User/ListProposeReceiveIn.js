@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { UserContext } from '../../context/UserContext';
 import ReactPaginate from 'react-paginate';
 import ModalProposeReceiveIn from '../ManagePropose/ModalProposeReceiveIn';
-import "./ListPropose.scss";
+import "./SCSS/ListPropose.scss";
 import moment from 'moment';
 import { Box, Typography } from "@mui/material";
 import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';

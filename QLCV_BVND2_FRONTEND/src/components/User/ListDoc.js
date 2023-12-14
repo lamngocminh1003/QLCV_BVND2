@@ -3,9 +3,9 @@ import moment from 'moment';
 import 'moment/locale/vi';
 import { UserContext } from '../../context/UserContext';
 import ReactPaginate from 'react-paginate';
-import "./ListDoc.scss";
+import "./SCSS/ListDoc.scss";
 import ModalDocument from '../ManageDocument/ModalDocument';
-import {getListByUserLimitNumberPage} from '../../services/docService'
+import { getListByUserLimitNumberPage } from '../../services/docService'
 
 
 function ListDoc() {
@@ -77,16 +77,16 @@ function ListDoc() {
 
     const fetchAllDoc = async () => {
         let result = await getListByUserLimitNumberPage(currentLimit, currentPage);
-        if(result.documents.length !== 0){
+        if (result.documents.length !== 0) {
             setTotalPages(result.totalPages);
             setListDoc(result.documents)
         }
     }
 
-    useEffect(()=> {
+    useEffect(() => {
         fetchAllDoc();
     }, [currentPage])
-    
+
     return (
         <>
             <div>
@@ -144,8 +144,8 @@ function ListDoc() {
                                                 return (
                                                     <tr key={`row-${indexListDoc}`}>
                                                         <td>{(currentPage - 1) * currentLimit + indexListDoc + 1}</td>
-                                                        <td style={{width: '20.4%'}}><button className='title-doc text-start' onClick={() => btnInfo(itemListDoc)}>{itemListDoc.document_Incomming_Title}</button></td>
-                                                        <td style={{width: '22.8%'}}>{itemListDoc.document_Incomming_Content}</td>
+                                                        <td style={{ width: '20.4%' }}><button className='title-doc text-start' onClick={() => btnInfo(itemListDoc)}>{itemListDoc.document_Incomming_Title}</button></td>
+                                                        <td style={{ width: '22.8%' }}>{itemListDoc.document_Incomming_Content}</td>
                                                         <td className='align-middle'>{`${moment(itemListDoc.document_Incomming_TimeStart).format('L')} ${moment(itemListDoc.document_Incomming_Deadline).format('L')}`}</td>
                                                         <td className='align-middle'>{`${moment(itemListDoc.document_Incomming_Time).format('llll')}`}</td>
                                                         {/* <td>{itemListDoc.docHandOver.length !== 0 ? itemListDoc.docHandOver : null}</td> */}

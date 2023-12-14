@@ -19,7 +19,7 @@ import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Skeleton from "@mui/material/Skeleton";
 //css
-import "./NotifiIcon.scss";
+import './SCSS/NotifiIcon.scss';
 //some icon
 import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -430,7 +430,7 @@ function NotifiIcon() {
                 </>
                 :
                 <>
-                  <Stack spacing={1.28} sx={{ pl: "4px", my: 0.7 }} id="skeleton">
+                  <Stack spacing={2.2} sx={{ pl: "4px", my: 1.5 }} id="skeleton">
                     <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
                       <Box sx={{ marginRight: '11px' }}>
                         <Skeleton variant="circular" width={56} height={56} />
@@ -527,6 +527,15 @@ function NotifiIcon() {
                       </Box>
                       <Box>
                         <Skeleton variant="rounded" width={260} height={15} />
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', px: 1 }}>
+                      <Box sx={{ marginRight: '11px' }}>
+                        <Skeleton variant="circular" width={56} height={56} />
+                      </Box>
+                      <Box>
+                        <Skeleton variant="rounded" width={130} height={15} />
                       </Box>
                     </Box>
                   </Stack>

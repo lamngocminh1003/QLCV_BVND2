@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
+import ButtonMui from '@mui/material/Button';
 import _, { cloneDeep, set } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../context/UserContext';
 import Modal from 'react-bootstrap/Modal';
 //import some theme from mui
 import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
 //import some shit to create assign to department
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
@@ -17,6 +19,10 @@ import ModalCofirmCreateTask from '../ManageTask/ModalCofirmCreateTask';
 //import api
 import { updateProposeState, moveupProposeByHeader, moveupProposeDepartmentOut } from '../../services/proposeService';
 import { getAllDepartmentByType } from '../../services/departmentService';
+//css
+import "./SCSS/ModalPropose.scss"
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import { Box } from '@mui/material';
 
 function ModalProposeReceive(props) {
     const { user, logoutContext } = useContext(UserContext);
@@ -156,7 +162,20 @@ function ModalProposeReceive(props) {
                                                 </>
                                                 :
                                                 <>
-                                                    <div className='col-sm-12 mt-3 mb-3'>
+                                                    <div className='col-sm-12 mt-3 mb-4'>
+                                                        <Typography variant='body1' fontSize={17} color='FireBrick'>Ý kiến giải quyết</Typography>
+                                                        <Typography >
+                                                            <textarea className='form-control mt-1 fs-6' id="document_Incomming_Comment" rows="4"
+                                                                onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Comment')} value={dataModalProposeReceive.document_Incomming_Comment || ""}></textarea>
+                                                        </Typography>
+                                                    </div>
+
+                                                    <div className='mb-1 d-flex'>
+                                                        <AutoFixHighIcon></AutoFixHighIcon>
+                                                        <hr style={{ border: '1.5px solid red', color: 'red', width: '100%' }} />
+                                                    </div>
+
+                                                    <div className='col-sm-12 mb-3'>
                                                         <Typography variant='body1' fontSize={17} color='FireBrick'>Lý do chuyển tiếp</Typography>
                                                         <Typography >
                                                             <textarea className='form-control mt-1 fs-6' id="document_Incomming_Transition_Reason" rows="4"
@@ -229,8 +248,9 @@ function ModalProposeReceive(props) {
                             else {
                                 return (
                                     <>
-                                        <Button variant="success" onClick={() => btnOpenModalConfirmCreateTask(dataModalProposeReceive)}>Tiếp nhận đề xuất</Button>
-                                        <Button variant="info" onClick={() => handleMoveupProposeDepartmentOut(dataModalProposeReceive)}>Chuyển tiếp đề xuất </Button>
+                                        <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="success" onClick={() => btnOpenModalConfirmCreateTask(dataModalProposeReceive)}>Tiếp nhận</ButtonMui>
+                                        <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="secondary">Bàn giao</ButtonMui>
+                                        <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="primary" onClick={() => handleMoveupProposeDepartmentOut(dataModalProposeReceive)}>Chuyển tiếp</ButtonMui>
                                     </>
                                 )
                             }

@@ -14,46 +14,52 @@ const createConfig = () => {
 }
 
 const createDocIncoming = async (dataObj) => {
-    const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/Create?Title=${dataObj.docName}&Content=${dataObj.docDes}&TimeStart=${dataObj.docExpireStart}&TimeEnd=${dataObj.docExpireEnd}`, 
+  const token = localStorage.getItem("jwt");
+  return await axios.post(`${backendURL}/api/DocumentIncomming/Create?Title=${dataObj.docName}&Content=${dataObj.docDes}&TimeStart=${dataObj.docExpireStart}&TimeEnd=${dataObj.docExpireEnd}`,
     dataObj.files, {
-        headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
+    headers: {
+      "content-type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(function (response) {
+      return response.status
     })
-  .then(function(response){
-    return response.status
-  })
-  .catch(function(error){
-    return error.response.status
-  })
+    .catch(function (error) {
+      return error.response.status
+    })
 }
 
 //lấy văn bản theo dạng không phân trang
 const getAllDocSendUserLogin = async () => {
   const config = createConfig();
   return await axios.get(`${backendURL}/api/DocumentIncomming/GetAllDocSendUserLogin`, config)
-  .then(function(response){
-    return response.data
-  })
-  .catch(function(error){
-    return error.response.status
-  })
+    .then(function (response) {
+      return response.data
+    })
+    .catch(function (error) {
+      return error.response.status
+    })
 }
 
 //lấy văn bản theo dạng phân trang
 const getListByUserLimitNumberPage = async (limit, page) => {
   const config = createConfig();
   return await axios.get(`${backendURL}/api/DocumentSend/GetListDocSendByUserLimitNumberPage/${limit}/${page}`, config)
-  .then(function(response){
-    return response.data
-  })
-  .catch(function(error){
-    return error.response.status
-  })
+    .then(function (response) {
+      return response.data
+    })
+    .catch(function (error) {
+      return error.response.status
+    })
+}
+
+const createDocSendPublicByDocIn = () => {
+
 }
 
 export {
-    createDocIncoming, getAllDocSendUserLogin, getListByUserLimitNumberPage
+  createDocIncoming, getAllDocSendUserLogin, getListByUserLimitNumberPage,
+
+  createDocSendPublicByDocIn,
 };

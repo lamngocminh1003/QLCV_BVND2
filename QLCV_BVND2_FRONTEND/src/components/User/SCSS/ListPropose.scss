@@ -15,10 +15,14 @@
         background-color: #8540f5;
     }
     &.browse{
-        background-color: #0cd22f;
+        background-color: rgb(252, 80, 32);
     }
     &.move-up{
         background-color: #0dcaf0;
+    }&.processing{
+        background-color: rgb(244, 39, 73);
+    }&.processed{
+        background-color: rgb(41, 137, 115);
     }
     // &.expired{
     //     background-color: #6c757d;

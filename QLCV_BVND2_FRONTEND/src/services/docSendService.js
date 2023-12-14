@@ -1,0 +1,49 @@
+import axios from "axios";
+
+const backendURL = 'http://146.190.89.3:9090';
+
+const createConfig = () => {
+    const token = localStorage.getItem("jwt");
+    // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    };
+    return config;
+}
+
+//đề xuất bên ngoài gửi vào để làm
+const createDocSendPublicByDocIn = async (dataObj) => {
+    const token = localStorage.getItem("jwt");
+    return await axios.post(`${backendURL}/api/DocumentSend/CreateDocSendPublicByDocIn?DocIncommingId=${dataObj.document_Incomming_Id}&Title=${dataObj.document_Incomming_Title}
+    &Content=${dataObj.document_Incomming_Content}&TimeStart=${dataObj.document_Incomming_TimeStart}&Deadline=${dataObj.document_Incomming_Deadline}&CatagoryId=${dataObj.document_Incomming_Category}`,
+        dataObj.files, {
+        headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+        }
+    })
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
+const getAllDocSendPublicByUserLogin = async () => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/DocumentSend/GetAllDocSendPublicByUserLogin`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
+export {
+    createDocSendPublicByDocIn,
+    getAllDocSendPublicByUserLogin
+};

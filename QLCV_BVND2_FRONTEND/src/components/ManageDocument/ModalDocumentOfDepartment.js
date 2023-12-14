@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import "./Document.scss";
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import "../Task/Task.scss";
+// import "./SCSS/Task.scss";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
