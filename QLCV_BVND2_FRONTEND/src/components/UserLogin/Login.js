@@ -1,5 +1,4 @@
 import React from 'react';
-import './Login.scss';
 import './Login_Template/vendor/bootstrap/css/bootstrap.min.css';
 import './Login_Template/fonts/font-awesome-4.7.0/css/font-awesome.min.css';
 import './Login_Template/fonts/iconic/css/material-design-iconic-font.min.css';
@@ -11,7 +10,7 @@ import './Login_Template/css/util.css';
 import './Login_Template/css/main.css';
 import image from './Login_Template/images/logo.png';
 
-import './Login.scss';
+import './SCSS/Login.scss';
 import { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
 import { userLogin } from "../../services/userService";
@@ -66,16 +65,16 @@ const LoginUser = () => {
         }
 
         let response = await userLogin(valueUserName, valuePassword);
-        if(response === 400){
+        if (response === 400) {
             toast.error('Tài khoản hoặc mật khẩu không chính xác!');
         }
-        else{
+        else {
             toast.success(`Xin chào ${response.userFullName}!`)
-            
+
             let userId = response.userId;
             let fullName = response.userFullName;
             let email = response.userEmail;
-            let departmentId = response.department.department_ID;   
+            let departmentId = response.department.department_ID;
             let departmentName = response.department.department_Name;
             let departmentHead = response.department.department_Head;
             let departmentType = response.department.department_Type;
@@ -83,7 +82,7 @@ const LoginUser = () => {
             //cập nhật lại giá trị của biến context global, biến data sẽ ghi đè lên biến user đang dùng state trong file UserContext
             let data = {
                 isAuthenticated: true,
-                account: {userId, fullName, email, departmentId, departmentName, departmentHead, departmentType}
+                account: { userId, fullName, email, departmentId, departmentName, departmentHead, departmentType }
             }
 
             localStorage.setItem('jwt', response.tokenDTO.token);
@@ -95,17 +94,17 @@ const LoginUser = () => {
     useEffect(() => {
         // Kiểm tra trạng thái đăng nhập khi component được render
         if (user && user.isAuthenticated === true) {
-          history.push("/");
+            history.push("/");
         }
-    
+
         let session = localStorage.getItem("jwt");
         if (session) {
-          history.push("/");
+            history.push("/");
         }
     }, [user, history]);
 
     return (
-        <div className='container-login-form' id='login-form' style={{height: '100%'}}>
+        <div className='container-login-form' id='login-form' style={{ height: '100%' }}>
             <div className="limiter">
                 <div className="container-login100">
                     <div className="wrap-login100">
