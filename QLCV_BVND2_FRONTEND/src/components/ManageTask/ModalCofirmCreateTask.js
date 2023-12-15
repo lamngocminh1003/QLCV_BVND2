@@ -13,6 +13,22 @@ import ModalCreateTaskPublic from "./ModalCreateTaskPublic";
 import ModalCreateTaskPrivate from "./ModalCreateTaskPrivate";
 
 function ModalCofirmCreateTask(props) {
+    const dataModalConfirmCreateTaskDefault = {
+        documentIncomming: {
+            document_Incomming_Id: '',
+            document_Incomming_Title: '',
+            document_Incomming_Content: '',
+            document_Incomming_UserSend: '',
+            document_Incomming_UserSend_FullName: '',
+            document_Incomming_UserReceive: '',
+            document_Incomming_State: '',
+            document_Incomming_Comment: '',
+            document_Incomming_Transition_Reason: '',
+            document_Incomming_Time: '',
+        },
+        fileIds: []
+    }
+
     const [dataModalConfirmCreateTask, setDataModalConfirmCreateTask] = useState({});
 
     //config modal create task public
@@ -35,7 +51,9 @@ function ModalCofirmCreateTask(props) {
     }
 
     useEffect(() => {
-        setDataModalConfirmCreateTask({ ...props.dataModalConfirmCreateTask })
+        if (Object.keys(props.dataModalConfirmCreateTask).length !== 0) {
+            setDataModalConfirmCreateTask({ ...props.dataModalConfirmCreateTask })
+        }
     }, [props.dataModalConfirmCreateTask])
 
     return (
@@ -47,7 +65,8 @@ function ModalCofirmCreateTask(props) {
                 <Modal.Body>
                     <Typography variant="subtitle1">
                         Tạo công việc {`${props.typeModalConfirmCreateTask === "PUBLIC" ? "" : "nội bộ"}`} cho đề xuất
-                        "<strong style={{ fontFamily: '"DM Sans", sans-serif' }}>{`${dataModalConfirmCreateTask.document_Incomming_Title}`}</strong>"?
+                        "<strong style={{ fontFamily: '"DM Sans", sans-serif' }}></strong>"?
+                        {/* {`${dataModalConfirmCreateTask.documentIncomming.document_Incomming_Title}`} */}
                     </Typography>
                 </Modal.Body>
                 <Modal.Footer className='d-flex justify-content-center'>

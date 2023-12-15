@@ -14,20 +14,21 @@ const createConfig = () => {
 }
 
 const createPropose = async (dataObj) => {
-    const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`,
-        dataObj.proposeFile, {
-        headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-        }
-    })
-        .then(function (response) {
-            return response.status
-        })
-        .catch(function (error) {
-            return error.response.status
-        })
+    console.log(dataObj)
+    // const token = localStorage.getItem("jwt");
+    // return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`,
+    //     dataObj.proposeFile, {
+    //     headers: {
+    //         "content-type": "multipart/form-data",
+    //         Authorization: `Bearer ${token}`,
+    //     }
+    // })
+    //     .then(function (response) {
+    //         return response.status
+    //     })
+    //     .catch(function (error) {
+    //         return error.response.status
+    //     })
 }
 
 const createProposeByHeader = async (dataObj, idDepartment) => {
@@ -68,8 +69,9 @@ const moveupProposeByHeader = async (dataObj, idDepartment) => {
 //chuyển tiếp đề xuất từ DP type = 2 sang DP type = 2 khác
 const moveupProposeDepartmentOut = async (dataObj, idDepartment) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}
-    &Comment=${dataObj.document_Incomming_Transition_Reason}&DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.document_Incomming_Id}`,
+    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.documentIncomming.document_Incomming_Title}
+    &Content=${dataObj.documentIncomming.document_Incomming_Content}&Comment=${dataObj.documentIncomming.document_Incomming_Transition_Reason}
+    &DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.documentIncomming.document_Incomming_Id}`,
         dataObj.proposeFile, {
         headers: {
             "content-type": "multipart/form-data",
@@ -117,6 +119,17 @@ const getProposeReceiveOut = async () => {
         })
 }
 
+const getProposeReceiveById = async (doc_id) => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/DocumentIncomming/GetDocByDocId/${doc_id}`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 const getProposeReceiveNotification = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/DocumentIncomming/GetListDocReceiveByUserNotification`, config)
@@ -130,7 +143,7 @@ const getProposeReceiveNotification = async () => {
 
 const updateProposeState = async (dataObj, state) => {
     const config = createConfig();
-    return await axios.put(`${backendURL}/api/DocumentIncomming/UpdateState?docId=${dataObj.document_Incomming_Id}&state=${state}&Comment=${dataObj.document_Incomming_Comment}`, '', config)
+    return await axios.put(`${backendURL}/api/DocumentIncomming/UpdateState?docId=${dataObj.documentIncomming.document_Incomming_Id}&state=${state}&Comment=${dataObj.documentIncomming.document_Incomming_Comment}`, '', config)
         .then(function (response) {
             return response.status
         })
@@ -152,6 +165,6 @@ const updateProposeStateSeen = async (proposeId) => {
 
 export {
     createPropose, createProposeByHeader, moveupProposeByHeader, moveupProposeDepartmentOut,
-    getProposeSend, getProposeReceiveIn, getProposeReceiveOut, getProposeReceiveNotification,
+    getProposeSend, getProposeReceiveIn, getProposeReceiveOut, getProposeReceiveNotification, getProposeReceiveById,
     updateProposeState, updateProposeStateSeen
 };

@@ -56,11 +56,11 @@ function ListProposeSent() {
     const columns = [
         { field: "stt", headerName: "STT", width: 100, valueGetter: (params) => params.row.stt },
         { field: "document_Incomming_Title", headerName: "Tên đề xuất", width: 205 },
-        { field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 420, renderCell: (params) => <ExpandableCell {...params} /> },
-        { field: "deparment_NameReceive", headerName: "Nơi nhận", width: 125 },
-        { field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 190, valueFormatter: (params) => moment(params.value).format('llll') },
+        { field: "document_Incomming_Content", headerName: "Nội dung đề xuất", width: 415, renderCell: (params) => <ExpandableCell {...params} /> },
+        { field: "document_Incomming_Time", headerName: "Thời gian gửi", width: 195, valueFormatter: (params) => moment(params.value).format('llll') },
+        { field: "deparment_NameReceive", headerName: "Nơi nhận", width: 135 },
         {
-            field: "document_Incomming_State", headerName: "Trạng thái", width: 125, renderCell: (params) => {
+            field: "document_Incomming_State", headerName: "Trạng thái", width: 133, renderCell: (params) => {
                 if (params.row.document_Incomming_State === 0) {
                     return (
                         <><span className="status rounded-pill wait">Chờ duyệt</span></>
@@ -81,15 +81,30 @@ function ListProposeSent() {
                         <><span className="status rounded-pill browse">Đã duyệt</span></>
                     )
                 }
-                else {
+                else if (params.row.document_Incomming_State === 4) {
                     return (
                         <><span className="status rounded-pill move-up">Chuyển lên</span></>
+                    )
+                }
+                else if (params.row.document_Incomming_State === 5) {
+                    return (
+                        <><span className="status rounded-pill processing">Đang xử lý...</span></>
+                    )
+                }
+                else if (params.row.document_Incomming_State === 6) {
+                    return (
+                        <><span className="status rounded-pill processed">Đã xử lý <i className="fa">&#xf00c;</i></span></>
+                    )
+                }
+                else {
+                    return (
+                        <><span className="status rounded-pill move-up">TH này chưa biết</span></>
                     )
                 }
             }
         },
         {
-            field: "department_Location", headerName: "Vị trí", width: 150, renderCell: (params) => {
+            field: "department_Location", headerName: "Vị trí", width: 135, renderCell: (params) => {
                 if (params.row.department_Location === null) {
                     return ("");
                 }

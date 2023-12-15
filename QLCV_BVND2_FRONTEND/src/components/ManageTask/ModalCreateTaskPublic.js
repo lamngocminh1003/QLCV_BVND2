@@ -15,16 +15,23 @@ import vi from "date-fns/locale/vi";
 import "./SCSS/ModalCreateTask.scss";
 //api
 import { createDocSendPublicByDocIn } from '../../services/docSendService';
+import { getTaskCategory } from '../../services/docSendService';
 
 function ModalCreateTaskPublic(props) {
     const dataModalCreateTaskPublicDefault = {
-        document_Incomming_Id: '',
-        document_Incomming_Title: '',
-        document_Incomming_Content: '',
-        document_Incomming_TimeStart: '',
-        document_Incomming_Deadline: '',
-        document_Incomming_Category: '',
-        files: '',
+        documentIncomming: {
+            document_Incomming_Id: '',
+            document_Incomming_Title: '',
+            document_Incomming_Content: '',
+            document_Incomming_UserSend: '',
+            document_Incomming_UserSend_FullName: '',
+            document_Incomming_UserReceive: '',
+            document_Incomming_State: '',
+            document_Incomming_Comment: '',
+            document_Incomming_Transition_Reason: '',
+            document_Incomming_Time: '',
+        },
+        fileIds: []
     }
 
     const [dataModalCreateTaskPublic, setDataModalCreateTaskPublic] = useState(dataModalCreateTaskPublicDefault);
@@ -76,7 +83,8 @@ function ModalCreateTaskPublic(props) {
     }
 
     //config chọn loại công việc
-    const [taskType, setTaskType] = useState(0);
+    const [taskType, setTaskType] = useState();
+    const [listTaskCategory, setListTaskCategory] = useState([]);
 
     const handleOnchange = (value, name) => {
 
@@ -93,13 +101,26 @@ function ModalCreateTaskPublic(props) {
         let formDataFile = new FormData();
         formDataFile.append('files', '');
         dataModalCreateTaskPublic.filesDocIn = formDataFile;
-
-
         let response = await createDocSendPublicByDocIn(dataModalCreateTaskPublic);
+        if (response === 200) {
+            toast.success('Tạo công việc thành công!');
+            props.closeModalConfirmCreateTask(false);
+        }
+        else {
+            toast.error(response);
+        }
+    }
+
+    const getTaskCategoryFunc = async () => {
+        let resultListTaskCategory = await getTaskCategory();
+        setListTaskCategory(resultListTaskCategory);
     }
 
     useEffect(() => {
-        setDataModalCreateTaskPublic({ ...props.dataModalCreateTaskPublic })
+        if (Object.keys(props.dataModalCreateTaskPublic).length !== 0) {
+            setDataModalCreateTaskPublic({ ...props.dataModalCreateTaskPublic })
+            getTaskCategoryFunc();
+        }
     }, [props.dataModalCreateTaskPublic])
 
     return (
@@ -117,11 +138,11 @@ function ModalCreateTaskPublic(props) {
                                         <div className="row">
                                             <Form.Group className="mb-3">
                                                 <Form.Label className='label-input-create-task'>Tên công việc <span className='text-danger'>(*)</span></Form.Label>
-                                                <Form.Control type="text" value={dataModalCreateTaskPublic.document_Incomming_Title || ""} onChange={(e) => handleOnchange(e.value, 'document_Incomming_Title')} />
+                                                <Form.Control type="text" value={dataModalCreateTaskPublic.documentIncomming.document_Incomming_Title || ""} onChange={(e) => handleOnchange(e.value, 'document_Incomming_Title')} />
                                             </Form.Group>
                                             <Form.Group className='mb-3'>
                                                 <Form.Label className='label-input-create-task'>Nội dung công việc <span className='text-danger'>(*)</span></Form.Label>
-                                                <Form.Control as="textarea" value={dataModalCreateTaskPublic.document_Incomming_Content || ""} onChange={(e) => handleOnchange(e.value, 'document_Incomming_Content')} rows={4} />
+                                                <Form.Control as="textarea" value={dataModalCreateTaskPublic.documentIncomming.document_Incomming_Content || ""} onChange={(e) => handleOnchange(e.value, 'document_Incomming_Content')} rows={4} />
                                             </Form.Group>
                                             <Form.Group className="date-expire-group mb-3">
                                                 <fieldset className="border rounded-3 p-4 ">
@@ -191,9 +212,9 @@ function ModalCreateTaskPublic(props) {
                                                 <Form.Label className='label-input-create-task'>Loại công việc <span className='text-danger'>(*)</span></Form.Label>
                                                 <Form.Select onChange={(e) => setTaskType(+e.currentTarget.value)}>
                                                     <option>Chọn 1 loại công việc</option>
-                                                    <option value="1">One</option>
-                                                    <option value="2">Two</option>
-                                                    <option value="3">Three</option>
+                                                    {listTaskCategory.map((item, index) => {
+                                                        return (<option key={item.task_Category_Id} value={item.task_Category_Id}>{item.category_Name}</option>)
+                                                    })}
                                                 </Form.Select>
                                             </Form.Group>
                                             <Form.Group>

@@ -17,7 +17,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 //modal
 import ModalCofirmCreateTask from '../ManageTask/ModalCofirmCreateTask';
 //import api
-import { updateProposeState, moveupProposeByHeader, moveupProposeDepartmentOut } from '../../services/proposeService';
+import { updateProposeState, moveupProposeDepartmentOut, getProposeReceiveById } from '../../services/proposeService';
 import { getAllDepartmentByType } from '../../services/departmentService';
 //css
 import "./SCSS/ModalPropose.scss"
@@ -32,16 +32,19 @@ function ModalProposeReceive(props) {
     const checkedIcon = <CheckBoxIcon fontSize="medium" />
 
     const dataModalProposeReceiveDefault = {
-        document_Incomming_Id: '',
-        document_Incomming_Title: '',
-        document_Incomming_Content: '',
-        document_Incomming_UserSend: '',
-        document_Incomming_UserSend_FullName: '',
-        document_Incomming_UserReceive: '',
-        document_Incomming_State: '',
-        document_Incomming_Comment: '',
-        document_Incomming_Transition_Reason: '',
-        document_Incomming_Time: '',
+        documentIncomming: {
+            document_Incomming_Id: '',
+            document_Incomming_Title: '',
+            document_Incomming_Content: '',
+            document_Incomming_UserSend: '',
+            document_Incomming_UserSend_FullName: '',
+            document_Incomming_UserReceive: '',
+            document_Incomming_State: '',
+            document_Incomming_Comment: '',
+            document_Incomming_Transition_Reason: '',
+            document_Incomming_Time: '',
+        },
+        fileIds: []
     }
 
     const [dataModalProposeReceive, setDataModalProposeReceive] = useState(dataModalProposeReceiveDefault);
@@ -57,7 +60,7 @@ function ModalProposeReceive(props) {
 
     const handleOnchange = (value, inputName) => {
         let _dataModalProposeReceive = cloneDeep(dataModalProposeReceive);
-        _dataModalProposeReceive[inputName] = value;
+        _dataModalProposeReceive.documentIncomming[inputName] = value;
         setDataModalProposeReceive(_dataModalProposeReceive);
     }
 
@@ -70,7 +73,7 @@ function ModalProposeReceive(props) {
         if (response === 200) {
             toast.success('Đã duyệt đề xuất!');
             props.makeModalProposeReceiveOutDoing(true);
-            setDataModalProposeReceive(dataModalProposeReceiveDefault);
+            handleGetProposeReceiveById(props.dataModalProposeReceiveOut);
         }
     }
 
@@ -79,7 +82,7 @@ function ModalProposeReceive(props) {
         if (response === 200) {
             toast.error('Đã từ chối đề xuất!');
             props.makeModalProposeReceiveOutDoing(true);
-            setDataModalProposeReceive(dataModalProposeReceiveDefault);
+            handleGetProposeReceiveById(props.dataModalProposeReceiveOut);
         }
     }
 
@@ -88,7 +91,7 @@ function ModalProposeReceive(props) {
         if (response === 200) {
             toast.warning('Đã trả đề xuất về!');
             props.makeModalProposeReceiveOutDoing(true);
-            setDataModalProposeReceive(dataModalProposeReceiveDefault);
+            handleGetProposeReceiveById(props.dataModalProposeReceiveOut);
         }
     }
 
@@ -97,13 +100,20 @@ function ModalProposeReceive(props) {
         if (response === 200) {
             toast.info(`Đã chuyển tiếp đề xuất qua ${selectedDepartment.department_Name}!`);
             props.makeModalProposeReceiveOutDoing(true);
-            setDataModalProposeReceive(dataModalProposeReceiveDefault);
+            handleGetProposeReceiveById(props.dataModalProposeReceiveOut);
+        }
+    }
+
+    const handleGetProposeReceiveById = async (proposeId) => {
+        let propse = await getProposeReceiveById(proposeId);
+        setDataModalProposeReceive(propse);
+        if (propse.documentIncomming.document_Incomming_State === 3 && Object.keys(listDepartmentByType).length === 0) {
+            getDepartmentByType();
         }
     }
 
     const handleHideModal = () => {
         props.closeModalProposeReceiveOut(false);
-        setDataModalProposeReceive(dataModalProposeReceiveDefault);
     }
 
     //gọi modal confirm create task
@@ -121,11 +131,8 @@ function ModalProposeReceive(props) {
     }
 
     useEffect(() => {
-        if (Object.keys(props.dataModalProposeReceiveOut).length !== 0) {
-            setDataModalProposeReceive({ ...props.dataModalProposeReceiveOut });
-            if (props.dataModalProposeReceiveOut.document_Incomming_State === 3) {
-                getDepartmentByType();
-            }
+        if (props.dataModalProposeReceiveOut.length !== 0) {
+            handleGetProposeReceiveById(props.dataModalProposeReceiveOut);
         }
     }, [props.dataModalProposeReceiveOut])
 
@@ -144,74 +151,102 @@ function ModalProposeReceive(props) {
                                         <div className="row">
                                             <div className='col-sm-12'>
                                                 <Typography variant='body1' fontSize={17} color='FireBrick'>Tên đề xuất</Typography>
-                                                <Typography variant='body1' className='form-control mt-1'>{dataModalProposeReceive.document_Incomming_Title}</Typography>
+                                                <Typography variant='body1' className='form-control mt-1'>{dataModalProposeReceive.documentIncomming.document_Incomming_Title}</Typography>
                                             </div>
                                             <div className='col-sm-12 mt-3'>
                                                 <Typography variant='body1' fontSize={17} color='FireBrick'>Nội dung đề xuất</Typography>
-                                                <Typography variant='body1' className='form-control mt-1'>{dataModalProposeReceive.document_Incomming_Content}</Typography>
+                                                <Typography variant='body1' className='form-control mt-1'>{dataModalProposeReceive.documentIncomming.document_Incomming_Content}</Typography>
                                             </div>
-                                            {dataModalProposeReceive.document_Incomming_State === 0 || dataModalProposeReceive.document_Incomming_State === 1 || dataModalProposeReceive.document_Incomming_State === 2 ?
-                                                <>
-                                                    <div className='col-sm-12 mt-3 mb-3'>
-                                                        <Typography variant='body1' fontSize={17} color='FireBrick'>Ý kiến giải quyết</Typography>
-                                                        <Typography >
-                                                            <textarea className='form-control mt-1 fs-6' id="document_Incomming_Comment" rows="4"
-                                                                onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Comment')} value={dataModalProposeReceive.document_Incomming_Comment || ""}></textarea>
-                                                        </Typography>
-                                                    </div>
-                                                </>
-                                                :
-                                                <>
-                                                    <div className='col-sm-12 mt-3 mb-4'>
-                                                        <Typography variant='body1' fontSize={17} color='FireBrick'>Ý kiến giải quyết</Typography>
-                                                        <Typography >
-                                                            <textarea className='form-control mt-1 fs-6' id="document_Incomming_Comment" rows="4"
-                                                                onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Comment')} value={dataModalProposeReceive.document_Incomming_Comment || ""}></textarea>
-                                                        </Typography>
-                                                    </div>
-
-                                                    <div className='mb-1 d-flex'>
-                                                        <AutoFixHighIcon></AutoFixHighIcon>
-                                                        <hr style={{ border: '1.5px solid red', color: 'red', width: '100%' }} />
-                                                    </div>
-
-                                                    <div className='col-sm-12 mb-3'>
-                                                        <Typography variant='body1' fontSize={17} color='FireBrick'>Lý do chuyển tiếp</Typography>
-                                                        <Typography >
-                                                            <textarea className='form-control mt-1 fs-6' id="document_Incomming_Transition_Reason" rows="4"
-                                                                onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Transition_Reason')} value={dataModalProposeReceive.document_Incomming_Transition_Reason || ""}></textarea>
-                                                        </Typography>
-                                                    </div>
-                                                    <div className="col-sm-12 mt-3 mb-3">
-                                                        <Typography variant='body1' fontSize={17} color='FireBrick'>Chuyển tiếp qua phòng chức năng</Typography>
-                                                        <Autocomplete
-                                                            options={listDepartmentByType}
-                                                            getOptionLabel={(option) => option.department_Name}
-                                                            renderOption={(props, option, { selected }) => (
-                                                                <li {...props}>
-                                                                    <Checkbox
-                                                                        icon={icon}
-                                                                        checkedIcon={checkedIcon}
-                                                                        style={{ marginRight: 8 }}
-                                                                        checked={selected}
-                                                                    />
-                                                                    {option.department_Name}
-                                                                </li>
-                                                            )}
-                                                            style={{ width: 718 }}
-                                                            onChange={(e, value) => handleChangeSelectedDepartment(e, value)}
-                                                            renderInput={(params) => (
-                                                                <TextField {...params} placeholder="Gõ hoặc nhấn chọn một phòng chức năng..." />
-                                                            )}
-                                                        />
-                                                    </div>
-                                                </>
-                                            }
-                                            <div className='col-sm-12'>
-                                                <Typography variant='body1' fontSize={17} color='FireBrick'>File đính kèm</Typography>
-                                                {/* <input type='file' className='form-control' id="proposeFile"
+                                            {(() => {
+                                                if (dataModalProposeReceive.documentIncomming.document_Incomming_State === 0 || dataModalProposeReceive.documentIncomming.document_Incomming_State === 1 || dataModalProposeReceive.documentIncomming.document_Incomming_State === 2) {
+                                                    return (
+                                                        <>
+                                                            <div className='col-sm-12 mt-3 mb-3'>
+                                                                <Typography variant='body1' fontSize={17} color='FireBrick'>Ý kiến giải quyết</Typography>
+                                                                <Typography >
+                                                                    <textarea className='form-control mt-1 fs-6' id="document_Incomming_Comment" rows="4"
+                                                                        onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Comment')} value={dataModalProposeReceive.documentIncomming.document_Incomming_Comment || ""}></textarea>
+                                                                </Typography>
+                                                            </div>
+                                                            <div className='col-sm-12 mt-3'>
+                                                                <Typography variant='body1' fontSize={17} color='FireBrick'>File đính kèm</Typography>
+                                                                {/* <input type='file' className='form-control' id="proposeFile"
                                                 accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple></input> */}
-                                            </div>
+                                                            </div>
+                                                        </>
+                                                    )
+                                                } else if (dataModalProposeReceive.documentIncomming.document_Incomming_State === 3) {
+                                                    return (
+                                                        <>
+                                                            <div className='col-sm-12 mt-3 mb-3'>
+                                                                <Typography variant='body1' fontSize={17} color='FireBrick'>Ý kiến giải quyết</Typography>
+                                                                <Typography variant='body1' className='form-control mt-1'>
+                                                                    {dataModalProposeReceive.documentIncomming.document_Incomming_Comment}
+                                                                </Typography>
+                                                            </div>
+
+                                                            <div className='col-sm-12 mb-4'>
+                                                                <Typography variant='body1' fontSize={17} color='FireBrick'>File đính kèm</Typography>
+                                                                {/* <input type='file' className='form-control' id="proposeFile"
+                                                accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple></input> */}
+                                                            </div>
+
+                                                            <div className='mb-1 d-flex'>
+                                                                <AutoFixHighIcon></AutoFixHighIcon>
+                                                                <hr style={{ border: '1.5px solid red', color: 'red', width: '100%' }} />
+                                                            </div>
+
+                                                            <div className='col-sm-12 mt-2 mb-3'>
+                                                                <Typography variant='body1' fontSize={17} color='FireBrick'>Lý do chuyển tiếp</Typography>
+                                                                <Typography >
+                                                                    <textarea className='form-control mt-1 fs-6' id="document_Incomming_Transition_Reason" rows="4"
+                                                                        onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Transition_Reason')} value={dataModalProposeReceive.documentIncomming.document_Incomming_Transition_Reason || ""}></textarea>
+                                                                </Typography>
+                                                            </div>
+                                                            <div className="col-sm-12 mt-3 mb-3">
+                                                                <Typography variant='body1' fontSize={17} color='FireBrick'>Chuyển tiếp qua phòng chức năng</Typography>
+                                                                <Autocomplete
+                                                                    options={listDepartmentByType}
+                                                                    getOptionLabel={(option) => option.department_Name}
+                                                                    renderOption={(props, option, { selected }) => (
+                                                                        <li {...props}>
+                                                                            <Checkbox
+                                                                                icon={icon}
+                                                                                checkedIcon={checkedIcon}
+                                                                                style={{ marginRight: 8 }}
+                                                                                checked={selected}
+                                                                            />
+                                                                            {option.department_Name}
+                                                                        </li>
+                                                                    )}
+                                                                    style={{ width: 718 }}
+                                                                    onChange={(e, value) => handleChangeSelectedDepartment(e, value)}
+                                                                    renderInput={(params) => (
+                                                                        <TextField {...params} placeholder="Gõ hoặc nhấn chọn một phòng chức năng..." />
+                                                                    )}
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )
+                                                }
+                                                else {
+                                                    return (
+                                                        <>
+                                                            <div className='col-sm-12 mt-3 mb-3'>
+                                                                <Typography variant='body1' fontSize={17} color='FireBrick'>Ý kiến giải quyết</Typography>
+                                                                <Typography variant='body1' className='form-control mt-1'>
+                                                                    {dataModalProposeReceive.documentIncomming.document_Incomming_Comment}
+                                                                </Typography>
+                                                            </div>
+                                                            <div className='col-sm-12 mt-3'>
+                                                                <Typography variant='body1' fontSize={17} color='FireBrick'>File đính kèm</Typography>
+                                                                {/* <input type='file' className='form-control' id="proposeFile" accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple></input> */}
+                                                            </div>
+                                                            xem lịch sử đường đi của đề xuất ở dưới này
+                                                        </>
+                                                    )
+                                                }
+                                            })()}
                                         </div>
                                     </div>
                                 </div>
@@ -220,7 +255,7 @@ function ModalProposeReceive(props) {
                     </Modal.Body>
                     <Modal.Footer className='mb-2'>
                         {(() => {
-                            if (dataModalProposeReceive.document_Incomming_State === 0) {
+                            if (dataModalProposeReceive.documentIncomming.document_Incomming_State === 0) {
                                 return (
                                     <>
                                         <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
@@ -229,7 +264,7 @@ function ModalProposeReceive(props) {
                                     </>
                                 )
                             }
-                            else if (dataModalProposeReceive.document_Incomming_State === 1) {
+                            else if (dataModalProposeReceive.documentIncomming.document_Incomming_State === 1) {
                                 return (
                                     <>
                                         <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
@@ -237,7 +272,7 @@ function ModalProposeReceive(props) {
                                     </>
                                 )
                             }
-                            else if (dataModalProposeReceive.document_Incomming_State === 2) {
+                            else if (dataModalProposeReceive.documentIncomming.document_Incomming_State === 2) {
                                 return (
                                     <>
                                         <Button variant="success" onClick={() => proposeCheck(dataModalProposeReceive)}>Duyệt đề xuất</Button>
@@ -245,13 +280,18 @@ function ModalProposeReceive(props) {
                                     </>
                                 )
                             }
-                            else {
+                            else if (dataModalProposeReceive.documentIncomming.document_Incomming_State === 3) {
                                 return (
                                     <>
                                         <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="success" onClick={() => btnOpenModalConfirmCreateTask(dataModalProposeReceive)}>Tiếp nhận</ButtonMui>
                                         <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="secondary">Bàn giao</ButtonMui>
                                         <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="primary" onClick={() => handleMoveupProposeDepartmentOut(dataModalProposeReceive)}>Chuyển tiếp</ButtonMui>
                                     </>
+                                )
+                            }
+                            else {
+                                return (
+                                    null
                                 )
                             }
                         })()}

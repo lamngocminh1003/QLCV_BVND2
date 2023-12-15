@@ -94,12 +94,12 @@ function ListProposeReceiveOut() {
     //config modal propose receive out
     const [showModalPropose, setShowModalPropose] = useState(false);
     const [actionModalPropose, setActionModalPropose] = useState("INFO");
-    const [dataModalPropose, setDataModalPropose] = useState({});
+    const [dataModalPropose, setDataModalPropose] = useState("");
     const [done, setDone] = useState(false);
 
     const btnActiveModalProposeActionInfo = (itemListPropose) => {
         setActionModalPropose("INFO")
-        setDataModalPropose(itemListPropose);
+        setDataModalPropose(itemListPropose.document_Incomming_Id);
         setShowModalPropose(true);
     }
 
@@ -131,7 +131,7 @@ function ListProposeReceiveOut() {
                             </div>
 
                             <div className="row mt-2">
-                                <Box className="px-0 py-0 mt-2" sx={{ height: 'auto', width: '100%' }}>
+                                <Box className="px-0 py-0 mt-2" sx={{ height: 'auto', width: '100%', '& .center': { justifyContent: 'center!important' } }}>
                                     <DataGrid
                                         style={{ fontSize: '15px' }}
                                         localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
@@ -141,6 +141,12 @@ function ListProposeReceiveOut() {
                                         }))}
                                         columns={columns}
                                         getRowHeight={() => 'auto'}
+                                        getCellClassName={(params) => {
+                                            if (params.field === 'document_Incomming_State') {
+                                                return 'center';
+                                            }
+                                            return '';
+                                        }}
                                         components={{ Toolbar: GridToolbar }}
                                         //autoPageSize={true}
                                         autoHeight={true}

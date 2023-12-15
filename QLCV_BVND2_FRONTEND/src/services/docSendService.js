@@ -13,6 +13,17 @@ const createConfig = () => {
     return config;
 }
 
+const getTaskCategory = async () => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/TaskCategory`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 //đề xuất bên ngoài gửi vào để làm
 const createDocSendPublicByDocIn = async (dataObj) => {
     const token = localStorage.getItem("jwt");
@@ -44,6 +55,7 @@ const getAllDocSendPublicByUserLogin = async () => {
 }
 
 export {
+    getTaskCategory,
     createDocSendPublicByDocIn,
     getAllDocSendPublicByUserLogin
 };

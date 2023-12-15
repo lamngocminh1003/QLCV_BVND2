@@ -91,7 +91,7 @@ function TaskOutDepartment() {
                             </div>
 
                             <div className="row mt-2">
-                                <Box className="px-0 py-0 mt-2" sx={{ height: 'auto', width: '100%', '& .center-progress': { justifyContent: 'center' } }}>
+                                <Box className="px-0 py-0 mt-2" sx={{ height: 'auto', width: '100%', '& .center-progress': { justifyContent: 'center!important' } }}>
                                     <DataGrid
                                         style={{ fontSize: '15px' }}
                                         localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
