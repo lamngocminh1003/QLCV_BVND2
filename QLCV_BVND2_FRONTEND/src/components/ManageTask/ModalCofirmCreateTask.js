@@ -29,7 +29,8 @@ function ModalCofirmCreateTask(props) {
         fileIds: []
     }
 
-    const [dataModalConfirmCreateTask, setDataModalConfirmCreateTask] = useState({});
+    const [dataModalConfirmCreateTask, setDataModalConfirmCreateTask] = useState(dataModalConfirmCreateTaskDefault);
+    const [done, setDone] = useState(false);
 
     //config modal create task public
     const [showModalCreateTaskPublic, setShowModalCreateTaskPublic] = useState(false);
@@ -56,6 +57,13 @@ function ModalCofirmCreateTask(props) {
         }
     }, [props.dataModalConfirmCreateTask])
 
+    useEffect(() => {
+        if (done === true) {
+            setDataModalConfirmCreateTask(dataModalConfirmCreateTaskDefault);
+            setDone(false);
+        }
+    }, [done])
+
     return (
         <>
             <Modal show={props.activeModalConfirmCreateTask} onHide={() => handleHideModal()} style={{ background: 'rgba(0, 0, 0, 0.6)' }} backdrop={'static'} keyboard={false} centered dialogClassName="modal-confirm">
@@ -65,8 +73,7 @@ function ModalCofirmCreateTask(props) {
                 <Modal.Body>
                     <Typography variant="subtitle1">
                         Tạo công việc {`${props.typeModalConfirmCreateTask === "PUBLIC" ? "" : "nội bộ"}`} cho đề xuất
-                        "<strong style={{ fontFamily: '"DM Sans", sans-serif' }}></strong>"?
-                        {/* {`${dataModalConfirmCreateTask.documentIncomming.document_Incomming_Title}`} */}
+                        "<strong style={{ fontFamily: '"DM Sans", sans-serif' }}>{`${dataModalConfirmCreateTask.documentIncomming.document_Incomming_Title}`}</strong>"?
                     </Typography>
                 </Modal.Body>
                 <Modal.Footer className='d-flex justify-content-center'>
@@ -83,8 +90,12 @@ function ModalCofirmCreateTask(props) {
                 activeModalCreateTaskPublic={showModalCreateTaskPublic}
                 closeModalConfirmCreateTask={setShowModalCreateTaskPublic}
                 dataModalCreateTaskPublic={dataModalCreateTaskPublic}
+                makeModalCreateTaskPublic={setDone}
+
+                makeModalConfirmCreateTaskDoing={setDone}
 
                 activeModalProposeReceiveOut={props.closeModalProposeReceiveOut}
+                makeListProposeReceiveOutDoing={props.makeListProposeReceiveOut}
             />
         </>
     )

@@ -30,6 +30,10 @@ function ModalCreateTaskPublic(props) {
             document_Incomming_Comment: '',
             document_Incomming_Transition_Reason: '',
             document_Incomming_Time: '',
+            document_Incomming_TimeStart: '',
+            document_Incomming_Deadline: '',
+            document_Incomming_Category: '',
+            filesDocSend: ''
         },
         fileIds: []
     }
@@ -78,8 +82,8 @@ function ModalCreateTaskPublic(props) {
 
         let TimeEnd = moment(moment(docEndDate).format("YYYY-MM-DDT23:59:ssZ")).toISOString();
 
-        dataModalCreateTaskPublic.document_Incomming_TimeStart = TimeStart;
-        dataModalCreateTaskPublic.document_Incomming_Deadline = TimeEnd;
+        dataModalCreateTaskPublic.documentIncomming.document_Incomming_TimeStart = TimeStart;
+        dataModalCreateTaskPublic.documentIncomming.document_Incomming_Deadline = TimeEnd;
     }
 
     //config chọn loại công việc
@@ -96,15 +100,17 @@ function ModalCreateTaskPublic(props) {
     }
 
     const handleCreateDocSend = async () => {
-        dataModalCreateTaskPublic.document_Incomming_Category = taskType;
+        dataModalCreateTaskPublic.documentIncomming.document_Incomming_Category = taskType;
         formatDateISO8601();
         let formDataFile = new FormData();
         formDataFile.append('files', '');
-        dataModalCreateTaskPublic.filesDocIn = formDataFile;
+        dataModalCreateTaskPublic.documentIncomming.filesDocSend = formDataFile;
         let response = await createDocSendPublicByDocIn(dataModalCreateTaskPublic);
         if (response === 200) {
             toast.success('Tạo công việc thành công!');
-            props.closeModalConfirmCreateTask(false);
+            props.makeModalConfirmCreateTaskDoing(true);
+            props.makeListProposeReceiveOutDoing(true);
+            props.closeModalConfirmCreateTask(true);
         }
         else {
             toast.error(response);
@@ -126,7 +132,7 @@ function ModalCreateTaskPublic(props) {
     return (
         <>
             <div>
-                <Modal size='lg' className='mt-4' show={props.activeModalCreateTaskPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false}>
+                <Modal size='lg' className='mt-1' show={props.activeModalCreateTaskPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false}>
                     <Modal.Header closeButton>
                         <Modal.Title><div className='text-primary text-uppercase'>Tạo công việc</div></Modal.Title>
                     </Modal.Header>

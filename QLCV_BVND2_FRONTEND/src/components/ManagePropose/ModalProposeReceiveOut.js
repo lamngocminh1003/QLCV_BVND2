@@ -139,7 +139,7 @@ function ModalProposeReceive(props) {
     return (
         <>
             <div>
-                <Modal show={props.activeModalProposeReceiveOut} onHide={() => handleHideModal()} size='lg' className='mt-4'>
+                <Modal show={props.activeModalProposeReceiveOut} onHide={() => handleHideModal()} size='lg'>
                     <Modal.Header closeButton>
                         <Modal.Title><div className='text-primary text-uppercase'>Thông tin đề xuất</div></Modal.Title>
                     </Modal.Header>
@@ -203,7 +203,7 @@ function ModalProposeReceive(props) {
                                                                         onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Transition_Reason')} value={dataModalProposeReceive.documentIncomming.document_Incomming_Transition_Reason || ""}></textarea>
                                                                 </Typography>
                                                             </div>
-                                                            <div className="col-sm-12 mt-3 mb-3">
+                                                            <div className="col-sm-12 mt-1">
                                                                 <Typography variant='body1' fontSize={17} color='FireBrick'>Chuyển tiếp qua phòng chức năng</Typography>
                                                                 <Autocomplete
                                                                     options={listDepartmentByType}
@@ -308,6 +308,7 @@ function ModalProposeReceive(props) {
 
                 //truyền props qua modal confirm để đóng modal propseReceiveOut
                 closeModalProposeReceiveOut={props.closeModalProposeReceiveOut}
+                makeListProposeReceiveOutDoing={props.makeModalProposeReceiveOutDoing}
             />
         </>
     )

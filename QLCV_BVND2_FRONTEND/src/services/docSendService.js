@@ -27,8 +27,10 @@ const getTaskCategory = async () => {
 //đề xuất bên ngoài gửi vào để làm
 const createDocSendPublicByDocIn = async (dataObj) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentSend/CreateDocSendPublicByDocIn?DocIncommingId=${dataObj.document_Incomming_Id}&Title=${dataObj.document_Incomming_Title}
-    &Content=${dataObj.document_Incomming_Content}&TimeStart=${dataObj.document_Incomming_TimeStart}&Deadline=${dataObj.document_Incomming_Deadline}&CatagoryId=${dataObj.document_Incomming_Category}`,
+    return await axios.post(`${backendURL}/api/DocumentSend/CreateDocSendPublicByDocIn?DocIncommingId=${dataObj.documentIncomming.document_Incomming_Id}
+    &Title=${dataObj.documentIncomming.document_Incomming_Title}&Content=${dataObj.documentIncomming.document_Incomming_Content}
+    &TimeStart=${dataObj.documentIncomming.document_Incomming_TimeStart}&Deadline=${dataObj.documentIncomming.document_Incomming_Deadline}
+    &CatagoryId=${dataObj.documentIncomming.document_Incomming_Category}`,
         dataObj.files, {
         headers: {
             "content-type": "multipart/form-data",

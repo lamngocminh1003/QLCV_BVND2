@@ -1,19 +1,19 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react'
 import { UserContext } from '../../context/UserContext';
-import ReactPaginate from 'react-paginate';
-
-import ModalProposeSent from '../ManagePropose/ModalProposeSent';
-
-import "./SCSS/ListPropose.scss";
-
 import moment from 'moment';
-import { Button } from '@mui/material';
-
+//mui
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';
 import Link from '@mui/material/Link';
-
+//modal
+import ModalProposeSent from '../ManagePropose/ManageProposeSent/ModalProposeSent';
+import ModalProposeCheck from '../ManagePropose/ManageProposeSent/ModalProposeCheck';
+import ModalProposeEdit from '../ManagePropose/ManageProposeSent/ModalProposeCheck';
+import ModalProposeDelete from '../ManagePropose/ManageProposeSent/ModalProposeDelete';
+//api
 import { getProposeSend } from '../../services/proposeService';
+//css
+import "./SCSS/ListPropose.scss";
 
 function ListProposeSent() {
     const { user } = useContext(UserContext);
@@ -117,34 +117,31 @@ function ListProposeSent() {
 
     //config listPropose when useEffect
     const [listPropose, setListPropose] = useState([]);
-
-    //config modal propose sent
-    const [showModalPropose, setShowModalPropose] = useState(false);
-    const [dataModalPropose, setDataModalPropose] = useState({});
-    const [actionModalPropose, setActionModalPropose] = useState('CREATE');
     const [done, setDone] = useState(false);
 
-    const btnActiveModalProposeActionCreate = () => {
-        setActionModalPropose('CREATE');
-        setShowModalPropose(true);
+    //config modal propose sent
+    const [showModalProposeSent, setShowModalProposeSent] = useState(false);
+
+    //config modal propose check
+    const [showModalProposeCheck, setShowModalProposeCheck] = useState(false);
+    const [proposeIdModalProposeCheck, setProposeIdModalProposeCheck] = useState("");
+
+    const btnActiveModalProposeSent = () => {
+        setShowModalProposeSent(true);
     }
 
-    const btnActiveModalProposeActionInfo = (itemListPropose) => {
-        setDataModalPropose(itemListPropose);
-        setActionModalPropose('INFO');
-        setShowModalPropose(true);
-    }
-
-    const btnEdit = () => {
-
-    }
-
-    const btnDel = () => {
-
-    }
-
-    const btnFeedBack = () => {
-
+    const setModalProposeAction = (itemListPropose) => {
+        if (itemListPropose.document_Incomming_State === 0 || itemListPropose.document_Incomming_State === 1 || itemListPropose.document_Incomming_State === 2) {
+            //hiện modal chỉnh sửa
+        }
+        else if (itemListPropose.document_Incomming_State === 3 || itemListPropose.document_Incomming_State === 5 || itemListPropose.document_Incomming_State === 6) {
+            //hiện modal check
+            setProposeIdModalProposeCheck(itemListPropose.document_Incomming_Id);
+            setShowModalProposeCheck(true);
+        }
+        else {
+            //hiện modal moveup
+        }
     }
 
     const fetchAllPropose = async () => {
@@ -183,7 +180,7 @@ function ListProposeSent() {
 
                             <div className="row mt-2">
                                 <div className='px-0 col-6' style={{ display: "block" }}>
-                                    <button className='btn btn-primary mt-1 mb-3 col-1 add-doc' style={{ paddingRight: "7.1rem" }} onClick={() => btnActiveModalProposeActionCreate()} ><i className="fa fa-plus i-add"></i>Gửi đề xuất</button>
+                                    <button className='btn btn-primary mt-1 mb-3 col-1 add-doc' style={{ paddingRight: "7.1rem" }} onClick={() => btnActiveModalProposeSent()} ><i className="fa fa-plus i-add"></i>Gửi đề xuất</button>
                                 </div>
                                 <Box className="px-0 py-0 mt-2" sx={{ height: 'auto', width: '100%' }}>
                                     <DataGrid
@@ -204,7 +201,7 @@ function ListProposeSent() {
                                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                                         rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
                                         getRowId={(row) => row.document_Incomming_Id}
-                                        onRowDoubleClick={(value) => btnActiveModalProposeActionInfo(value.row)}
+                                        onRowDoubleClick={(value) => setModalProposeAction(value.row)}
                                         sx={{
                                             '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
                                                 py: '10px',
@@ -222,12 +219,17 @@ function ListProposeSent() {
             </div>
 
             <ModalProposeSent
-                activeModalProposeSent={showModalPropose}
-                closeModalProposeSent={setShowModalPropose}
-                actionModalProposeSent={actionModalPropose}
+                activeModalProposeSent={showModalProposeSent}
+                closeModalProposeSent={setShowModalProposeSent}
                 makeModalProposeSentDoing={setDone}
-                dataModalProposeSent={dataModalPropose}
             />
+
+            <ModalProposeCheck
+                activeModalProposeCheck={showModalProposeCheck}
+                closeModalProposeCheck={setShowModalProposeCheck}
+                sendIdToModalProposeCheck={proposeIdModalProposeCheck}
+            />
+
         </>
     )
 }

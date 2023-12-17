@@ -14,27 +14,25 @@ const createConfig = () => {
 }
 
 const createPropose = async (dataObj) => {
-    console.log(dataObj)
-    // const token = localStorage.getItem("jwt");
-    // return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`,
-    //     dataObj.proposeFile, {
-    //     headers: {
-    //         "content-type": "multipart/form-data",
-    //         Authorization: `Bearer ${token}`,
-    //     }
-    // })
-    //     .then(function (response) {
-    //         return response.status
-    //     })
-    //     .catch(function (error) {
-    //         return error.response.status
-    //     })
+    const token = localStorage.getItem("jwt");
+    return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`,
+        dataObj.proposeFile, {
+        headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+        }
+    })
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
 }
 
 const createProposeByHeader = async (dataObj, idDepartment) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}
-    &DepartmentIdReceive=${idDepartment}`,
+    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}&DepartmentIdReceive=${idDepartment}`,
         dataObj.proposeFile, {
         headers: {
             "content-type": "multipart/form-data",
