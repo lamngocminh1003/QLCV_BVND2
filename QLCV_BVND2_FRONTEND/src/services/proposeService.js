@@ -49,8 +49,7 @@ const createProposeByHeader = async (dataObj, idDepartment) => {
 
 const moveupProposeByHeader = async (dataObj, idDepartment) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}
-    &DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.document_Incomming_Id}`, dataObj.proposeFile, {
+    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}&DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.document_Incomming_Id}`, dataObj.proposeFile, {
         headers: {
             "content-type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
@@ -67,9 +66,7 @@ const moveupProposeByHeader = async (dataObj, idDepartment) => {
 //chuyển tiếp đề xuất từ DP type = 2 sang DP type = 2 khác
 const moveupProposeDepartmentOut = async (dataObj, idDepartment) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.documentIncomming.document_Incomming_Title}
-    &Content=${dataObj.documentIncomming.document_Incomming_Content}&Comment=${dataObj.documentIncomming.document_Incomming_Transition_Reason}
-    &DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.documentIncomming.document_Incomming_Id}`,
+    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.documentIncomming.document_Incomming_Title}&Content=${dataObj.documentIncomming.document_Incomming_Content}&Comment=${dataObj.documentIncomming.document_Incomming_Transition_Reason}&DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.documentIncomming.document_Incomming_Id}`,
         dataObj.proposeFile, {
         headers: {
             "content-type": "multipart/form-data",

@@ -10,7 +10,7 @@ import ListProposeReceiveOut from "../components/Propose/ListProposeReceiveOut";
 import ListDoc from "../components/User/ListDoc";
 import ListDocOfDepartment from "../components/User/ListDocOfDepartment";
 import TaskOutDepartment from "../components/Task/TaskOutDepartment";
-import MemberTask from "../components/Task/TaskInDepartment";
+import TaskInDepartment from "../components/Task/TaskInDepartment";
 import Header from "../components/Nav/Header";
 
 const AppRoutes = (props) => {
@@ -30,7 +30,7 @@ const AppRoutes = (props) => {
           <PrivateRoutes path="/list-doc" component={ListDoc} />
           <PrivateRoutes path="/list-doc-department" component={ListDocOfDepartment} />
           <PrivateRoutes path="/task-out-department" component={TaskOutDepartment} />
-          <PrivateRoutes path="/task-in-department" component={MemberTask} />
+          <PrivateRoutes path="/task-in-department" component={TaskInDepartment} />
           <Route path="*">
             <Page404 />{" "}
           </Route>

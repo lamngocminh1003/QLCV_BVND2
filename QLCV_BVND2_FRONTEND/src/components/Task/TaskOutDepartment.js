@@ -1,18 +1,22 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../context/UserContext';
-import ModalProposeReceiveOut from '../ManagePropose/ModalProposeReceiveOut';
 import moment from 'moment';
 import { Box, Typography } from "@mui/material";
 import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';
 import Link from '@mui/material/Link';
-import { getProposeReceiveOut } from '../../services/proposeService';
 import { toast } from 'react-toastify';
 //progress bar
 import CircularProgress from "../ProgressBar/CircularProgressWithLabel";
+//modal
+import ModalDivineWorkPublic from "../ManageDivineWork/ManageDivineWorkPublic/ModalDivineWorkPublic.js";
+//mui
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+//css
+import "./SCSS/Task.scss";
 //api
 import { getAllDocSendPublicByUserLogin } from '../../services/docSendService';
 
-function TaskOutDepartment() {
+function DocSendOutDepartment() {
     const [listDocSend, setListDocSend] = useState([]);
 
     //config default number propose to display in gridview
@@ -46,10 +50,15 @@ function TaskOutDepartment() {
         { field: "document_Send_Title", headerName: "Tên công việc", width: 210 },
         { field: "document_Send_Content", headerName: "Nội dung công việc", width: 400, renderCell: (params) => <ExpandableCell {...params} /> },
         { field: "document_Send_TimeStart", headerName: "Thời hạn xử lý", width: 200, renderCell: (params) => moment(params.row.document_Send_TimeStart).format('l') + ' - ' + moment(params.row.document_Send_Deadline).format('l') },
-        { field: "document_Send_Catagory", headerName: "Loại công việc", width: 150 },
+        { field: "catagory_Name", headerName: "Loại công việc", width: 150 },
         {
-            field: "document_Send_State", headerName: "Trạng thái", headerAlign: 'center', width: 155, renderCell: (params) => {
-                if (params.row.document_Send_State === 3) {
+            field: "document_Send_State", headerName: "Trạng thái", width: 155, renderCell: (params) => {
+                if (params.row.document_Send_Percent === null) {
+                    return (
+                        <><span className="status rounded-pill empty">Chưa chia việc</span></>
+                    )
+                }
+                else if (params.row.document_Send_State === 3) {
                     return (
                         <><span className="status rounded-pill processing">Đang thực hiện</span></>
                     )
@@ -66,8 +75,21 @@ function TaskOutDepartment() {
                 }
             }
         },
-        { field: "progress", headerName: "Tiến độ", headerAlign: 'center', width: 100, renderCell: () => { return (<><CircularProgress progressValue={50} /></>) } },
+        {
+            field: "document_Send_Percent", headerName: "Tiến độ", headerAlign: 'center', width: 100, renderCell: (params) => {
+                return (params.row.document_Send_Percent !== null ?
+                    <><CircularProgress progressValue={params.row.document_Send_Percent} /></>
+                    :
+                    <><ErrorOutlineIcon></ErrorOutlineIcon></>
+                )
+            }
+        },
     ]
+
+    //config modal divine work public
+    const [taskId, setTaskId] = useState('');
+    const [taskTitle, setTaskTitle] = useState('');
+    const [showModalDivineWorkPublic, setShowModalDivineWorkPublic] = useState(false);
 
     const getAllDocSendPublic = async () => {
         let resultListDocSend = await getAllDocSendPublicByUserLogin();
@@ -102,7 +124,7 @@ function TaskOutDepartment() {
                                         columns={columns}
                                         getRowHeight={() => 'auto'}
                                         getCellClassName={(params) => {
-                                            if (params.field === 'progress') {
+                                            if (params.field === 'document_Send_Percent') {
                                                 return 'center-progress';
                                             }
                                             return '';
@@ -113,6 +135,7 @@ function TaskOutDepartment() {
                                         pagination={true}
                                         pageSize={pageSize}
                                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                                        onRowDoubleClick={(value) => [setTaskId(value.row.document_Send_Id), setTaskTitle(value.row.document_Send_Title), setShowModalDivineWorkPublic(true)]}
                                         rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
                                         getRowId={(row) => row.document_Send_Id}
                                         // onRowDoubleClick={(value) => btnActiveModalProposeActionInfo(value.row)}
@@ -131,8 +154,15 @@ function TaskOutDepartment() {
                     </div>
                 </div>
             </div>
+
+            <ModalDivineWorkPublic
+                taskSendId={taskId}
+                taskSendTitle={taskTitle}
+                activeModalDivineWorkPublic={showModalDivineWorkPublic}
+                closeModalDivineWorkPublic={setShowModalDivineWorkPublic}
+            />
         </>
     )
 }
 
-export default TaskOutDepartment
+export default DocSendOutDepartment

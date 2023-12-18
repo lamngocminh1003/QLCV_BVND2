@@ -24,6 +24,17 @@ const getTaskReceiveNotification = async () => {
         })
 }
 
+const getListTaskByDocSendId = async (docSendId) => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/Task/GetListTaskByDocSendId/${docSendId}`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 const updateTaskStateSeen = async (taskId) => {
     const config = createConfig();
     return await axios.put(`${backendURL}/api/Task/UpdateSendTaskTrue?TaskId=${taskId}`, '', config)
@@ -36,6 +47,6 @@ const updateTaskStateSeen = async (taskId) => {
 }
 
 export {
-    getTaskReceiveNotification,
+    getTaskReceiveNotification, getListTaskByDocSendId,
     updateTaskStateSeen
 };

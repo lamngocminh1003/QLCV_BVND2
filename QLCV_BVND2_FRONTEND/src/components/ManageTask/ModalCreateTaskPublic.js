@@ -95,7 +95,7 @@ function ModalCreateTaskPublic(props) {
     }
 
     const handleHideModal = () => {
-        props.closeModalConfirmCreateTask(false);
+        props.closeModalCreateTaskPublic(false);
         props.activeModalProposeReceiveOut(true);
     }
 
@@ -110,7 +110,7 @@ function ModalCreateTaskPublic(props) {
             toast.success('Tạo công việc thành công!');
             props.makeModalConfirmCreateTaskDoing(true);
             props.makeListProposeReceiveOutDoing(true);
-            props.closeModalConfirmCreateTask(true);
+            props.closeModalCreateTaskPublic(false);
         }
         else {
             toast.error(response);

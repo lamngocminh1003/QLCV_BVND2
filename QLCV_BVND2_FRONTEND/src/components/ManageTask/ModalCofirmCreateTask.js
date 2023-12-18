@@ -88,14 +88,14 @@ function ModalCofirmCreateTask(props) {
 
             <ModalCreateTaskPublic
                 activeModalCreateTaskPublic={showModalCreateTaskPublic}
-                closeModalConfirmCreateTask={setShowModalCreateTaskPublic}
+                closeModalCreateTaskPublic={setShowModalCreateTaskPublic}
                 dataModalCreateTaskPublic={dataModalCreateTaskPublic}
                 makeModalCreateTaskPublic={setDone}
 
                 makeModalConfirmCreateTaskDoing={setDone}
 
                 activeModalProposeReceiveOut={props.closeModalProposeReceiveOut}
-                makeListProposeReceiveOutDoing={props.makeListProposeReceiveOut}
+                makeListProposeReceiveOutDoing={props.makeListProposeReceiveOutDoing}
             />
         </>
     )

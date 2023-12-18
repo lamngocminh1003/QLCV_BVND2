@@ -4,7 +4,9 @@
     border-radius: 0.25rem;
     display: inline-block;
     color: #fff;
-
+    &.empty{
+        background-color: rgb(163, 105, 34);
+    }
     &.processing{
         background-color: rgb(244, 39, 73);
     }&.processed{
