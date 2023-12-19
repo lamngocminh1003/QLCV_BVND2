@@ -31,7 +31,6 @@ import { getProposeReceiveNotification, updateProposeStateSeen, } from "../../se
 import { getHandOverNotification, updateHandOverStateSeen } from "../../services/handoverService";
 import { getTaskReceiveNotification, updateTaskStateSeen } from "../../services/taskService";
 import { getDisscussReceiveNotification, updateDiscussStateSeen } from "../../services/discussService";
-
 //cdn
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap');
