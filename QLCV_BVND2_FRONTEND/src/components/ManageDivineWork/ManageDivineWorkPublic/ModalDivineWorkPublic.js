@@ -57,6 +57,9 @@ function ModalDivineWorkPublic(props) {
   const [divineWork, setDivineWork] = useState(); //1 divine work
   const [listDivineWork, setListDivineWork] = useState({}); //1 đống divine work
 
+  //config discuss
+  const [discussContent, setDiscussContent] = useState('');
+
   const getExpireDateTime = (task_DateEnd) => {
     const expiration = moment(task_DateEnd);
     // get the difference between the moments
@@ -177,6 +180,7 @@ function ModalDivineWorkPublic(props) {
 
                                 <div className='task-discuss-input mt-2 d-flex'>
                                   <div className='input-area'>
+                                    {/* onInput={(e) => setDiscussContent(e.currentTarget.textContent)} */}
                                     <div className='child-1' contentEditable='true' aria-label='Viết bình luận...'>
                                     </div>
                                   </div>

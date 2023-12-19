@@ -40,10 +40,8 @@
             height: auto;
          
             .input-area{
-                position: relative;
-                top: .25rem;
-                left: 1rem;
-                width: 91%;  
+                padding: 10px 0px 10px 15px;
+                width: 93%;  
                 font-size: 17px;
                 color: rgb(5, 5, 5);
             }            
@@ -51,11 +49,12 @@
     }
 }
 
-.child-1:empty::before{
+.child-1[aria-label]:not([aria-label=""]):empty::before{
     color: rgb(5, 5, 5);
     font-size: 15px;
     content: attr(aria-label);
     cursor: text;
+    background-color: red;
 }  
 
 .list-title:nth-child(5n + 1){
