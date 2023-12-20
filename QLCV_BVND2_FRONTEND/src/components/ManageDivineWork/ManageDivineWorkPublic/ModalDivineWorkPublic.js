@@ -86,7 +86,6 @@ function ModalDivineWorkPublic(props) {
   const handlePressEnter = (event) => {
     if (event.which === 13 && event.code === "Enter") {
       createDivineWork();
-      setDivineWork('');
     }
   }
 
@@ -95,6 +94,7 @@ function ModalDivineWorkPublic(props) {
     let _objDivineWork = _.cloneDeep(objDivineWork);
     _objDivineWork = {
       document_Send_Id: props.taskSendId,
+      task_Id: `task ${uuidv4()}`,
       task_Title: divineWork,
       task_Content: '',
       task_DateSend: '',
@@ -110,8 +110,16 @@ function ModalDivineWorkPublic(props) {
     let _listDivineWork = _.cloneDeep(listDivineWork);
     _listDivineWork.push(_objDivineWork);
     setListDivineWork(_listDivineWork);
-    console.log(_listDivineWork);
     setDivineWork('');
+  }
+
+  const deleteDivineWork = (task_Id_Value, event) => {
+    event.stopPropagation();
+    let _listDivineWork = _.cloneDeep(listDivineWork);
+    _listDivineWork = _.filter(_listDivineWork, function (currentObject) {
+      return currentObject.task_Id !== task_Id_Value;
+    })
+    setListDivineWork(_listDivineWork);
   }
 
   const handleOnChangeDiscussContent = (value, inputNameDiscussContent, taskId, inputNameTaskId, e) => {
@@ -165,7 +173,7 @@ function ModalDivineWorkPublic(props) {
   }, [props.taskSendId])
 
   return (
-    <Modal dialogClassName='modal-1000w' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false}>
+    <Modal size='lg' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false}>
       <Modal.Header closeButton>
         <Modal.Title>
           <div className='text-primary text-uppercase'>{`Công việc cho ${props.taskSendTitle}`}</div>
@@ -174,10 +182,10 @@ function ModalDivineWorkPublic(props) {
       <Modal.Body>
         <div className="col-xs-12">
           <div className='row d-flex justify-content-center'>
-            <div className='row col-8'>
+            <div className='row col-9 p-0'>
               <Stack direction="row" spacing={0}>
                 {/* <input type='text' className='form-control' /> */}
-                <TextField label="Thêm công việc" sx={{ width: 555 }} onChange={(e) => setDivineWork(e.target.value)} onKeyDown={(event) => handlePressEnter(event)} />
+                <TextField label="Thêm công việc" sx={{ width: 510 }} value={divineWork || ""} onChange={(e) => setDivineWork(e.target.value)} onKeyDown={(event) => handlePressEnter(event)} />
                 <IconButton color='primary' size="large" onClick={() => createDivineWork()}><AddCircleIcon fontSize="inherit" sx={{ transform: 'Scale(1.4)' }} /></IconButton>
               </Stack>
             </div>
@@ -195,11 +203,11 @@ function ModalDivineWorkPublic(props) {
                               <Typography className={`item child ${itemKey} text-uppercase text-white fw-bolder col-10 px-0`} sx={{ fontSize: '17px' }}>
                                 {itemValue.task_Title}
                               </Typography>
-                              <Box className='text-white d-flex flex-row col-2 left-4 justify-content-end p-0'>
+                              <Box className='text-white d-flex flex-row col-2 justify-content-end p-0'>
                                 <AssignmentIndIcon className='mr-2' fontSize='medium' />
                                 <EditIcon className='mr-2' fontSize='medium' />
                                 {itemValue.userReceive_FullName === "" ?
-                                  <DeleteIcon fontSize='medium' color="inherit" />
+                                  <DeleteIcon fontSize='medium' color="inherit" onClick={(event) => deleteDivineWork(itemValue.task_Id, event)} />
                                   :
                                   ""
                                 }
