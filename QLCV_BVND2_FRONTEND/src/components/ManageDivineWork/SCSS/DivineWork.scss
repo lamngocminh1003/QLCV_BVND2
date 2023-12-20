@@ -1,3 +1,8 @@
+.modal-1000w{
+    max-width: none!important;
+    width: 1000px!important;
+}
+
 .list-title{
     background: linear-gradient(90deg, rgb(255, 134, 249) 100%, rgba(250, 0, 135, 1) 100%); //5
     border-radius: .5rem!important;
@@ -40,7 +45,7 @@
             height: auto;
          
             .input-area{
-                padding: 10px 0px 10px 15px;
+                padding: 10px 0px 11px 15px;
                 width: 93%;  
                 font-size: 17px;
                 color: rgb(5, 5, 5);
@@ -49,12 +54,16 @@
     }
 }
 
+.task-discuss-input:focus-within{
+    outline: 2px solid rgb(237, 64, 87);  
+    //outline: 2px solid rgb(255, 15, 107);  
+}
+
 .child-1[aria-label]:not([aria-label=""]):empty::before{
     color: rgb(5, 5, 5);
-    font-size: 15px;
+    font-size: 16px;
     content: attr(aria-label);
     cursor: text;
-    background-color: red;
 }  
 
 .list-title:nth-child(5n + 1){

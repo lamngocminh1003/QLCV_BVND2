@@ -3,10 +3,12 @@ import _, { cloneDeep, set } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../../context/UserContext';
 import moment from 'moment';
+import { v4 as uuidv4 } from 'uuid';
 //bs5
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 //mui theme
+import Input from '@mui/material/Input';
 import Typography from "@mui/material/Typography";
 import ButtonMui from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -27,6 +29,7 @@ import Divider from '@mui/material/Divider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PersonIcon from '@mui/icons-material/Person';
 import Person2Icon from '@mui/icons-material/Person2';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import SendIcon from '@mui/icons-material/Send';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditIcon from '@mui/icons-material/Edit';
@@ -35,6 +38,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import "../SCSS/DivineWork.scss";
 //api
 import { getListTaskByDocSendId } from '../../../services/taskService';
+import { getDate } from 'date-fns';
 //cdn
 <style>
   @import url('https://www.w3schools.com/w3css/4/w3.css');
@@ -54,11 +58,17 @@ function ModalDivineWorkPublic(props) {
     task_State: '',
   }
 
-  const [divineWork, setDivineWork] = useState(); //1 divine work
-  const [listDivineWork, setListDivineWork] = useState({}); //1 đống divine work
+  const dataDiscussContentDefault = {
+    taskId: '',
+    discussContent: ''
+  }
+
+  const [divineWork, setDivineWork] = useState(''); //1 divine work
+  const [objDivineWork, setObjDivineWork] = useState({}); //1 obj divine work
+  const [listDivineWork, setListDivineWork] = useState([]); //1 list chứa 1 đống obj divine work
 
   //config discuss
-  const [discussContent, setDiscussContent] = useState('');
+  const [dataDiscussContent, setDataDiscussContent] = useState(dataDiscussContentDefault);
 
   const getExpireDateTime = (task_DateEnd) => {
     const expiration = moment(task_DateEnd);
@@ -73,6 +83,76 @@ function ModalDivineWorkPublic(props) {
     props.closeModalDivineWorkPublic(false);
   }
 
+  const handlePressEnter = (event) => {
+    if (event.which === 13 && event.code === "Enter") {
+      createDivineWork();
+      setDivineWork('');
+    }
+  }
+
+  const createDivineWork = () => {
+    //create new obj devine work
+    let _objDivineWork = _.cloneDeep(objDivineWork);
+    _objDivineWork = {
+      document_Send_Id: props.taskSendId,
+      task_Title: divineWork,
+      task_Content: '',
+      task_DateSend: '',
+      task_DateStart: '',
+      task_DateEnd: '',
+      task_Catagory_Name: '',
+      userReceive_FullName: '',
+      userSend_FullName: '',
+    }
+    setObjDivineWork(_objDivineWork);
+
+    //push obj to listDivineWork array
+    let _listDivineWork = _.cloneDeep(listDivineWork);
+    _listDivineWork.push(_objDivineWork);
+    setListDivineWork(_listDivineWork);
+    console.log(_listDivineWork);
+    setDivineWork('');
+  }
+
+  const handleOnChangeDiscussContent = (value, inputNameDiscussContent, taskId, inputNameTaskId, e) => {
+    if (dataDiscussContent.discussContent === '') {
+      if (dataDiscussContent.taskId === '') {
+        let _dataDiscussContent = _.cloneDeep(dataDiscussContent);
+        _dataDiscussContent[inputNameTaskId] = taskId;
+        _dataDiscussContent[inputNameDiscussContent] = value;
+        setDataDiscussContent(_dataDiscussContent);
+      }
+      else {
+        let _dataDiscussContent = _.cloneDeep(dataDiscussContent);
+        _dataDiscussContent[inputNameDiscussContent] = value;
+        setDataDiscussContent(_dataDiscussContent);
+      }
+    }
+    else {
+      let _dataDiscussContent = _.cloneDeep(dataDiscussContent);
+      _dataDiscussContent[inputNameTaskId] = taskId;
+      _dataDiscussContent[inputNameDiscussContent] = value;
+      setDataDiscussContent(_dataDiscussContent);
+    }
+  }
+
+  const handleOnKeyDownDelete = (e) => {
+    const keyCode = e.keyCode || e.which;
+    if (keyCode === 8 && dataDiscussContent.discussContent === '') {
+      let _dataDiscussContent = _.cloneDeep(dataDiscussContent);
+      _dataDiscussContent.taskId = '';
+      setDataDiscussContent(_dataDiscussContent.taskId);
+    }
+  }
+
+  //format dán text
+  const pasteAsPlainText = (event) => {
+    event.preventDefault()
+
+    const text = event.clipboardData.getData('text/plain')
+    document.execCommand('insertHTML', false, text)
+  }
+
   const handleGetListTaskByDocSendId = async (docSendId) => {
     let resultListDivineWork = await getListTaskByDocSendId(docSendId);
     setListDivineWork(resultListDivineWork);
@@ -85,7 +165,7 @@ function ModalDivineWorkPublic(props) {
   }, [props.taskSendId])
 
   return (
-    <Modal size='lg' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false}>
+    <Modal dialogClassName='modal-1000w' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false}>
       <Modal.Header closeButton>
         <Modal.Title>
           <div className='text-primary text-uppercase'>{`Công việc cho ${props.taskSendTitle}`}</div>
@@ -94,10 +174,11 @@ function ModalDivineWorkPublic(props) {
       <Modal.Body>
         <div className="col-xs-12">
           <div className='row d-flex justify-content-center'>
-            <div className='row col-9'>
+            <div className='row col-8'>
               <Stack direction="row" spacing={0}>
-                <TextField id="outlined-basic" label="Thêm công việc" variant="outlined" sx={{ width: 555 }} />
-                <IconButton color='primary' size="large"><AddCircleIcon fontSize="inherit" sx={{ transform: 'Scale(1.4)' }} /></IconButton>
+                {/* <input type='text' className='form-control' /> */}
+                <TextField label="Thêm công việc" sx={{ width: 555 }} onChange={(e) => setDivineWork(e.target.value)} onKeyDown={(event) => handlePressEnter(event)} />
+                <IconButton color='primary' size="large" onClick={() => createDivineWork()}><AddCircleIcon fontSize="inherit" sx={{ transform: 'Scale(1.4)' }} /></IconButton>
               </Stack>
             </div>
             <div className='list-task mt-2'>
@@ -108,15 +189,20 @@ function ModalDivineWorkPublic(props) {
                     {Object.entries(listDivineWork).map(([itemKey, itemValue]) => {
                       let expire = getExpireDateTime(itemValue.task_DateEnd)
                       return (
-                        <Accordion key={`task-${itemKey}`} className={`list-title ${itemKey > 0 ? 'mt-2' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}>
+                        <Accordion key={`task-${itemKey}`} className={`list-title ${itemKey > 0 ? 'mt-3' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}>
                           <div className='list-parent-task p-1'>
                             <AccordionSummary>
-                              <Typography className={`item child ${itemKey} text-uppercase text-white fw-bolder col-11 px-0`} sx={{ fontSize: '17px' }}>
+                              <Typography className={`item child ${itemKey} text-uppercase text-white fw-bolder col-10 px-0`} sx={{ fontSize: '17px' }}>
                                 {itemValue.task_Title}
                               </Typography>
-                              <Box className='text-white d-flex ms-auto align-items-center col-0'>
-                                <EditIcon className='mr-1' fontSize='medium' />
-                                <DeleteIcon fontSize='medium' color="inherit" />
+                              <Box className='text-white d-flex flex-row col-2 left-4 justify-content-end p-0'>
+                                <AssignmentIndIcon className='mr-2' fontSize='medium' />
+                                <EditIcon className='mr-2' fontSize='medium' />
+                                {itemValue.userReceive_FullName === "" ?
+                                  <DeleteIcon fontSize='medium' color="inherit" />
+                                  :
+                                  ""
+                                }
                               </Box>
                             </AccordionSummary>
                           </div>
@@ -127,19 +213,24 @@ function ModalDivineWorkPublic(props) {
                                 <Typography variant="h6">{itemValue.task_Content}</Typography>
                               </div>
 
-                              <div className='details-task-receive mt-1' style={{ borderTop: '1.8px solid silver' }}>
+                              <div className='details-task-receive mt-1 py-1' style={{ borderTop: '1.8px solid silver' }}>
                                 <Stack direction="row" sx={{ mt: 0.5 }} spacing={1}>
-                                  <Typography variant='subtitle1' color='brown'>Ngày tạo công việc: </Typography>
-                                  <Typography variant="subtitle1">{`${moment(itemValue.document_Incomming_Time).format('LLLL')} - `}</Typography>
-                                  <Typography variant='subtitle1' color='brown'>Loại công việc: </Typography>
+                                  <Typography variant='subtitle1' color='#0e9193'>Ngày tạo công việc: </Typography>
+                                  <Typography variant="subtitle1">{`${itemValue.task_DateSend !== '' ? moment(itemValue.task_DateSend).format('LLLL') : ""} - `}</Typography>
+                                  <Typography variant='subtitle1' color='#0e9193'>Loại công việc: </Typography>
                                   <Typography variant="subtitle1">{itemValue.task_Catagory_Name}</Typography>
                                 </Stack>
                                 <Stack direction="row" spacing={0.6}>
-                                  <Typography variant='subtitle1' color='brown'>Thời hạn: </Typography>
+                                  <Typography variant='subtitle1' color='#0e9193'>Thời hạn: </Typography>
                                   <Typography variant="subtitle1">
-                                    {`${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} (còn lại ${expire.days()} ngày) -`}
+                                    {itemValue.task_DateStart && itemValue.task_DateEnd !== '' ?
+                                      `${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} 
+                                      (còn lại ${expire.days() !== 0 ? expire.days() + ' ngày' : expire.hours() + ' giờ'}) -`
+                                      :
+                                      ""
+                                    }
                                   </Typography>
-                                  <Typography variant='subtitle1' color='brown'>Người thực hiện: </Typography>
+                                  <Typography variant='subtitle1' color='#0e9193'>Người thực hiện: </Typography>
                                   <Typography variant="subtitle1">{itemValue.userReceive_FullName}</Typography>
                                 </Stack>
                                 <Stack direction="row" spacing={0.6}>
@@ -178,14 +269,25 @@ function ModalDivineWorkPublic(props) {
                                   </ListItem>
                                 </List>
 
-                                <div className='task-discuss-input mt-2 d-flex'>
+                                <div className='task-discuss-input mt-2 d-flex '>
                                   <div className='input-area'>
-                                    {/* onInput={(e) => setDiscussContent(e.currentTarget.textContent)} */}
-                                    <div className='child-1' contentEditable='true' aria-label='Viết bình luận...'>
+                                    <div
+                                      className='child-1'
+                                      contentEditable='true'
+                                      aria-label='Viết bình luận...'
+                                      onInput={(e) => handleOnChangeDiscussContent(e.currentTarget.textContent, 'discussContent', itemValue.task_Id, 'taskId', e)}
+                                      onKeyPress={(e) => handleOnKeyDownDelete(e)}
+                                      onPaste={(e) => pasteAsPlainText(e)}
+                                    >
                                     </div>
                                   </div>
-                                  <div className='input-send-icon'>
-                                    <IconButton color='primary' size="large"><SendIcon /></IconButton>
+                                  <div className='input-send-icon' style={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}>
+                                    <IconButton
+                                      color={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? 'default' : 'primary'}
+                                      disabled={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? true : false} size="large"
+                                    >
+                                      <SendIcon />
+                                    </IconButton>
                                   </div>
                                 </div>
                               </div>
@@ -205,7 +307,11 @@ function ModalDivineWorkPublic(props) {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <ButtonMui variant="contained" color="success">Tạo</ButtonMui>
+        {listDivineWork.length !== 0 ?
+          <ButtonMui variant="contained" color="primary">Lưu</ButtonMui>
+          :
+          <ButtonMui variant="contained" color="success">Lưu</ButtonMui>
+        }
         <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
       </Modal.Footer>
     </Modal>
