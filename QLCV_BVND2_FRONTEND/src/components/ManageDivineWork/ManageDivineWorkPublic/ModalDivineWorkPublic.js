@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import _, { cloneDeep, set } from 'lodash';
+import _, { assign, cloneDeep, set } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../../context/UserContext';
 import moment from 'moment';
@@ -7,8 +7,9 @@ import { v4 as uuidv4 } from 'uuid';
 //bs5
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 //mui theme
-import Input from '@mui/material/Input';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from "@mui/material/Typography";
 import ButtonMui from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -36,6 +37,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 //css
 import "../SCSS/DivineWork.scss";
+//modal
+import ModalAssignDivineWorkPublic from './ModalAssignDivineWorkPublic';
 //api
 import { getListTaskByDocSendId } from '../../../services/taskService';
 import { getDate } from 'date-fns';
@@ -69,6 +72,10 @@ function ModalDivineWorkPublic(props) {
 
   //config discuss
   const [dataDiscussContent, setDataDiscussContent] = useState(dataDiscussContentDefault);
+
+  //config modal assign divine work public
+  const [showModalAssignDivineWorkPublic, setShowModalAssignDivineWorkPublic] = useState(false);
+  const [dataModalAssignDivineWorkPublic, setDataModalAssignDivineWorkPublic] = useState({});
 
   const getExpireDateTime = (task_DateEnd) => {
     const expiration = moment(task_DateEnd);
@@ -122,6 +129,17 @@ function ModalDivineWorkPublic(props) {
     setListDivineWork(_listDivineWork);
   }
 
+  const assignInfoDivineWork = (e, itemValue) => {
+    e.stopPropagation();
+    setDataModalAssignDivineWorkPublic(itemValue)
+    setShowModalAssignDivineWorkPublic(true);
+  }
+
+  const editInfoDivineWork = (e) => {
+    e.stopPropagation();
+    alert('user nhan viec khong rong');
+  }
+
   const handleOnChangeDiscussContent = (value, inputNameDiscussContent, taskId, inputNameTaskId, e) => {
     if (dataDiscussContent.discussContent === '') {
       if (dataDiscussContent.taskId === '') {
@@ -173,156 +191,165 @@ function ModalDivineWorkPublic(props) {
   }, [props.taskSendId])
 
   return (
-    <Modal size='lg' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false}>
-      <Modal.Header closeButton>
-        <Modal.Title>
-          <div className='text-primary text-uppercase'>{`Công việc cho ${props.taskSendTitle}`}</div>
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <div className="col-xs-12">
-          <div className='row d-flex justify-content-center'>
-            <div className='row col-9 p-0'>
-              <Stack direction="row" spacing={0}>
-                {/* <input type='text' className='form-control' /> */}
-                <TextField label="Thêm công việc" sx={{ width: 510 }} value={divineWork || ""} onChange={(e) => setDivineWork(e.target.value)} onKeyDown={(event) => handlePressEnter(event)} />
-                <IconButton color='primary' size="large" onClick={() => createDivineWork()}><AddCircleIcon fontSize="inherit" sx={{ transform: 'Scale(1.4)' }} /></IconButton>
-              </Stack>
-            </div>
-            <div className='list-task mt-2'>
-              <div className='list-task-div'>
-                {listDivineWork.length !== 0 ?
-                  <>
-                    <Typography variant="h6" color='red' sx={{ mb: 0.8 }}>Danh sách công việc</Typography>
-                    {Object.entries(listDivineWork).map(([itemKey, itemValue]) => {
-                      let expire = getExpireDateTime(itemValue.task_DateEnd)
-                      return (
-                        <Accordion key={`task-${itemKey}`} className={`list-title ${itemKey > 0 ? 'mt-3' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}>
-                          <div className='list-parent-task p-1'>
-                            <AccordionSummary>
-                              <Typography className={`item child ${itemKey} text-uppercase text-white fw-bolder col-10 px-0`} sx={{ fontSize: '17px' }}>
-                                {itemValue.task_Title}
-                              </Typography>
-                              <Box className='text-white d-flex flex-row col-2 justify-content-end p-0'>
-                                <AssignmentIndIcon className='mr-2' fontSize='medium' />
-                                <EditIcon className='mr-2' fontSize='medium' />
-                                {itemValue.userReceive_FullName === "" ?
-                                  <DeleteIcon fontSize='medium' color="inherit" onClick={(event) => deleteDivineWork(itemValue.task_Id, event)} />
-                                  :
-                                  ""
-                                }
-                              </Box>
-                            </AccordionSummary>
-                          </div>
-                          <div className='list-children-task border border-top-0 rounded-bottom' style={{ backgroundColor: "#fff" }}>
-                            <AccordionDetails>
+    <>
+      <Modal size='lg' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false} >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <div className='text-primary text-uppercase'>{`Công việc cho ${props.taskSendTitle}`}</div>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="col-xs-12">
+            <div className='row d-flex justify-content-center'>
+              <div className='row col-8 p-0'>
+                <Form.Group>
+                  <Form.Label >Thêm công việc</Form.Label>
+                  <Stack direction="row" spacing={0.5}>
+                    <Form.Control type="text" value={divineWork || ""} onChange={(e) => setDivineWork(e.target.value)} onKeyDown={(event) => handlePressEnter(event)} />
+                    <IconButton color='primary' size="medium" onClick={() => createDivineWork()}><AddCircleIcon fontSize="inherit" sx={{ transform: 'Scale(1.4)' }} /></IconButton>
+                  </Stack>
+                </Form.Group>
+              </div>
+              <div className='list-task mt-2'>
+                <div className='list-task-div'>
+                  {listDivineWork.length !== 0 ?
+                    <>
+                      <Typography variant="h6" color='red' sx={{ mb: 0.8 }}>Danh sách công việc</Typography>
+                      {Object.entries(listDivineWork).map(([itemKey, itemValue]) => {
+                        let expire = getExpireDateTime(itemValue.task_DateEnd)
+                        return (
+                          <Accordion key={`task-${itemKey}`} className={`list-title ${itemKey > 0 ? 'mt-3' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}>
+                            <div className='list-parent-task p-1'>
+                              <AccordionSummary>
+                                <Typography className={`item child ${itemKey} text-uppercase text-white fw-bolder col-10 px-0`} sx={{ fontSize: '17px' }}>
+                                  {itemValue.task_Title}
+                                </Typography>
+                                <Box className='text-white d-flex flex-row col-2 justify-content-end p-0'>
+                                  <Tooltip title="Thông tin giao việc">
+                                    <AssignmentIndIcon className='mr-2' fontSize='medium' onClick={(e) => itemValue.userReceive_FullName === "" ? assignInfoDivineWork(e, itemValue) : editInfoDivineWork(e, itemValue)} />
+                                  </Tooltip>
+                                  {itemValue.userReceive_FullName === "" ?
+                                    <Tooltip title="Xóa công việc">
+                                      <DeleteIcon fontSize='medium' onClick={(event) => deleteDivineWork(itemValue.task_Id, event)} />
+                                    </Tooltip>
+                                    :
+                                    ""
+                                  }
+                                </Box>
+                              </AccordionSummary>
+                            </div>
+                            <div className='list-children-task border border-top-0 rounded-bottom' style={{ backgroundColor: "#fff" }}>
+                              <AccordionDetails>
 
-                              <div className='task-content'>
-                                <Typography variant="h6">{itemValue.task_Content}</Typography>
-                              </div>
+                                <div className='task-content'>
+                                  <Typography variant="h6">{itemValue.task_Content}</Typography>
+                                </div>
 
-                              <div className='details-task-receive mt-1 py-1' style={{ borderTop: '1.8px solid silver' }}>
-                                <Stack direction="row" sx={{ mt: 0.5 }} spacing={1}>
-                                  <Typography variant='subtitle1' color='#0e9193'>Ngày tạo công việc: </Typography>
-                                  <Typography variant="subtitle1">{`${itemValue.task_DateSend !== '' ? moment(itemValue.task_DateSend).format('LLLL') : ""} - `}</Typography>
-                                  <Typography variant='subtitle1' color='#0e9193'>Loại công việc: </Typography>
-                                  <Typography variant="subtitle1">{itemValue.task_Catagory_Name}</Typography>
-                                </Stack>
-                                <Stack direction="row" spacing={0.6}>
-                                  <Typography variant='subtitle1' color='#0e9193'>Thời hạn: </Typography>
-                                  <Typography variant="subtitle1">
-                                    {itemValue.task_DateStart && itemValue.task_DateEnd !== '' ?
-                                      `${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} 
+                                <div className='details-task-receive mt-1 py-1' style={{ borderTop: '1.8px solid silver' }}>
+                                  <Stack direction="row" sx={{ mt: 0.5 }} spacing={1}>
+                                    <Typography variant='subtitle1' color='#0e9193'>Ngày tạo công việc: </Typography>
+                                    <Typography variant="subtitle1">{`${itemValue.task_DateSend !== '' ? moment(itemValue.task_DateSend).format('LLLL') : ""} - `}</Typography>
+                                    <Typography variant='subtitle1' color='#0e9193'>Loại công việc: </Typography>
+                                    <Typography variant="subtitle1">{itemValue.task_Catagory_Name}</Typography>
+                                  </Stack>
+                                  <Stack direction="row" spacing={0.6}>
+                                    <Typography variant='subtitle1' color='#0e9193'>Thời hạn: </Typography>
+                                    <Typography variant="subtitle1">
+                                      {itemValue.task_DateStart && itemValue.task_DateEnd !== '' ?
+                                        `${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} 
                                       (còn lại ${expire.days() !== 0 ? expire.days() + ' ngày' : expire.hours() + ' giờ'}) -`
-                                      :
-                                      ""
-                                    }
-                                  </Typography>
-                                  <Typography variant='subtitle1' color='#0e9193'>Người thực hiện: </Typography>
-                                  <Typography variant="subtitle1">{itemValue.userReceive_FullName}</Typography>
-                                </Stack>
-                                <Stack direction="row" spacing={0.6}>
+                                        :
+                                        ""
+                                      }
+                                    </Typography>
+                                    <Typography variant='subtitle1' color='#0e9193'>Người thực hiện: </Typography>
+                                    <Typography variant="subtitle1">{itemValue.userReceive_FullName}</Typography>
+                                  </Stack>
+                                  <Stack direction="row" spacing={0.6}>
 
-                                </Stack>
-                              </div>
+                                  </Stack>
+                                </div>
 
-                              <div className='task-discuss mt-1'>
-                                <List sx={{ mt: 0 }}>
-                                  <ListItem sx={{ px: 0 }}>
-                                    <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
-                                    <Box className='discuss-box'>
-                                      <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận' />
-                                    </Box>
-                                  </ListItem>
+                                <div className='task-discuss mt-1'>
+                                  <List sx={{ mt: 0 }}>
+                                    <ListItem sx={{ px: 0 }}>
+                                      <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
+                                      <Box className='discuss-box'>
+                                        <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận' />
+                                      </Box>
+                                    </ListItem>
 
-                                  <ListItem sx={{ px: 0 }}>
-                                    <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
-                                    <Box className='discuss-box'>
-                                      <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận' />
-                                    </Box>
-                                  </ListItem>
+                                    <ListItem sx={{ px: 0 }}>
+                                      <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
+                                      <Box className='discuss-box'>
+                                        <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận' />
+                                      </Box>
+                                    </ListItem>
 
-                                  <ListItem sx={{ px: 0 }}>
-                                    <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
-                                    <Box className='discuss-box'>
-                                      <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='bình luận bình luận bình luận' />
-                                    </Box>
-                                  </ListItem>
+                                    <ListItem sx={{ px: 0 }}>
+                                      <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
+                                      <Box className='discuss-box'>
+                                        <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='bình luận bình luận bình luận' />
+                                      </Box>
+                                    </ListItem>
 
-                                  <ListItem sx={{ px: 0 }}>
-                                    <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
-                                    <Box className='discuss-box'>
-                                      <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='luận bình luận bình luận bình luận luận bình luận bình luận bình luận' />
-                                    </Box>
-                                  </ListItem>
-                                </List>
+                                    <ListItem sx={{ px: 0 }}>
+                                      <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
+                                      <Box className='discuss-box'>
+                                        <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='luận bình luận bình luận bình luận luận bình luận bình luận bình luận' />
+                                      </Box>
+                                    </ListItem>
+                                  </List>
 
-                                <div className='task-discuss-input mt-2 d-flex '>
-                                  <div className='input-area'>
-                                    <div
-                                      className='child-1'
-                                      contentEditable='true'
-                                      aria-label='Viết bình luận...'
-                                      onInput={(e) => handleOnChangeDiscussContent(e.currentTarget.textContent, 'discussContent', itemValue.task_Id, 'taskId', e)}
-                                      onKeyPress={(e) => handleOnKeyDownDelete(e)}
-                                      onPaste={(e) => pasteAsPlainText(e)}
-                                    >
+                                  <div className='task-discuss-input mt-2 d-flex '>
+                                    <div className='input-area'>
+                                      <div
+                                        className='child-1'
+                                        contentEditable='true'
+                                        aria-label='Viết bình luận...'
+                                        onInput={(e) => handleOnChangeDiscussContent(e.currentTarget.textContent, 'discussContent', itemValue.task_Id, 'taskId', e)}
+                                        onKeyPress={(e) => handleOnKeyDownDelete(e)}
+                                        onPaste={(e) => pasteAsPlainText(e)}
+                                      >
+                                      </div>
+                                    </div>
+                                    <div className='input-send-icon' style={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}>
+                                      <IconButton
+                                        color={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? 'default' : 'primary'}
+                                        disabled={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? true : false} size="large"
+                                      >
+                                        <SendIcon />
+                                      </IconButton>
                                     </div>
                                   </div>
-                                  <div className='input-send-icon' style={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}>
-                                    <IconButton
-                                      color={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? 'default' : 'primary'}
-                                      disabled={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? true : false} size="large"
-                                    >
-                                      <SendIcon />
-                                    </IconButton>
-                                  </div>
                                 </div>
-                              </div>
-                            </AccordionDetails>
-                          </div>
+                              </AccordionDetails>
+                            </div>
 
-                        </Accordion>
-                      )
-                    })}
-                  </>
-                  :
-                  <Typography variant="h6" color='red' className='text-center mt-2'>Hiện chưa có danh sách công việc, hãy thêm mới</Typography>
-                }
+                          </Accordion>
+                        )
+                      })}
+                    </>
+                    :
+                    <Typography variant="h6" color='red' className='text-center mt-2'>Hiện chưa có danh sách công việc, hãy thêm mới</Typography>
+                  }
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Modal.Body>
-      <Modal.Footer>
-        {listDivineWork.length !== 0 ?
-          <ButtonMui variant="contained" color="primary">Lưu</ButtonMui>
-          :
-          <ButtonMui variant="contained" color="success">Lưu</ButtonMui>
-        }
-        <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
-      </Modal.Footer>
-    </Modal>
+        </Modal.Body>
+        <Modal.Footer>
+          <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="primary">Lưu</ButtonMui>
+          <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
+        </Modal.Footer>
+      </Modal>
+
+      <ModalAssignDivineWorkPublic
+        activeModalAssignDivineWorkPublic={showModalAssignDivineWorkPublic}
+        closeModalAssignDivineWorkPublic={setShowModalAssignDivineWorkPublic}
+        dataModalAssignDivineWorkPublic={dataModalAssignDivineWorkPublic}
+      />
+    </>
   )
 }
 

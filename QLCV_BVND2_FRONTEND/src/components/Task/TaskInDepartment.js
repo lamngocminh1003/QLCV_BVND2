@@ -8,7 +8,6 @@ import Link from '@mui/material/Link';
 import { getProposeReceiveOut } from '../../services/proposeService';
 import { toast } from 'react-toastify';
 //progress bar
-import CircularProgress from "../ProgressBar/CircularProgressWithLabel";
 //modal
 import ModalDivineWorkPublic from '../ManageDivineWork/ManageDivineWorkPublic/ModalDivineWorkPublic';
 //mui

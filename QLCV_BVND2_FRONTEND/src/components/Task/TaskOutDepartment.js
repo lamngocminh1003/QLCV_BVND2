@@ -6,7 +6,7 @@ import { DataGrid, GridToolbar, viVN } from '@mui/x-data-grid';
 import Link from '@mui/material/Link';
 import { toast } from 'react-toastify';
 //progress bar
-import CircularProgress from "../ProgressBar/CircularProgressWithLabel";
+import CircularProgress from "../FunctionComponents/ProgressBar/CircularProgressWithLabel.js";
 //modal
 import ModalDivineWorkPublic from "../ManageDivineWork/ManageDivineWorkPublic/ModalDivineWorkPublic.js";
 //mui
