@@ -55,6 +55,7 @@ function ModalDivineWorkPublic(props) {
     task_Content: '',
     task_DateStart: '',
     task_DateEnd: '',
+    task_Catagory_Id: '',
     task_Catagory_Name: '',
     userReceive_FullName: '',
     userSend_FullName: '',
@@ -107,7 +108,7 @@ function ModalDivineWorkPublic(props) {
       task_DateSend: '',
       task_DateStart: '',
       task_DateEnd: '',
-      task_Catagory_Name: '',
+      task_Catagory_Id: '',
       userReceive_FullName: '',
       userSend_FullName: '',
     }

@@ -13,6 +13,28 @@ const createConfig = () => {
     return config;
 }
 
+const createTaskCategory = async (category_Name) => {
+    const config = createConfig();
+    return await axios.post(`${backendURL}/api/TaskCategory`, { category_Name }, config)
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
+const getTaskCategory = async () => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/TaskCategory`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 const getTaskReceiveNotification = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/Task/GetListTaskUserReceiveNotification`, config)
@@ -47,6 +69,7 @@ const updateTaskStateSeen = async (taskId) => {
 }
 
 export {
-    getTaskReceiveNotification, getListTaskByDocSendId,
+    createTaskCategory,
+    getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId,
     updateTaskStateSeen
 };

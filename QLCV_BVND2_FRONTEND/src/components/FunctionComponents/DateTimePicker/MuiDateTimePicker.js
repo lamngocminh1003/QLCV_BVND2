@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 export default function DateTimePickerViewRenderers() {
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['DateTimePicker', 'DateTimePicker']}>
+            <DemoContainer components={['DateTimePicker', 'DateTimePicker']} sx={{ paddingBottom: '10px', paddingTop: '0px' }}>
                 <div className='row col-12'>
                     <div className='col-6' style={{ left: '30px' }}>
                         <DateTimePicker ampm={false} format='DD/MM/YYYY HH:mm' label="Từ ngày"

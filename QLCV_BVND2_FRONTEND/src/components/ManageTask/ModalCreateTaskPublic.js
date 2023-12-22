@@ -217,7 +217,7 @@ function ModalCreateTaskPublic(props) {
                                             <Form.Group className='mb-3'>
                                                 <Form.Label className='label-input-create-task'>Loại công việc <span className='text-danger'>(*)</span></Form.Label>
                                                 <Form.Select onChange={(e) => setTaskType(+e.currentTarget.value)}>
-                                                    <option>Chọn 1 loại công việc</option>
+                                                    <option hidden>Chọn 1 loại công việc</option>
                                                     {listTaskCategory.map((item, index) => {
                                                         return (<option key={item.task_Category_Id} value={item.task_Category_Id}>{item.category_Name}</option>)
                                                     })}
