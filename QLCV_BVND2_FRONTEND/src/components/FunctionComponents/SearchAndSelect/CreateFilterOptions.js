@@ -16,9 +16,10 @@ import { createTaskCategory, getTaskCategory } from '../../../services/taskServi
 
 const filter = createFilterOptions();
 
-export default function CreateFilterOptions({ props }) {
-    let dataModalAssignDivineWorkPublic = props;
-    //console.log(dataModalAssignDivineWorkPublic);
+export default function CreateFilterOptions(props) {
+    //config data was sent by Modal AssignDivineWorkPublic
+    const [dataModalAssignDivineWorkPublic, setDataModalAssignDivineWorkPublic] = useState(null);
+
     const [listTaskCategory, setListTaskCategory] = useState([]);
     //config thêm loại công việc
     const [value, setValue] = useState(null);
@@ -56,9 +57,14 @@ export default function CreateFilterOptions({ props }) {
         }
     }, [])
 
+    useEffect(() => {
+        if (Object.values(props.state).every(value => value !== null || value !== '')) {
+            setDataModalAssignDivineWorkPublic(props.state);
+        }
+    }, [props.state])
+
     return (
         <>
-
             <Autocomplete style={{ width: '100%' }} value={value} onChange={(event, newValue) => {
                 if (typeof newValue === 'string') {
                     // timeout to avoid instant validation of the dialog's form.
@@ -75,26 +81,36 @@ export default function CreateFilterOptions({ props }) {
                     });
                 } else {
                     setValue(newValue);
+                    //set state và truyền ngược lại cho ModalAssignDivineWorkPublic
+                    let input_task_Catagory_Id = 'task_Catagory_Id';
+                    let input_task_Catagory_Name = 'task_Catagory_Name';
+
+                    let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataModalAssignDivineWorkPublic);
+                    _dataModalAssignDivineWorkPublic[input_task_Catagory_Id] = newValue.category_Name;
+                    _dataModalAssignDivineWorkPublic[input_task_Catagory_Name] = newValue.task_Category_Id;
+                    props.setState(_dataModalAssignDivineWorkPublic);
                 }
             }}
                 filterOptions={(options, params) => {
                     const filtered = filter(options, params);
-                    let found = _.find(listTaskCategory, (obj) => obj.category_Name === params.inputValue);
-                    if (params.inputValue !== '') {
-                        if (found === undefined) {
-                            filtered.push({
+                    if (params.inputValue === '') {
+                        return filtered;
+                    }
+                    else if (params.inputValue !== '') {
+                        const result = options.filter((obj) => obj.category_Name.toLowerCase().includes(params.inputValue.toLowerCase()));
+                        //nếu tìm trong options không có thì sẽ vào phía dưới để tạo data mới
+                        if (result.length === 0) {
+                            let newInputValue = [];
+                            newInputValue.push({
                                 inputValue: params.inputValue,
                                 category_Name: `Thêm loại công việc "${params.inputValue}"`,
                             });
+                            return newInputValue;
                         }
                         else {
-                            // filtered.push({
-                            //     inputValue: '',
-                            //     category_Name: '',
-                            // });
+                            return filtered;
                         }
                     }
-                    return filtered;
                 }}
                 options={listTaskCategory}
                 getOptionLabel={(option) => {
@@ -103,19 +119,8 @@ export default function CreateFilterOptions({ props }) {
                 }}
                 selectOnFocus
                 clearOnBlur
-                handleHomeEndKeys
+                handleHomeEndKeys={false}
                 renderOption={(props, option) => <li {...props}>{option.category_Name}</li>}
-                // renderOption={(props, option, { selected }) => (
-                //     <li {...props}>
-                //         <Checkbox
-                //             icon={icon}
-                //             checkedIcon={checkedIcon}
-                //             style={{ marginRight: 8 }}
-                //             checked={selected}
-                //         />
-                //         {option.category_Name}
-                //     </li>
-                // )}
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="Loại công việc" />}
             />
@@ -136,7 +141,6 @@ export default function CreateFilterOptions({ props }) {
                     </DialogActions>
                 </form>
             </Dialog>
-
         </>
     );
 }

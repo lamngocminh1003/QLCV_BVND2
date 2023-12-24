@@ -27,21 +27,23 @@ import { getUserInDepartment } from '../../../services/departmentService.js';
 function ModalAssignDivineWorkPublic(props) {
     const { user, logoutContext } = useContext(UserContext);
 
-    const dataModalAssignDivineWorkPublicDefault = {
+    const dataAssignDivineWorkPublicDefault = {
         document_Send_Id: '',
         task_Catagory_Id: '',
+        task_Catagory_Name: '',
         task_Content: '',
         task_DateEnd: '',
         task_DateSend: '',
         task_DateStart: '',
         task_Id: '',
         task_Title: '',
+        userReceive_Id: '',
         userReceive_FullName: '',
         userSend_FullName: ''
     }
 
     const [doSomething, setDoSomething] = useState(false);
-    const [dataModalAssignDivineWorkPublic, setDataModalAssignDivineWorkPublic] = useState(dataModalAssignDivineWorkPublicDefault);
+    const [dataAssignDivineWorkPublic, setDataAssignDivineWorkPublic] = useState(dataAssignDivineWorkPublicDefault);
 
     const [listUserInDepartment, setListUserInDepartment] = useState([]);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -51,8 +53,10 @@ function ModalAssignDivineWorkPublic(props) {
         props.closeModalAssignDivineWorkPublic(false);
     }
 
-    const handleOnchange = () => {
-
+    const handleOnchange = (value, inputName) => {
+        let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
+        _dataModalAssignDivineWorkPublic[inputName] = value;
+        setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
     }
 
     const handleGetListUserInDepartment = async (departmentId) => {
@@ -60,9 +64,18 @@ function ModalAssignDivineWorkPublic(props) {
         setListUserInDepartment(listUserInDepartment.users);
     }
 
+    const handleSelectedUserReceive = (e, value) => {
+        let input_UserReceive_Id = 'userReceive_Id';
+        let input_userReceive_FullName = 'userReceive_FullName';
+        let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
+        _dataModalAssignDivineWorkPublic[input_UserReceive_Id] = value.user_Id;
+        _dataModalAssignDivineWorkPublic[input_userReceive_FullName] = value.user_FullName;
+        setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
+    }
+
     useEffect(() => {
         if (Object.keys(props.dataModalAssignDivineWorkPublic).length !== 0) {
-            setDataModalAssignDivineWorkPublic(props.dataModalAssignDivineWorkPublic);
+            setDataAssignDivineWorkPublic(props.dataModalAssignDivineWorkPublic);
             handleGetListUserInDepartment(user.account.departmentId);
         }
     }, [props.dataModalAssignDivineWorkPublic])
@@ -80,13 +93,13 @@ function ModalAssignDivineWorkPublic(props) {
                             <div className="mb-3 col-sm-12">
                                 <Form.Group>
                                     <Form.Label>Tên công việc <span className='text-danger'>(*)</span></Form.Label>
-                                    <Form.Control type="text" value={dataModalAssignDivineWorkPublic.task_Title || ""} onChange={(e) => handleOnchange(e.value, 'task_Title')} />
+                                    <Form.Control type="text" defaultValue={dataAssignDivineWorkPublic.task_Title || ""} onChange={(e) => handleOnchange(e.target.value, 'task_Title')} />
                                 </Form.Group>
                             </div>
                             <div className="mb-4 col-sm-12">
                                 <Form.Group>
                                     <Form.Label>Nội dung công việc <span className='text-danger'>(*)</span></Form.Label>
-                                    <Form.Control as="textarea" value={dataModalAssignDivineWorkPublic.task_Content || ""} onChange={(e) => handleOnchange(e.value, 'task_Title')} rows={4} />
+                                    <Form.Control as="textarea" defaultValue={dataAssignDivineWorkPublic.task_Content || ""} onChange={(e) => handleOnchange(e.target.value, 'task_Content')} rows={4} />
                                 </Form.Group>
                             </div>
                             <div className="mb-3 col-sm-12">
@@ -101,7 +114,7 @@ function ModalAssignDivineWorkPublic(props) {
 
                             <div className='col-sm-6 mt-3'>
                                 <Form.Group>
-                                    <CreateFilterOptions props={dataModalAssignDivineWorkPublic}></CreateFilterOptions>
+                                    <CreateFilterOptions state={dataAssignDivineWorkPublic} setState={setDataAssignDivineWorkPublic}></CreateFilterOptions>
                                 </Form.Group>
                             </div>
                             <div className='col-sm-6 mt-3'>
@@ -120,7 +133,7 @@ function ModalAssignDivineWorkPublic(props) {
                                                 {option.user_FullName}
                                             </li>
                                         )}
-                                        // onChange={(e, value) => handleChangeSelectedDepartment(e, value)}
+                                        onChange={(e, value) => handleSelectedUserReceive(e, value)}
                                         renderInput={(params) => (
                                             <TextField {...params} label="Người thực hiện" />
                                         )}
@@ -139,7 +152,7 @@ function ModalAssignDivineWorkPublic(props) {
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="warning">Cập nhật</ButtonMui>
+                <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="warning" onClick={(e) => console.log(dataAssignDivineWorkPublic)}>Cập nhật</ButtonMui>
                 <Button variant="secondary" onClick={() => handleOnHide()}>Đóng</Button>
             </Modal.Footer>
         </Modal>
