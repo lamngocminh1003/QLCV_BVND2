@@ -51,8 +51,9 @@ function ModalAssignDivineWorkPublic(props) {
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     const handleOnHide = () => {
-        props.closeModalAssignDivineWorkPublic(false);
         setDataAssignDivineWorkPublic(dataAssignDivineWorkPublicDefault);
+        props.setDataModalAssignDivineWorkPublic({});
+        props.closeModalAssignDivineWorkPublic(false);
     }
 
     const handleOnchange = (value, inputName) => {
@@ -98,8 +99,9 @@ function ModalAssignDivineWorkPublic(props) {
             setDataAssignDivineWorkPublic(props.dataModalAssignDivineWorkPublic);
             setdataAssignDivineWorkPublicEdit(props.dataModalAssignDivineWorkPublic);
             handleGetListUserInDepartment(user.account.departmentId);
+            console.log(props.dataModalAssignDivineWorkPublic);
         }
-    }, [props.dataModalAssignDivineWorkPublic], [dataAssignDivineWorkPublic])
+    }, [props.dataModalAssignDivineWorkPublic])
 
     return (
         <Modal size='lg' show={props.activeModalAssignDivineWorkPublic} onHide={() => handleOnHide()} style={{ background: 'rgba(0, 0, 0, 0.6)' }}

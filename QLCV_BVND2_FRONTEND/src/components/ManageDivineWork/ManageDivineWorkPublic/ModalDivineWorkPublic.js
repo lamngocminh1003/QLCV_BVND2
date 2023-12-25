@@ -164,13 +164,13 @@ function ModalDivineWorkPublic(props) {
   const handleSaveListDivineWork = async () => {
     //tìm những obj có key clone là true
     let arrayToHandleDivineWork = _.filter(listDivineWork, (item) => item.task_Clone === true);
-    let count;
+    let count = 0;
     for (let item of arrayToHandleDivineWork) {
       let response = await assignDivineWork(item);
       if (response === 200) {
         count++;
         if (count === arrayToHandleDivineWork.length) {
-          toast.success(response);
+          toast.success('Lưu công việc thành công!');
         }
       }
     }
@@ -268,7 +268,7 @@ function ModalDivineWorkPublic(props) {
                                 </Typography>
                                 <Box className='text-white d-flex flex-row col-2 justify-content-end p-0'>
                                   <Tooltip title="Thông tin giao việc">
-                                    <AssignmentIndIcon className='mr-2' fontSize='medium' onClick={(e) => itemValue.userReceive_FullName === "" ? assignInfoDivineWork(e, itemValue) : editInfoDivineWork(e, itemValue)} />
+                                    <AssignmentIndIcon className='mr-2' fontSize='medium' onClick={(e) => itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ? assignInfoDivineWork(e, itemValue) : editInfoDivineWork(e, itemValue)} />
                                   </Tooltip>
                                   {itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ?
                                     <Tooltip title="Xóa công việc">
@@ -390,6 +390,8 @@ function ModalDivineWorkPublic(props) {
         activeModalAssignDivineWorkPublic={showModalAssignDivineWorkPublic}
         closeModalAssignDivineWorkPublic={setShowModalAssignDivineWorkPublic}
         dataModalAssignDivineWorkPublic={dataModalAssignDivineWorkPublic}
+        setDataModalAssignDivineWorkPublic={setDataModalAssignDivineWorkPublic}
+
         setDataObjDivineWorkEdit={setObjDivineWorkEdit}
       />
     </>
