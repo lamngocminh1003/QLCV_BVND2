@@ -58,10 +58,10 @@ export default function CreateFilterOptions(props) {
     }, [])
 
     useEffect(() => {
-        if (Object.values(props.state).every(value => value !== null || value !== '')) {
-            setDataModalAssignDivineWorkPublic(props.state);
+        if (Object.values(props.stateExtra2).every(value => value !== null || value !== '')) {
+            setDataModalAssignDivineWorkPublic(props.stateExtra2);
         }
-    }, [props.state])
+    }, [props.stateExtra2])
 
     return (
         <>
@@ -81,14 +81,19 @@ export default function CreateFilterOptions(props) {
                     });
                 } else {
                     setValue(newValue);
-                    //set state và truyền ngược lại cho ModalAssignDivineWorkPublic
-                    let input_task_Catagory_Id = 'task_Catagory_Id';
-                    let input_task_Catagory_Name = 'task_Catagory_Name';
+                    if (newValue !== null) {
+                        //set stateExtra2 và truyền ngược lại cho ModalAssignDivineWorkPublic
+                        let input_task_Catagory_Id = 'task_Catagory_Id';
+                        let input_task_Catagory_Name = 'task_Catagory_Name';
 
-                    let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataModalAssignDivineWorkPublic);
-                    _dataModalAssignDivineWorkPublic[input_task_Catagory_Id] = newValue.category_Name;
-                    _dataModalAssignDivineWorkPublic[input_task_Catagory_Name] = newValue.task_Category_Id;
-                    props.setState(_dataModalAssignDivineWorkPublic);
+                        let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataModalAssignDivineWorkPublic);
+                        _dataModalAssignDivineWorkPublic[input_task_Catagory_Id] = newValue.task_Category_Id;
+                        _dataModalAssignDivineWorkPublic[input_task_Catagory_Name] = newValue.category_Name;
+                        props.setStateExtra2(_dataModalAssignDivineWorkPublic);
+                    }
+                    else {
+                        setDataModalAssignDivineWorkPublic(props.stateExtra2);
+                    }
                 }
             }}
                 filterOptions={(options, params) => {

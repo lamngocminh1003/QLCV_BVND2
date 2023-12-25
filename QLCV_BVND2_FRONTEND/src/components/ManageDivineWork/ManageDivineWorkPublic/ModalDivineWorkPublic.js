@@ -40,7 +40,7 @@ import "../SCSS/DivineWork.scss";
 //modal
 import ModalAssignDivineWorkPublic from './ModalAssignDivineWorkPublic';
 //api
-import { getListTaskByDocSendId } from '../../../services/taskService';
+import { assignDivineWork, getListTaskByDocSendId } from '../../../services/taskService';
 import { getDate } from 'date-fns';
 //cdn
 <style>
@@ -69,6 +69,7 @@ function ModalDivineWorkPublic(props) {
 
   const [divineWork, setDivineWork] = useState(''); //1 divine work
   const [objDivineWork, setObjDivineWork] = useState({}); //1 obj divine work
+  const [objDivineWorkEdit, setObjDivineWorkEdit] = useState(null); //1 obj divine work eidt dùng khi cập nhật thông tin của 1 task
   const [listDivineWork, setListDivineWork] = useState([]); //1 list chứa 1 đống obj divine work
 
   //config discuss
@@ -102,10 +103,10 @@ function ModalDivineWorkPublic(props) {
     let _objDivineWork = _.cloneDeep(objDivineWork);
     _objDivineWork = {
       document_Send_Id: props.taskSendId,
-      task_Id: `task ${uuidv4()}`,
+      task_Id: `task-clone ${uuidv4()}`,
       task_Title: divineWork,
       task_Content: '',
-      task_DateSend: '',
+      task_DateSend: moment(),
       task_DateStart: '',
       task_DateEnd: '',
       task_Catagory_Id: '',
@@ -113,6 +114,7 @@ function ModalDivineWorkPublic(props) {
       userReceive_Id: '',
       userReceive_FullName: '',
       userSend_FullName: '',
+      task_Clone: true
     }
     setObjDivineWork(_objDivineWork);
 
@@ -121,6 +123,22 @@ function ModalDivineWorkPublic(props) {
     _listDivineWork.push(_objDivineWork);
     setListDivineWork(_listDivineWork);
     setDivineWork('');
+  }
+
+  const updateDivineWork = () => {
+    let check = _.isEqual(dataModalAssignDivineWorkPublic, objDivineWorkEdit);
+    if (check === true) {
+
+    }
+    else {
+      const result = listDivineWork.map((item) => {
+        return item.task_Id === objDivineWorkEdit.task_Id ? objDivineWorkEdit : item;
+      });
+
+      let _listDivineWork = _.cloneDeep(listDivineWork);
+      _listDivineWork = result;
+      setListDivineWork(_listDivineWork);
+    }
   }
 
   const deleteDivineWork = (task_Id_Value, event) => {
@@ -141,6 +159,21 @@ function ModalDivineWorkPublic(props) {
   const editInfoDivineWork = (e) => {
     e.stopPropagation();
     alert('user nhan viec khong rong');
+  }
+
+  const handleSaveListDivineWork = async () => {
+    //tìm những obj có key clone là true
+    let arrayToHandleDivineWork = _.filter(listDivineWork, (item) => item.task_Clone === true);
+    let count;
+    for (let item of arrayToHandleDivineWork) {
+      let response = await assignDivineWork(item);
+      if (response === 200) {
+        count++;
+        if (count === arrayToHandleDivineWork.length) {
+          toast.success(response);
+        }
+      }
+    }
   }
 
   const handleOnChangeDiscussContent = (value, inputNameDiscussContent, taskId, inputNameTaskId, e) => {
@@ -193,6 +226,12 @@ function ModalDivineWorkPublic(props) {
     }
   }, [props.taskSendId])
 
+  useEffect(() => {
+    if (objDivineWorkEdit !== null) {
+      updateDivineWork();
+    }
+  }, [objDivineWorkEdit])
+
   return (
     <>
       <Modal size='lg' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false} >
@@ -231,7 +270,7 @@ function ModalDivineWorkPublic(props) {
                                   <Tooltip title="Thông tin giao việc">
                                     <AssignmentIndIcon className='mr-2' fontSize='medium' onClick={(e) => itemValue.userReceive_FullName === "" ? assignInfoDivineWork(e, itemValue) : editInfoDivineWork(e, itemValue)} />
                                   </Tooltip>
-                                  {itemValue.userReceive_FullName === "" ?
+                                  {itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ?
                                     <Tooltip title="Xóa công việc">
                                       <DeleteIcon fontSize='medium' onClick={(event) => deleteDivineWork(itemValue.task_Id, event)} />
                                     </Tooltip>
@@ -342,7 +381,7 @@ function ModalDivineWorkPublic(props) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="primary">Lưu</ButtonMui>
+          <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="primary" onClick={(e) => handleSaveListDivineWork()}>Lưu</ButtonMui>
           <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
         </Modal.Footer>
       </Modal>
@@ -351,6 +390,7 @@ function ModalDivineWorkPublic(props) {
         activeModalAssignDivineWorkPublic={showModalAssignDivineWorkPublic}
         closeModalAssignDivineWorkPublic={setShowModalAssignDivineWorkPublic}
         dataModalAssignDivineWorkPublic={dataModalAssignDivineWorkPublic}
+        setDataObjDivineWorkEdit={setObjDivineWorkEdit}
       />
     </>
   )

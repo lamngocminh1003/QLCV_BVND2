@@ -24,6 +24,23 @@ const createTaskCategory = async (category_Name) => {
         })
 }
 
+const assignDivineWork = async (dataObj) => {
+    const token = localStorage.getItem("jwt");
+    return await axios.post(`${backendURL}/api/Task/CreateTaskByDocSendId?DocSendId=${dataObj.document_Send_Id}&UserReceive=${dataObj.userReceive_Id}&Title=${dataObj.task_Title}&Content=${dataObj.task_Content}&TimeStart=${dataObj.task_DateStart}&Deadline=${dataObj.task_DateEnd}&CatagoryId=${dataObj.task_Catagory_Id}`,
+        dataObj.taskFile, {
+        headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+        }
+    })
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 const getTaskCategory = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/TaskCategory`, config)
@@ -69,7 +86,7 @@ const updateTaskStateSeen = async (taskId) => {
 }
 
 export {
-    createTaskCategory,
+    createTaskCategory, assignDivineWork,
     getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId,
     updateTaskStateSeen
 };

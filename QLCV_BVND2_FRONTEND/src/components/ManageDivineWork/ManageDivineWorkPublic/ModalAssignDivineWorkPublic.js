@@ -44,6 +44,7 @@ function ModalAssignDivineWorkPublic(props) {
 
     const [doSomething, setDoSomething] = useState(false);
     const [dataAssignDivineWorkPublic, setDataAssignDivineWorkPublic] = useState(dataAssignDivineWorkPublicDefault);
+    const [dataAssignDivineWorkPublicEdit, setdataAssignDivineWorkPublicEdit] = useState(null); // dùng khi nhấn nút cập nhật để check xem cái trên với cái dưới có trùng nhau không
 
     const [listUserInDepartment, setListUserInDepartment] = useState([]);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -51,6 +52,7 @@ function ModalAssignDivineWorkPublic(props) {
 
     const handleOnHide = () => {
         props.closeModalAssignDivineWorkPublic(false);
+        setDataAssignDivineWorkPublic(dataAssignDivineWorkPublicDefault);
     }
 
     const handleOnchange = (value, inputName) => {
@@ -59,26 +61,45 @@ function ModalAssignDivineWorkPublic(props) {
         setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
     }
 
+    const handleUpdateData = () => {
+        let check = _.isEqual(dataAssignDivineWorkPublic, dataAssignDivineWorkPublicEdit);
+        if (check !== true) {
+            toast.info(`Đã cập nhật công việc ${dataAssignDivineWorkPublic.task_Title} thành công!`);
+            props.setDataObjDivineWorkEdit(dataAssignDivineWorkPublic);
+            setdataAssignDivineWorkPublicEdit(dataAssignDivineWorkPublic);
+        }
+        else {
+            toast.warning('Hiện không có gì để cập nhật!');
+        }
+    }
+
     const handleGetListUserInDepartment = async (departmentId) => {
         let listUserInDepartment = await getUserInDepartment(departmentId);
         setListUserInDepartment(listUserInDepartment.users);
     }
 
     const handleSelectedUserReceive = (e, value) => {
-        let input_UserReceive_Id = 'userReceive_Id';
-        let input_userReceive_FullName = 'userReceive_FullName';
-        let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
-        _dataModalAssignDivineWorkPublic[input_UserReceive_Id] = value.user_Id;
-        _dataModalAssignDivineWorkPublic[input_userReceive_FullName] = value.user_FullName;
-        setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
+        if (value !== null) {
+            let input_UserReceive_Id = 'userReceive_Id';
+            let input_userReceive_FullName = 'userReceive_FullName';
+            let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
+            _dataModalAssignDivineWorkPublic[input_UserReceive_Id] = value.user_Id;
+            _dataModalAssignDivineWorkPublic[input_userReceive_FullName] = value.user_FullName;
+            setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
+        }
+        else {
+            let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
+            setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
+        }
     }
 
     useEffect(() => {
         if (Object.keys(props.dataModalAssignDivineWorkPublic).length !== 0) {
             setDataAssignDivineWorkPublic(props.dataModalAssignDivineWorkPublic);
+            setdataAssignDivineWorkPublicEdit(props.dataModalAssignDivineWorkPublic);
             handleGetListUserInDepartment(user.account.departmentId);
         }
-    }, [props.dataModalAssignDivineWorkPublic])
+    }, [props.dataModalAssignDivineWorkPublic], [dataAssignDivineWorkPublic])
 
     return (
         <Modal size='lg' show={props.activeModalAssignDivineWorkPublic} onHide={() => handleOnHide()} style={{ background: 'rgba(0, 0, 0, 0.6)' }}
@@ -107,14 +128,14 @@ function ModalAssignDivineWorkPublic(props) {
                                     <legend className="float-none w-auto"
                                         style={{ fontWeight: "bold", color: "#dc3545", fontSize: "1.1rem" }}>Thời hạn xử lý</legend>
                                     <div className="row date-expire-input">
-                                        <DateTimePicker></DateTimePicker>
+                                        <DateTimePicker stateExtra1={dataAssignDivineWorkPublic} setStateExtra1={setDataAssignDivineWorkPublic}></DateTimePicker>
                                     </div>
                                 </fieldset>
                             </div>
 
                             <div className='col-sm-6 mt-3'>
                                 <Form.Group>
-                                    <CreateFilterOptions state={dataAssignDivineWorkPublic} setState={setDataAssignDivineWorkPublic}></CreateFilterOptions>
+                                    <CreateFilterOptions stateExtra2={dataAssignDivineWorkPublic} setStateExtra2={setDataAssignDivineWorkPublic}></CreateFilterOptions>
                                 </Form.Group>
                             </div>
                             <div className='col-sm-6 mt-3'>
@@ -152,7 +173,7 @@ function ModalAssignDivineWorkPublic(props) {
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="warning" onClick={(e) => console.log(dataAssignDivineWorkPublic)}>Cập nhật</ButtonMui>
+                <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="warning" onClick={(e) => handleUpdateData()}>Cập nhật</ButtonMui>
                 <Button variant="secondary" onClick={() => handleOnHide()}>Đóng</Button>
             </Modal.Footer>
         </Modal>
