@@ -71,7 +71,6 @@ function NotifiIcon() {
 
   const getTotalNotificationFunc = async () => {
     let listTotal = await getTotalNotification();
-    console.log(listTotal);
     setTotalNotification(listTotal);
   }
 
@@ -161,12 +160,6 @@ function NotifiIcon() {
   }, [notificationType, doSomething]);
 
   useEffect(() => {
-    if (realTimeNotification === true) {
-      getTotalNotificationFunc();
-    }
-  }, [realTimeNotification])
-
-  useEffect(() => {
     getTotalNotificationFunc();
   }, [])
 
@@ -186,7 +179,7 @@ function NotifiIcon() {
         {/* ẩn, hiện bottom của icon */}
         {showNotifiIconBottom ?
           <div className='notifiicon-bottom'>
-            <div id="notifiicon-bottom-box" style={{ overflowY: "auto", height: "92.2vh" }}>
+            <div id="notifiicon-bottom-box" style={getData ? null : { overflowY: 'hidden' }}>
               <Typography variant="h5" className="py-2 text-dark" sx={{ fontFamily: "Inter, sans-serif", fontWeight: "bolder", fontSize: "24.5px", marginLeft: "0.75rem", }}>Thông báo</Typography>
               <Stack direction="row" sx={{ ml: 1.2, mt: 0.3 }} spacing={1}>
                 {/* spacing dùng để giãn cách giữa các chip */} {/* hiện thông tổng số thông báo */}
@@ -210,7 +203,7 @@ function NotifiIcon() {
               {/* ẩn hiện Skeleton */}
               {getData ?
                 <>
-                  <List sx={{ pb: "0px", pl: "4px" }}>
+                  <List sx={{ pb: "0px", pl: "0px" }}>
 
                     {(() => {
                       //bắt đầu lặp tùy theo loại
@@ -219,10 +212,10 @@ function NotifiIcon() {
                           return (
                             Object.entries(dataNotification.documentIncomming).map(([itemKey, itemValue]) => {
                               return (
-                                <ListItem button alignItems="flex-start" onClick={() => updateStateProposeSeen(itemValue.document_Incomming_Id)}>
+                                <ListItem button alignItems="flex-start" onClick={() => updateStateProposeSeen(itemValue.document_Incomming_Id)} key={itemKey}>
                                   <ListItemAvatar><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}><TipsAndUpdatesIcon /></Avatar></ListItemAvatar>
                                   <ListItemText
-                                    sx={{ marginTop: "0px" }}
+                                    sx={{ margin: "0px" }}
                                     primary={
                                       <>
                                         <Typography
@@ -257,39 +250,35 @@ function NotifiIcon() {
                                       </>}
                                     secondary={
                                       <>
-                                        <div className="message-notifi">
-                                          <Typography sx={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }} variant="h6">
-                                            {(() => {
-                                              if (itemValue.document_Incomming_State === 0) {
-                                                return (<>Bạn nhận được đề xuất với tiêu đề: <span className="result-notification-title">{`${itemValue.document_Incomming_Title}`}</span></>);
-                                              }
-                                              else if (itemValue.document_Incomming_State === 1) {
-                                                return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã bị từ chối</>);
-                                              }
-                                              else if (itemValue.document_Incomming_State === 2) {
-                                                return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã bị trả về để chỉnh sửa</>);
-                                              }
-                                              else if (itemValue.document_Incomming_State === 3) {
-                                                return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã được duyệt</>);
-                                              }
-                                              else if (itemValue.document_Incomming_State === 4) {
-                                                return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã được chuyển lên</>);
-                                              }
-                                              else {
-                                                return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã được xử lý</>);
-                                              }
-                                            })()}
-                                          </Typography>
-                                        </div>
-                                        <div>
-                                          <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
-                                            {itemValue.document_Incomming_State === 0 ?
-                                              moment(itemValue.document_Incomming_Time).startOf().fromNow()
-                                              :
-                                              moment(itemValue.document_Incomming_TimeUpdate).startOf().fromNow()
+                                        <span className="message-notifi" style={{ fontSize: "16px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif" }}>
+                                          {(() => {
+                                            if (itemValue.document_Incomming_State === 0) {
+                                              return (<>Bạn nhận được đề xuất với tiêu đề: <span className="result-notification-title">{`${itemValue.document_Incomming_Title}`}</span></>);
                                             }
-                                          </Typography>
-                                        </div>
+                                            else if (itemValue.document_Incomming_State === 1) {
+                                              return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã bị từ chối</>);
+                                            }
+                                            else if (itemValue.document_Incomming_State === 2) {
+                                              return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã bị trả về để chỉnh sửa</>);
+                                            }
+                                            else if (itemValue.document_Incomming_State === 3) {
+                                              return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã được duyệt</>);
+                                            }
+                                            else if (itemValue.document_Incomming_State === 4) {
+                                              return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã được chuyển lên</>);
+                                            }
+                                            else {
+                                              return (<>Đề xuất <span className="result-notification-title">{`"${itemValue.document_Incomming_Title}"`}</span> đã được xử lý</>);
+                                            }
+                                          })()}
+                                        </span>
+                                        <span style={{ fontSize: "14px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", lineHeight: '1.7' }}>
+                                          {itemValue.document_Incomming_State === 0 ?
+                                            moment(itemValue.document_Incomming_Time).startOf().fromNow()
+                                            :
+                                            moment(itemValue.document_Incomming_TimeUpdate).startOf().fromNow()
+                                          }
+                                        </span>
                                       </>
                                     }
                                   />
@@ -312,7 +301,7 @@ function NotifiIcon() {
                           return (
                             Object.entries(dataNotification.documentSend).map(([itemKey, itemValue]) => {
                               return (
-                                <ListItem button alignItems="flex-start" onClick={() => updateStateHandoverSeen(itemValue.document_Send_Id)}>
+                                <ListItem button alignItems="flex-start" onClick={() => updateStateHandoverSeen(itemValue.document_Send_Id)} key={itemKey}>
                                   <ListItemAvatar><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(84, 160, 191)' }} ><AssignmentIcon /></Avatar></ListItemAvatar>
                                   <ListItemText
                                     sx={{ marginTop: "0px" }}
@@ -325,16 +314,12 @@ function NotifiIcon() {
                                       </>}
                                     secondary={
                                       <>
-                                        <div className="message-notifi">
-                                          <Typography sx={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }} variant="h6">
-                                            Bạn nhận được văn bản với tiêu đề <span className="result-notification-title">{`${itemValue.document_Send_Title}`}</span>
-                                          </Typography>
-                                        </div>
-                                        <div>
-                                          <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
-                                            {moment(itemValue.document_Send_Time).startOf().fromNow()}
-                                          </Typography>
-                                        </div>
+                                        <span className="message-notifi" style={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }}>
+                                          Bạn nhận được văn bản với tiêu đề <span className="result-notification-title">{`${itemValue.document_Send_Title}`}</span>
+                                        </span>
+                                        <span style={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, lineHeight: '1.54' }}>
+                                          {moment(itemValue.document_Send_Time).startOf().fromNow()}
+                                        </span>
                                       </>
                                     }
                                   />
@@ -357,7 +342,7 @@ function NotifiIcon() {
                           return (
                             Object.entries(dataNotification.task).map(([itemKey, itemValue]) => {
                               return (
-                                <ListItem button alignItems="flex-start" onClick={() => updateTaskSeen(itemValue.task_Id)}>
+                                <ListItem button alignItems="flex-start" onClick={() => updateTaskSeen(itemValue.task_Id)} key={itemKey}>
                                   <ListItemAvatar><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(255, 71, 101)' }} ><TaskIcon /></Avatar></ListItemAvatar>
                                   <ListItemText
                                     sx={{ marginTop: "0px" }}
@@ -370,16 +355,12 @@ function NotifiIcon() {
                                     //   </>}
                                     secondary={
                                       <>
-                                        <div className="message-notifi">
-                                          <Typography sx={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }} variant="h6">
-                                            Bạn nhận được công việc với tiêu đề <span className="result-notification-title">{`${itemValue.task_Title}`}</span>
-                                          </Typography>
-                                        </div>
-                                        <div>
-                                          <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
-                                            {moment(itemValue.task_DateSend).startOf().fromNow()}
-                                          </Typography>
-                                        </div>
+                                        <span className="message-notifi" style={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }}>
+                                          Bạn nhận được công việc với tiêu đề <span className="result-notification-title">{`${itemValue.task_Title}`}</span>
+                                        </span>
+                                        <span style={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, lineHeight: '1.54' }}>
+                                          {moment(itemValue.task_DateSend).startOf().fromNow()}
+                                        </span>
                                       </>
                                     }
                                   />
@@ -402,21 +383,21 @@ function NotifiIcon() {
                           return (
                             Object.entries(dataNotification.discuss).map(([itemKey, itemValue]) => {
                               return (
-                                <ListItem button alignItems="flex-start" onClick={() => updateDiscussSeen(itemValue.discuss_Task)}>
+                                <ListItem button alignItems="flex-start" onClick={() => updateDiscussSeen(itemValue.discuss_Task)} key={itemKey}>
                                   <ListItemAvatar><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(40, 193, 112)' }} ><ChatBubbleIcon /></Avatar></ListItemAvatar>
                                   <ListItemText
                                     sx={{ marginTop: "0px" }}
                                     secondary={
                                       <>
-                                        <div className="message-notifi">
-                                          <Typography sx={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }} variant="h6">
-                                            <span className="result-notification-title">{`${itemValue.userSend_Fullname}`}</span> đã bình luận về một công việc</Typography>
-                                        </div>
-                                        <div>
-                                          <Typography sx={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, }}>
-                                            {moment(itemValue.discuss_Time).startOf().fromNow()}
-                                          </Typography>
-                                        </div>
+                                        <span className="message-notifi" style={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }}>
+                                          <span className="result-notification-title" style={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }}>
+                                            {`${itemValue.userSend_Fullname}`}
+                                          </span>
+                                          đã bình luận về một công việc
+                                        </span>
+                                        <span style={{ fontSize: "13.5px", color: "rgb(8, 102, 255)", fontFamily: "Arimo, sans-serif", pt: 0.15, lineHeight: '1.54' }}>
+                                          {moment(itemValue.discuss_Time).startOf().fromNow()}
+                                        </span>
                                       </>
                                     }
                                   />

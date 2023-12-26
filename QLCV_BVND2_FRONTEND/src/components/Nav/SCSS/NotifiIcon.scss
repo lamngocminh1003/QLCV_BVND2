@@ -57,6 +57,11 @@
     background-color: #fff;
     box-shadow: rgba(0, 0, 0, 0.30) 0px 5px 15px;
 
+    #notifiicon-bottom-box{
+        overflow-y: auto;
+        height: 92.2vh;
+    }
+
     #notifiicon-bottom-box:active::-webkit-scrollbar-thumb,
     #notifiicon-bottom-box:focus::-webkit-scrollbar-thumb,
     #notifiicon-bottom-box:hover::-webkit-scrollbar-thumb
@@ -97,9 +102,7 @@
 }
 
 @media (min-width: 576px) { 
-    #notifiicon-bottom-box{
-        overflow-y: hidden!important;
-    }
+
  }
 
 // @media (max-width: 991.98px) { 
