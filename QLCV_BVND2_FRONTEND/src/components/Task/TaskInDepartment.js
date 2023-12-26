@@ -1,21 +1,20 @@
 import {
-    DataGrid,
     GridToolbarColumnsButton,
     GridToolbarFilterButton,
     GridToolbarDensitySelector,
     GridToolbarContainer,
     GridToolbarExport,
+    DataGrid,
+    viVN
   } from "@mui/x-data-grid";
   import React, { useState, useEffect, useContext } from 'react';
   import { Box } from "@mui/material";
-  import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
   import Button from '@mui/material/Button';
   import Checkbox from '@mui/material/Checkbox';
   import CloudUploadIcon from '@mui/icons-material/CloudUpload';
   import Link from '@mui/material/Link';
   import { styled } from '@mui/material/styles';
-  import {getListTaskReceiver} from '../../services/docService'
-  // import ModalEmployee  from '../ManageDocument/ModalEmployee.js'
+  import moment from 'moment';
   
   const TaskInDepartment = () => {
     function ExpandableCell ({value}){
@@ -39,23 +38,23 @@ import {
       }
     
     const [isLoading, setIsLoading] = useState(false);
-  
-    const [isOpenTimeModal, setisOpenTimeModal] = useState(false);
-    
-    const [dataModal, setDataModal] = useState();
-  
-    const handleOpenTimeModal = (item) =>{
-      console.log('clicked!!!');
+
+    const [file, setFile] = useState();
+
+    function handleOnChangeFile(e) {
+        console.log(e.target.files);
+        setFile(URL.createObjectURL(e.target.files[0]));
+        setFile(true);
     }
-  
-    const handleCloseTimeModal = () =>{
-      setisOpenTimeModal(false);
+
+    const checkFile = () =>{
+
     }
-  
+
+
     const handleReload = () => {
       window.location.reload(); // Tải lại trang
     };
-  
   
     
     //Fetch data
@@ -65,118 +64,75 @@ import {
   
     const data = [
         {
-          id:1,
+          id:'',
           docName: 'Khoa Nội',
           taskName:'Tên công việc 1',
-          description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
-          time: '2023-07-05 - 2024-01-01',
+          description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.NVJIANLVLS DVNVAJVNAD ÁKVJASKJVSAKJV DLDVJALKVLKVNL',
+          dateStart: '2023-07-05',
+          dateEnd:'2023-07-14',
           status: 3,
-          action: ''
+          action: '',
+          uploadFile:''
         },
     
         {
-          id:2,
+          id:'',
           docName: 'Khoa Ngoại Tổng hợp',
           taskName:'Tên công việc 2',
           description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
-          time: '2023-07-05 - 2024-01-01',
+          dateStart: '2023-07-05',
+          dateEnd:'2024-01-01',
           status: 'Hoàn thành',
-          action: ''
+          action: '',
+          uploadFile:''
         },
     
         {
-          id:3,
+          id:'',
           docName: 'Khoa Nội',
           taskName:'Tên công việc 3',
           description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
-          time: '2023-07-05 - 2024-01-01',
+          dateStart: '2023-07-05',
+          dateEnd:'2024-01-01',
           status: 3,
-          action: ''
+          action: '',
+          uploadFile:''
         },
     
         {
-          id:4,
+          id:'',
           docName: 'Khoa Nội',
           taskName:'Tên công việc 4',
           description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
-          time: '2023-07-05 - 2024-01-01',
+          dateStart: '2023-07-05',
+          dateEnd:'2024-01-01',
           status: 4,
-          action: ''
+          action: '',
+          uploadFile:''
         },
     
         {
-          id:5,
+          id:'',
           docName: 'Khoa Nội',
           taskName:'Tên công việc 5',
           description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-          time: '2023-07-05 - 2024-01-01',
+          dateStart: '2023-07-14',
+          dateEnd:'2024-01-01',
           status: 4,
-          action: ''
-        },
-    
-        {
-          id:6,
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 5',
-          description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-          time: '2023-07-05 - 2024-01-01',
-          status: 4,
-          action: ''
+          action: '',
+          uploadFile:''
         },
         {
-          id:6,
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 5',
-          description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-          time: '2023-07-05 - 2024-01-01',
-          status: 4,
-          action: ''
-        },
-        {
-          id:6,
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 5',
-          description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-          time: '2023-07-05 - 2024-01-01',
-          status: 4,
-          action: ''
-        },
-        {
-          id:6,
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 5',
-          description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-          time: '2023-07-05 - 2024-01-01',
-          status: 4,
-          action: ''
-        },
-        {
-          id:6,
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 5',
-          description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-          time: '2023-07-05 - 2024-01-01',
-          status: 4,
-          action: ''
-        },
-        {
-          id:6,
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 5',
-          description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-          time: '2023-07-05 - 2024-01-01',
-          status: 4,
-          action: ''
-        },
-        {
-          id:6,
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 5',
-          description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-          time: '2023-07-05 - 2024-01-01',
-          status: 4,
-          action: ''
-        }
+            id:'',
+            docName: 'Khoa Nội',
+            taskName:'Tên công việc 6',
+            description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
+            dateStart: '2023-07-14',
+            dateEnd:'2024-01-01',
+            status: 4,
+            action: '',
+            uploadFile:''
+          }
       ]
   
       const columns=[
@@ -200,7 +156,6 @@ import {
             return(
               <>
                 <h3 
-                //   onClick={() => handleOnClickDocName(params.row.docName)}
                     style={{
                     color:'blue', 
                     cursor:'pointer',
@@ -222,7 +177,6 @@ import {
             return(
               <>
                 <h3 
-                //   onClick={() => handleOnClickTaskName(params.row.taskName)}
                     style={{
                     color:'blue', 
                     cursor:'pointer',
@@ -249,26 +203,12 @@ import {
             editable: true,
             headerAlign:'center',
             align:'center',
-            valueGetter: (params) => params.row.time 
-          //   renderCell: (params) =>{
-          //   return(
-          //     <>
-          //       <button
-          //         onClick={()=>handleOpenTimeModal(params.row.id)}
-          //         variant="contained"
-          //         title="Thời gian"
-          //         className="btn btn-primary"
-          //       >
-          //         <CalendarMonthIcon />{" "}
-          //       </button>
-          //     </>
-          //   )
-          // }
+            renderCell:(params) => moment(params.row.dateStart).format('l') +'-'+ moment(params.row.dateEnd).format('l') 
         },
         {
             field: 'status',
             headerName:'TRẠNG THÁI',
-            width:300,
+            width:200,
             headerAlign:'center',
             align:'center',
             renderCell: (params) =>{
@@ -276,19 +216,20 @@ import {
               <>
                   {`${params.row.status}`== 3 ?
                     <>
-                      <span className='status rounded-pill success'>Tiếp nhận</span>
+                      <span className='status rounded-pill ahead'>Tiếp nhận</span>
+                      
                     </>
                     :
                     <>
-                      <span className='status rounded-pill ahead'>Hoàn thành</span>
+                      <span className='status rounded-pill success'>Hoàn thành</span>
                     </>} 
               </>
             )
           }
         },
         {
-            field: 'action',
-            headerName:'THAO TÁC',
+            field: 'upload',
+            headerName:'ĐÍNH KÈM FILE',
             sortable: false,
             filterable: false,
             headerAlign:'center',
@@ -296,19 +237,19 @@ import {
             width:300,
             renderCell: (params) => {
             return (
-              <>
+              <>    
                 <div>
-                  <Checkbox color="success" />
+                 <Checkbox  color="success"/> 
                 </div>
+
                 <div>
-                  <Button 
+                <Button 
                     component="label" 
                     variant="contained" 
-                    // onClick={() =>  handleOnClickUpload(params.row.id)}
+                    onChange={handleOnChangeFile}
                     startIcon={<CloudUploadIcon />}
                     >
-                    Upload file
-                    <VisuallyHiddenInput type="file" />
+                    Tải file lên
                   </Button>
                 </div>
               </>
@@ -326,13 +267,14 @@ import {
         <GridToolbarExport
           printOptions={{ disableToolbarButton: true }}
           csvOptions={{
-            fileName: `Danh sách công việc`,
+            fileName: `Danh sách Công việc Nội bộ`,
             utf8WithBom: true,
           }}
         />
       </GridToolbarContainer>
     );
   }
+
   const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
     clipPath: 'inset(50%)',
@@ -344,15 +286,15 @@ import {
     whiteSpace: 'nowrap',
     width: 1,
   });
-  
+
   return (
     <>
       {!isLoading && (
         <>
-          <div className="h3 text-center text-primary m-3">
-            Danh sách công việc
+          <div className="h5 text-center text-primary m-3">
+            CÔNG VIỆC NỘI BỘ
           </div>
-          <Box m="20px" width="100%" height="600" >
+          <Box >
             <Box
               m="0px 100px 0 100px"
               sx={{
@@ -382,28 +324,36 @@ import {
               }}
             >
              {data.length > 0 ? ( 
-                <DataGrid
-                  rows={data.map((row, index) => ({
-                    ...row,
-                    id: index + 1,
-                  }))}
-                    columns={columns}
-                    getEstimatedRowHeight={() => 50}
-                    getRowHeight={() => 'auto'}
-                    autoHeight={true}
-                    components={{
-                    Toolbar: CustomToolbar,
-                  }}
-                />
+                <div style={{height: 600, overflow: "auto" }}>
+                    <DataGrid
+                        rows={data.map((row, index) => ({
+                            ...row,
+                            id: index + 1,
+                        }))}
+                            columns={columns}
+                            getEstimatedRowHeight={() => 50}
+                            getRowHeight={() => 'auto'}
+                            autoHeight={false}
+                            components={{
+                            Toolbar: CustomToolbar,
+                        }}
+                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                    />
+                </div>
                ) : (
-                <div className="h6 text-center text-secondary m-3">
-                  Vui lòng load lại trang{" "}
-                  <button
-                    onClick={() => handleReload()}
-                    className="btn btn-primary"
-                  >
-                    <i className="fa-solid fa-rotate-right"></i> Reload
-                  </button>
+                <div className="h6 text-center text-secondary m-3" style={{display:'flex', flexDirection:'column',gap:'1rem'}}>
+
+                  <div>Vui lòng tải lại trang{" "}</div>
+
+                  <div>
+                    <button
+                        onClick={() => handleReload()}
+                        className="btn btn-primary"
+                    >
+                        <i className="fa-solid fa-rotate-right"></i> Tải lại trang
+                    </button>
+                  </div>
+                  
                 </div>
               )} 
             </Box>
@@ -411,8 +361,8 @@ import {
         </>
       )}
   
-    {/* <ModalEmployee isOpen={isOpenTimeModal} onClose={handleCloseTimeModal} /> */}
     </>
   );
+  
   };
   export default TaskInDepartment;
