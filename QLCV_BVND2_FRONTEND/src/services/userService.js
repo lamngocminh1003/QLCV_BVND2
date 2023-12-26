@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendURL = 'https://localhost:7147';
+const backendURL = 'http://146.190.89.3:9090';
 
 const token = localStorage.getItem("jwt");
 // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
@@ -42,8 +42,6 @@ const fetchUserList = (page, limit) => {
 const fetchUserById = (user) => {
   return axios.get("/api/user/read/userId", { data: { userId: user.id } });
 }
-
-
 
 const createNewUser = (userData) => {
   return axios.post(`/api/user/create`, { userData });

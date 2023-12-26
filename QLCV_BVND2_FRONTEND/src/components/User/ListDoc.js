@@ -233,7 +233,7 @@ function ListDoc() {
                                                         <td>{indexListDoc + 1}</td>
                                                         <td><button className='title-doc' onClick={() => btnInfo(itemListDoc)}>{itemListDoc.docName}</button></td>
                                                         <td>{itemListDoc.docDes}</td>
-                                                        <td>{`${moment(itemListDoc.docExpireStart).format('L')} - ${moment(itemListDoc.docExpireEnd).format('L')}`}</td>
+                                                        <td>{`${moment(itemListDoc.docExpireStart).format('L')} - ${moment(itemListDoc.docExpireEnd).format('L')}`}</td>p
                                                         <td>{itemListDoc.docHandOver.length !== 0 ? itemListDoc.docHandOver : null}</td>
                                                         <td>
                                                             {(() => {

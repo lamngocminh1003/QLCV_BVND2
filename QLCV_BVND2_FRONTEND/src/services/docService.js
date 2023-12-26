@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendURL = 'https://localhost:7147';
+const backendURL = 'http://146.190.89.3:9090';
 
 const token = localStorage.getItem("jwt");
 // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
@@ -37,5 +37,15 @@ const getAllDocSendUserLogin = async () => {
 }
 
 export {
-    createDocIncoming, getAllDocSendUserLogin
+    createDocIncoming, getAllDocSendUserLogin, getListTaskReceiver
 };
+
+const getListTaskReceiver = async () =>{
+  return await axios.get(`${backendURL}/api/Task/GetListTaskReceiveUserLogin`,config)
+  .then(function(response){
+    return response.data
+  })
+  .catch(function(error){
+    return error.response.status
+  })
+}

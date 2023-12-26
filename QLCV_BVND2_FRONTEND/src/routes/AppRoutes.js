@@ -10,6 +10,7 @@ import ListDoc from "../components/User/ListDoc";
 import ListDocOfDepartment from "../components/User/ListDocOfDepartment";
 import MemberTask from "../components/Task/MemberTask";
 import Header from "../components/Nav/Header";
+import Employee from "../components/User/Employee";
 
 const AppRoutes = (props) => {
   return (
@@ -27,6 +28,7 @@ const AppRoutes = (props) => {
           <PrivateRoutes path="/list-doc" component={ListDoc} />
           <PrivateRoutes path="/list-doc-department" component={ListDocOfDepartment} />
           <PrivateRoutes path="/member-task-department" component={MemberTask} />
+          <PrivateRoutes path="/employee" component={Employee} />
           <Route path="*">
             <Page404 />{" "}
           </Route>
