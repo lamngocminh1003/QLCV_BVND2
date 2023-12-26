@@ -45,6 +45,9 @@ function NotifiIcon() {
   const [showNotifiIconBottom, setShowNotifiIconBottom] = useState(false);
   const [getData, checkGetData] = useState(false);
   const [doSomething, setDoSomething] = useState(false);
+  //config real time state
+  const [listNotificationPrev, setListNotificationPrev] = useState(null);
+  const [realTimeNotification, setRealTimeNotification] = useState(false);
 
   //config detect ref
   const menuRef = useRef();
@@ -68,6 +71,7 @@ function NotifiIcon() {
 
   const getTotalNotificationFunc = async () => {
     let listTotal = await getTotalNotification();
+    console.log(listTotal);
     setTotalNotification(listTotal);
   }
 
@@ -155,6 +159,12 @@ function NotifiIcon() {
       getDiscussNotificationFunc();
     }
   }, [notificationType, doSomething]);
+
+  useEffect(() => {
+    if (realTimeNotification === true) {
+      getTotalNotificationFunc();
+    }
+  }, [realTimeNotification])
 
   useEffect(() => {
     getTotalNotificationFunc();

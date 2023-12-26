@@ -99,7 +99,6 @@ function ModalAssignDivineWorkPublic(props) {
             setDataAssignDivineWorkPublic(props.dataModalAssignDivineWorkPublic);
             setdataAssignDivineWorkPublicEdit(props.dataModalAssignDivineWorkPublic);
             handleGetListUserInDepartment(user.account.departmentId);
-            console.log(props.dataModalAssignDivineWorkPublic);
         }
     }, [props.dataModalAssignDivineWorkPublic])
 

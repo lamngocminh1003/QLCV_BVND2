@@ -1,4 +1,5 @@
 import axios from "axios";
+import signalRService from "./signalRService.js";
 
 const backendURL = 'http://146.190.89.3:9090';
 
@@ -14,20 +15,37 @@ const createConfig = () => {
 }
 
 const createPropose = async (dataObj) => {
-    const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`,
-        dataObj.proposeFile, {
-        headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-        }
-    })
-        .then(function (response) {
-            return response.status
+    try {
+        const token = localStorage.getItem("jwt");
+        return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`,
+            dataObj.proposeFile, {
+            headers: {
+                "content-type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            }
         })
-        .catch(function (error) {
-            return error.response.status
-        })
+            .then(function (response) {
+
+                const data = JSON.stringify(dataObj);
+
+
+                signalRService.getConnection().invoke('SendUpdateNotification', data, 'hh1')
+
+                    .then(() => {
+                        console.log(`gui de xuat cho user co id la: hh1 .`);
+                    })
+                    .catch((error) => {
+                        console.error(`Failed to Send: ${error}`);
+                    });
+
+                return response.status
+            })
+            .catch(function (error) {
+                return error.response.status
+            })
+    } catch (error) {
+
+    }
 }
 
 const createProposeByHeader = async (dataObj, idDepartment) => {

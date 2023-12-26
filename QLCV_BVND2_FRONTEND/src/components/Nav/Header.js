@@ -10,6 +10,8 @@ import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { Box } from '@mui/material';
 import NotifiIcon from './NotifiIcon';
+//service
+import signalRService from '../../services/signalRService.js';
 
 const Header = (props) => {
   const { user, logoutContext } = useContext(UserContext);
@@ -26,6 +28,7 @@ const Header = (props) => {
   const handleLogout = async () => {
     localStorage.removeItem('jwt'); //xóa localStorage
     logoutContext();
+    signalRService.removeFromGroup(user.account.userId);
     toast.success('Đăng xuất thành công!');
     history.push('/login-user');
   }

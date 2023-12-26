@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 import { UserContext } from '../../../context/UserContext';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
+//function components
+import Backdrop from "../../FunctionComponents/ProgressBar/Backdrop.js";
 //bs5
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -12,6 +14,7 @@ import Form from 'react-bootstrap/Form';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from "@mui/material/Typography";
 import ButtonMui from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -79,6 +82,9 @@ function ModalDivineWorkPublic(props) {
   const [showModalAssignDivineWorkPublic, setShowModalAssignDivineWorkPublic] = useState(false);
   const [dataModalAssignDivineWorkPublic, setDataModalAssignDivineWorkPublic] = useState({});
 
+  //config backdrop when submit
+  const [openBackdrop, setOpenBackdrop] = useState(false);
+
   const getExpireDateTime = (task_DateEnd) => {
     const expiration = moment(task_DateEnd);
     // get the difference between the moments
@@ -114,6 +120,7 @@ function ModalDivineWorkPublic(props) {
       userReceive_Id: '',
       userReceive_FullName: '',
       userSend_FullName: '',
+      task_file: '',
       task_Clone: true
     }
     setObjDivineWork(_objDivineWork);
@@ -163,17 +170,19 @@ function ModalDivineWorkPublic(props) {
 
   const handleSaveListDivineWork = async () => {
     //tìm những obj có key clone là true
-    let arrayToHandleDivineWork = _.filter(listDivineWork, (item) => item.task_Clone === true);
-    let count = 0;
-    for (let item of arrayToHandleDivineWork) {
-      let response = await assignDivineWork(item);
-      if (response === 200) {
-        count++;
-        if (count === arrayToHandleDivineWork.length) {
-          toast.success('Lưu công việc thành công!');
-        }
-      }
-    }
+    setOpenBackdrop(true);
+    // let arrayToHandleDivineWork = _.filter(listDivineWork, (item) => item.task_Clone === true);
+    // let count = 0;
+    // for (let item of arrayToHandleDivineWork) {
+    //   let response = await assignDivineWork(item);
+    //   if (response === 200) {
+    //     console.log(response);
+    //     count++;
+    //     if (count === arrayToHandleDivineWork.length) {
+    //       toast.success('Lưu công việc thành công!');
+    //     }
+    //   }
+    // }
   }
 
   const handleOnChangeDiscussContent = (value, inputNameDiscussContent, taskId, inputNameTaskId, e) => {
@@ -232,8 +241,20 @@ function ModalDivineWorkPublic(props) {
     }
   }, [objDivineWorkEdit])
 
+  const [progress, setProgress] = React.useState(10);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
+    }, 800);
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
   return (
     <>
+      <Backdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} />
       <Modal size='lg' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false} >
         <Modal.Header closeButton>
           <Modal.Title>
@@ -381,6 +402,7 @@ function ModalDivineWorkPublic(props) {
           </div>
         </Modal.Body>
         <Modal.Footer>
+          <LoadingButton sx={{ textTransform: 'none' }} endIcon={<SendIcon />} loading loadingPosition="end" variant="contained"> Lưu </LoadingButton>
           <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="primary" onClick={(e) => handleSaveListDivineWork()}>Lưu</ButtonMui>
           <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
         </Modal.Footer>
