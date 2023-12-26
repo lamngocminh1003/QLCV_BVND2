@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import "./Document.scss";
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import "../Task/Task.scss";
+// import "./SCSS/Task.scss";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -187,7 +187,7 @@ const ModalDocumentOfDepartment = (props) => {
                                                                     itemTemplate={itemTemplate}
                                                                 />
                                                                 <label htmlFor={`discuss ${itemKey}`} className='form-label mt-3'>Thảo luận công việc</label>
-                                                                {/* <Mention id={`assign ${itemKey}`} placeholder="Nhập để thảo luận" rows={3.5} cols={50} /> */}
+                                                                <Mention id={`assign ${itemKey}`} placeholder="Nhập để thảo luận" rows={3.5} cols={50} />
                                                             </Typography>
                                                         </AccordionDetails>
                                                     </div>

@@ -13,19 +13,13 @@ const createConfig = () => {
   return config;
 }
 
-const userLogin = async (userId, password) => {
-  return await axios.post(`${backendURL}/api/UserAccount/Login`, { userId, password })
-    .then(function (response) {
-      return response.data
-    })
-    .catch(function (error) {
-      return error.response.status
-    })
-};
+const getAllDepartment = async () => {
 
-const getUserAccount = async () => {
+}
+
+const getAllDepartmentByType = async (typeInt) => {
   const config = createConfig();
-  return await axios.get(`${backendURL}/api/UserAccount/GetUserLogin`, config)
+  return await axios.get(`${backendURL}/api/Department/GetDepartmentByType/${typeInt}`, config)
     .then(function (response) {
       return response.data
     })
@@ -34,9 +28,9 @@ const getUserAccount = async () => {
     })
 }
 
-const getTotalNotification = async () => {
+const getUserInDepartment = async (id) => {
   const config = createConfig();
-  return await axios.get(`${backendURL}/api/UserAccount/GetTotalNumberNotification`, config)
+  return await axios.get(`${backendURL}/api/Department/GetUserByDepartmentId/${id}`, config)
     .then(function (response) {
       return response.data
     })
@@ -46,6 +40,5 @@ const getTotalNotification = async () => {
 }
 
 export {
-  userLogin,
-  getUserAccount, getTotalNotification,
-};
+  getAllDepartment, getAllDepartmentByType, getUserInDepartment
+}

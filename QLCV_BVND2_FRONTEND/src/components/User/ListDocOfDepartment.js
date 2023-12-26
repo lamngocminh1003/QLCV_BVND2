@@ -5,7 +5,7 @@ import { UserContext } from '../../context/UserContext';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 //import progressbar
-import CircularProgress from "../ProgressBar/CircularProgressWithLabel";
+import CircularProgress from "../FunctionComponents/ProgressBar/CircularProgressWithLabel.js";
 
 import ReactPaginate from 'react-paginate';
 import ModalDocumentOfDepartment from '../ManageDocument/ModalDocumentOfDepartment';

@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { fetchUserList, deleteUserById } from '../../services/userService';
 import ModalDeleteUser from '../ManageUsers/ModalDeleteUser';
 import ModalUser from '../ManageUsers/ModalUser';
 import ReactPaginate from 'react-paginate';
-import './ListUser.scss';
+import './SCSS/ListUser.scss';
 import { toast, ToastContainer } from 'react-toastify';
+import { UserContext } from '../../context/UserContext';
+import Typography from '@mui/material/Typography';
 
 const ListUser = (props) => {
+    const { user } = useContext(UserContext);
 
     const [listUsers, setListUsers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -28,12 +30,7 @@ const ListUser = (props) => {
     }, [currentPage])
 
     const fetchUsers = async () => {
-        let response = await fetchUserList(currentPage, currentLimit);
-        if (response && response.EC === 0) {
-            setTotalPages(response.DT.totalPages)
-            setListUsers(response.DT.userList)
-            // console.log(response);
-        }
+
     }
 
     const handlePageClick = (event) => {
@@ -67,15 +64,15 @@ const ListUser = (props) => {
 
     //đồng ý xóa user
     const handleConfirmDeleteUser = async () => {
-        let response = await deleteUserById(dataModal)
-        if (response && response.data.EC === 0) {
-            toast.success(response.data.EM)
-            await fetchUsers();
-            setIsShowModalDelete(false);
-        }
-        else {
-            toast.error(response.data.EM)
-        }
+        // let response = await deleteUserById(dataModal)
+        // if (response && response.data.EC === 0) {
+        //     toast.success(response.data.EM)
+        //     await fetchUsers();
+        //     setIsShowModalDelete(false);
+        // }
+        // else {
+        //     toast.error(response.data.EM)
+        // }
     }
 
     return (
@@ -96,30 +93,29 @@ const ListUser = (props) => {
             <div className="container mt-4">
                 <div className='manage-users-container'>
                     <div className='user-header'>
-                        <h3 className="row text-primary text-uppercase mb-3">Danh sách người dùng</h3>
+                        <h3 className="row text-primary text-uppercase mb-3">{`Danh sách người dùng ${user.account.departmentName}`}</h3>
                         <div className='actions'>
                             <button className='btn btn-primary mb-3 add-user' onClick={() => { setIsShowModalUser(true); setActionModalUser("CREATE") }}><i className="fa fa-plus i-add"></i>Thêm người dùng</button>
                         </div>
                     </div>
                     <div className='user-body'>
                         <div className="row">
-                            <table className="table table-hover table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope='col'>STT</th>
-                                        <th scope="col">Họ tên</th>
-                                        <th scope="col">Tên người dùng</th>
-                                        <th scope="col">Số điện thoại</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Vai trò</th>
-                                        <th scope="col">Vị trí</th>
-                                        <th scope="col">Khoa phòng</th>
-                                        <th scope="col">Thao tác</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    {listUsers && listUsers.length > 0 ?
+                            {listUsers && listUsers.length > 0 ?
+                                <table className="table table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope='col'>STT</th>
+                                            <th scope="col">Họ tên</th>
+                                            <th scope="col">Tên người dùng</th>
+                                            <th scope="col">Số điện thoại</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Vai trò</th>
+                                            <th scope="col">Vị trí</th>
+                                            <th scope="col">Khoa phòng</th>
+                                            <th scope="col">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         <>
                                             {listUsers.map((itemUserList, indexUserList) => {
                                                 return (
@@ -140,11 +136,11 @@ const ListUser = (props) => {
                                                 )
                                             })}
                                         </>
-                                        :
-                                        <><tr><td>Không tìm thấy danh sách người dùng</td></tr></>
-                                    }
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                                :
+                                <><Typography variant='body1' fontSize={17} color='black' className='text-center'>Không tìm thấy danh sách người dùng, hãy thêm mới!</Typography></>
+                            }
                         </div>
                     </div>
                     {totalPages > 0 &&

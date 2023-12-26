@@ -1,7 +1,6 @@
 //ListDoc.js
 .title-doc{
-    text-decoration: underline;
-    color: #0d6efd
+    color: #0d6efd; 
 }
 
 .i-add{
@@ -41,16 +40,16 @@
         &.btn:focus {
             outline: none;
             box-shadow: none;
-          }
+        }
     }
 }
 
 //ListDocOfDepartment.js
-.btn-primary {
-    &.add-doc{
-        &.btn:focus {
-            outline: none;
-            box-shadow: none;
-          }
-    }
-}
+// .btn-primary {
+//     &.add-doc{
+//         &.btn:focus {
+//             outline: none;
+//             box-shadow: none;
+//           }
+//     }
+// }
