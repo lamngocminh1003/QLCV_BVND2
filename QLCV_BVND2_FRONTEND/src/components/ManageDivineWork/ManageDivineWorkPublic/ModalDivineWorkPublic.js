@@ -402,7 +402,7 @@ function ModalDivineWorkPublic(props) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <LoadingButton sx={{ textTransform: 'none' }} endIcon={<SendIcon />} loading loadingPosition="end" variant="contained"> Lưu </LoadingButton>
+          {/* <LoadingButton sx={{ textTransform: 'none' }} endIcon={<SendIcon />} loading loadingPosition="end" variant="contained"> Lưu </LoadingButton> */}
           <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="primary" onClick={(e) => handleSaveListDivineWork()}>Lưu</ButtonMui>
           <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
         </Modal.Footer>

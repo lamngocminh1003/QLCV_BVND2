@@ -9,6 +9,9 @@ import { ImageConfig } from '../../../config/ImageConfig.js';
 import Typography from '@mui/material/Typography';
 import Box from "@mui/material/Box";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ListItemText from '@mui/material/ListItemText';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
 //import some shit to create assign to department
 import Checkbox from '@mui/material/Checkbox';
@@ -41,6 +44,20 @@ const ModalProposeSent_Delete = (props) => {
     //config select file before append to form data and assign to dataModalProposeSent
     const [fileListState, setFileListState] = useState([]);
 
+    //config slotPropsPopper
+    const slotPropsPopper = {
+        popper: {
+            modifiers: [
+                {
+                    name: 'offset',
+                    options: {
+                        offset: [0, -20],
+                    },
+                },
+            ],
+        },
+    }
+
     //config react mui checkboxes
     const icon = <CheckBoxOutlineBlankIcon fontSize="medium" />
     const checkedIcon = <CheckBoxIcon fontSize="medium" />
@@ -70,6 +87,12 @@ const ModalProposeSent_Delete = (props) => {
             console.log('không có file nào được thêm vào.');
             console.log('luc dau: ', fileListState)
         }
+    }
+
+    const onDeleteFile = (itemFile) => {
+        let updatedList = [...fileListState];
+        updatedList.splice(fileListState.indexOf(itemFile), 1);
+        setFileListState(updatedList);
     }
 
     const handleChangeSelectedDepartment = (e, value) => {
@@ -175,47 +198,58 @@ const ModalProposeSent_Delete = (props) => {
                                     }
                                     <div className='col-sm-12 mt-4'>
                                         <Box sx={{ boxShadow: 'rgba(0, 0, 0, 0.20) 0px 5px 15px', height: 'auto', p: 1, m: 0, borderRadius: 2, textAlign: 'center' }}>
-                                            <div className='wrap' style={{ width: 'auto', margin: 'auto' }}>
+                                            <div className='wrap' style={{ width: '100%', margin: 'auto' }}>
                                                 <Typography variant='body1' fontSize='1.1rem' color='black'>File đính kèm</Typography>
                                                 <div className='file-input-container'>
                                                     <div className='file-input-label'>
                                                         <CloudUploadIcon sx={{ color: 'darkturquoise', fontSize: '70px' }}></CloudUploadIcon>
-                                                        <Typography variant='subtitle2' fontWeight='600' color='gray' fontSize='0.8rem'>Nhấn để chọn file</Typography>
+                                                        <Typography variant='subtitle2' fontWeight='600' color='gray' fontSize='0.8rem'>Nhấn vào đây để chọn file</Typography>
                                                     </div>
                                                     <div className='file-input'>
                                                         <input type='file' multiple onChange={(e) => onSelectFile(e)}></input>
                                                     </div>
                                                 </div>
-                                                <div className='selected-file-preview-item mt-2'>
+                                                {
+                                                    fileListState.length > 0 ? (
+                                                        <div className='selected-file-preview-item col-sm-12 row'>
+                                                            {
+                                                                fileListState.map((itemFile, index) => {
+                                                                    return (
+                                                                        <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.name} key={index}>
+                                                                            <div className='selected-file-preview-item-info col-5 mt-2'>
+                                                                                <div className='selected-file-preview-item-info-img-type-file'>
+                                                                                    <img src={ImageConfig[itemFile.name.split('.')[1]] || ImageConfig['default']} />
+                                                                                </div>
+                                                                                <div className='selected-file-preview-item-info-label'>
+                                                                                    <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
+                                                                                        {itemFile.name}
+                                                                                    </Typography><p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p>
+                                                                                </div>
+                                                                                <span className='selected-file-preview-delete-item' onClick={() => onDeleteFile(itemFile)}>x</span>
+                                                                            </div>
+                                                                        </Tooltip>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
+                                                    ) : null
+                                                }
 
-
-                                                    <div className='selected-file-preview-item-info'>
-                                                        <img src={img} />
-                                                        <Typography>a.png</Typography>
-                                                        <Typography>1</Typography>
-                                                        <span className='selected-file-preview-delete-item'>x</span>
-                                                    </div>
-                                                    <div className='selected-file-preview-item-info'>
-                                                        <img src={img} />
-                                                        <Typography>a.png</Typography>
-                                                        <Typography>1</Typography>
-                                                        <span className='selected-file-preview-delete-item'>x</span>
-                                                    </div>
-                                                    <div className='selected-file-preview-item-info'>
-                                                        <img src={img} />
-                                                        <Typography>a.png</Typography>
-                                                        <Typography>1</Typography>
-                                                        <span className='selected-file-preview-delete-item'>x</span>
-                                                    </div>
-                                                    <div className='selected-file-preview-item-info'>
-                                                        <img src={img} />
-                                                        <Typography>a.png</Typography>
-                                                        <Typography>1</Typography>
-                                                        <span className='selected-file-preview-delete-item'>x</span>
-                                                    </div>
-
-
-                                                </div>
+                                                {/* <div className='selected-file-preview-item col-sm-12 row'>
+                                                    <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title="23 08 25- 221TB-TCCB ve viec ra soat doi tuong da va chua qua boi duong kien thuc Quoc phong an ninh">
+                                                        <div className='selected-file-preview-item-info col-5 mt-2'>
+                                                            <div className='selected-file-preview-item-info-img-type-file'>
+                                                                <img src={img} />
+                                                            </div>
+                                                            <div className='selected-file-preview-item-info-label'>
+                                                                <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
+                                                                    23 08 25- 221TB-TCCB ve viec ra soat doi tuong da va chua qua boi duong kien thuc Quoc phong an ninh
+                                                                </Typography><p className='selected-file-preview-item-info-label-file-size'>236 KB</p>
+                                                            </div>
+                                                            <span className='selected-file-preview-delete-item' onClick={() => onDeleteFile()}>x</span>
+                                                        </div>
+                                                    </Tooltip>
+                                                </div> */}
                                             </div>
                                         </Box>
                                         {/* <input type='file' className='form-control' id="proposeFile" onChange={(e) => handleFile(e)}
