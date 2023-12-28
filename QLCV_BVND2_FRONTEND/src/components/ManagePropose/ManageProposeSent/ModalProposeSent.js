@@ -4,8 +4,12 @@ import _, { cloneDeep, set } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../../context/UserContext';
 import Modal from 'react-bootstrap/Modal';
+import { ImageConfig } from '../../../config/ImageConfig.js';
 //import some theme from mui
 import Typography from '@mui/material/Typography';
+import Box from "@mui/material/Box";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Stack from '@mui/material/Stack';
 //import some shit to create assign to department
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
@@ -15,6 +19,8 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 //import some api
 import { createPropose, createProposeByHeader } from '../../../services/proposeService';
 import { getAllDepartmentByType } from '../../../services/departmentService';
+
+import img from '../../../assets/image/file-pdf-solid-240.png';
 
 const ModalProposeSent_Delete = (props) => {
     const { user } = useContext(UserContext);
@@ -32,6 +38,9 @@ const ModalProposeSent_Delete = (props) => {
     const [listDepartmentByType, setListDepartmentByType] = useState([]);
     const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
 
+    //config select file before append to form data and assign to dataModalProposeSent
+    const [fileListState, setFileListState] = useState([]);
+
     //config react mui checkboxes
     const icon = <CheckBoxOutlineBlankIcon fontSize="medium" />
     const checkedIcon = <CheckBoxIcon fontSize="medium" />
@@ -47,10 +56,19 @@ const ModalProposeSent_Delete = (props) => {
         setDataModalProposeSent(_dataPropose);
     }
 
-    const handleFile = (event) => {
-        let selectedFile = event.target.files;
-        if (selectedFile) {
-            setDataProposeFile(selectedFile);
+    const onSelectFile = (e) => {
+        let newListFile = e.target.files;
+
+        // Lọc ra những object mới từ mảng data mới, khác với object trong mảng của state
+        let newObjects = _.differenceBy(newListFile, fileListState, 'name');
+
+        if (newObjects.length !== 0) {
+            let updatedList = [...fileListState, ...newObjects];
+            setFileListState(updatedList);
+        }
+        else {
+            console.log('không có file nào được thêm vào.');
+            console.log('luc dau: ', fileListState)
         }
     }
 
@@ -130,14 +148,9 @@ const ModalProposeSent_Delete = (props) => {
                                         <label className='form-label fs-5' htmlFor='document_Incomming_Content'>Nội dung đề xuất <span className='text-danger'>(*)</span></label>
                                         <textarea className='form-control' id="document_Incomming_Content" rows="5" onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Content')} value={dataModalProposeSent.document_Incomming_Content || ""} autoComplete='off'></textarea>
                                     </div>
-                                    <div className='col-sm-12 mt-3'>
-                                        <label className='form-label fs-5' htmlFor='proposeFile'>File đính kèm</label>
-                                        <input type='file' className='form-control' id="proposeFile" onChange={(e) => handleFile(e)}
-                                            accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple></input>
-                                    </div>
                                     {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ?
                                         <>
-                                            <div className="col-sm-12 mt-3">
+                                            <div className="col-sm-12 mt-3 mb-1">
                                                 <Typography variant='body1' fontSize={17} color='FireBrick'>Gửi lên phòng chức năng</Typography>
                                                 <Autocomplete
                                                     autoComplete={false}
@@ -160,6 +173,54 @@ const ModalProposeSent_Delete = (props) => {
                                         :
                                         null
                                     }
+                                    <div className='col-sm-12 mt-4'>
+                                        <Box sx={{ boxShadow: 'rgba(0, 0, 0, 0.20) 0px 5px 15px', height: 'auto', p: 1, m: 0, borderRadius: 2, textAlign: 'center' }}>
+                                            <div className='wrap' style={{ width: 'auto', margin: 'auto' }}>
+                                                <Typography variant='body1' fontSize='1.1rem' color='black'>File đính kèm</Typography>
+                                                <div className='file-input-container'>
+                                                    <div className='file-input-label'>
+                                                        <CloudUploadIcon sx={{ color: 'darkturquoise', fontSize: '70px' }}></CloudUploadIcon>
+                                                        <Typography variant='subtitle2' fontWeight='600' color='gray' fontSize='0.8rem'>Nhấn để chọn file</Typography>
+                                                    </div>
+                                                    <div className='file-input'>
+                                                        <input type='file' multiple onChange={(e) => onSelectFile(e)}></input>
+                                                    </div>
+                                                </div>
+                                                <div className='selected-file-preview-item mt-2'>
+
+
+                                                    <div className='selected-file-preview-item-info'>
+                                                        <img src={img} />
+                                                        <Typography>a.png</Typography>
+                                                        <Typography>1</Typography>
+                                                        <span className='selected-file-preview-delete-item'>x</span>
+                                                    </div>
+                                                    <div className='selected-file-preview-item-info'>
+                                                        <img src={img} />
+                                                        <Typography>a.png</Typography>
+                                                        <Typography>1</Typography>
+                                                        <span className='selected-file-preview-delete-item'>x</span>
+                                                    </div>
+                                                    <div className='selected-file-preview-item-info'>
+                                                        <img src={img} />
+                                                        <Typography>a.png</Typography>
+                                                        <Typography>1</Typography>
+                                                        <span className='selected-file-preview-delete-item'>x</span>
+                                                    </div>
+                                                    <div className='selected-file-preview-item-info'>
+                                                        <img src={img} />
+                                                        <Typography>a.png</Typography>
+                                                        <Typography>1</Typography>
+                                                        <span className='selected-file-preview-delete-item'>x</span>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </Box>
+                                        {/* <input type='file' className='form-control' id="proposeFile" onChange={(e) => handleFile(e)}
+                                            accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple></input> */}
+                                    </div>
                                 </div>
                             </div>
                         </div>
