@@ -7,143 +7,144 @@ import {
     DataGrid,
     viVN
   } from "@mui/x-data-grid";
-  import React, { useState, useEffect, useContext } from 'react';
   import { Box } from "@mui/material";
   import Button from '@mui/material/Button';
   import Checkbox from '@mui/material/Checkbox';
   import CloudUploadIcon from '@mui/icons-material/CloudUpload';
   import Link from '@mui/material/Link';
   import { styled } from '@mui/material/styles';
+
+  import React, { useState, useEffect, useContext } from 'react';
+
   import moment from 'moment';
+
+  import {getTaskCategory} from '../../services/taskService'
+  // import {getAllDocSendPublicByUserLogin} from '../../services/docService'
   
   const TaskInDepartment = () => {
-    function ExpandableCell ({value}){
-        const [expanded, setExpanded] = useState(false);
-      
-        return (
+    const ExpandableCell = ({ value }) => {
+      const [expanded, setExpanded] = useState(false);
+      return (
           <div>
-            {expanded ? value : value.slice(0, 200)}&nbsp;
-            {value.length > 200 && (
-              <Link
-                type="button"
-                component="button"
-                sx={{ fontSize: 'inherit', color:'blue' }}
-                onClick={() => setExpanded(!expanded)}
-              >
-                {expanded ? 'Rút gọn' : 'Xem thêm'}
-              </Link>
-            )}
+              {expanded ? value : value.slice(0,200)}&nbsp;
+              {value.length > 200 && (
+                  <Link
+                      type="button"
+                      component="button"
+                      sx={{ fontSize: 'inherit' }}
+                      onClick={() => setExpanded(!expanded)}
+                  >
+                      {expanded ? 'Rút gọn' : 'Xem thêm'}
+                  </Link>
+              )}
           </div>
-        )
-      }
-    
+      );
+  }
     const [isLoading, setIsLoading] = useState(false);
 
+    const [listDocSend, setListDocSend] = useState([]);
+
+    const [listTask, setListTask] = useState([]);
+
     const [file, setFile] = useState();
-
-    function handleOnChangeFile(e) {
-        console.log(e.target.files);
-        setFile(URL.createObjectURL(e.target.files[0]));
-        setFile(true);
-    }
-
-    const checkFile = () =>{
-
-    }
-
 
     const handleReload = () => {
       window.location.reload(); // Tải lại trang
     };
   
+
+  //Fetch task data 
+  const getTaskCategoryFunc = async() =>{
+    let resultListTaskSend = await getTaskCategory();
+    setListTask(resultListTaskSend); 
+  }
+
+  useEffect(() =>{
+    getTaskCategoryFunc();
+  },[])
+
+    // const data = [
+    //     {
+    //       id:'',
+    //       docName: 'Khoa Nội',
+    //       taskName:'Tên công việc 1',
+    //       description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.NVJIANLVLS DVNVAJVNAD ÁKVJASKJVSAKJV DLDVJALKVLKVNL',
+    //       dateStart: '2023-07-05',
+    //       dateEnd:'2023-07-14',
+    //       status: 3,
+    //       action: '',
+    //       uploadFile:''
+    //     },
     
-    //Fetch data
-    const fetchTaskData = async () =>{
-  
-    }
-  
-    const data = [
-        {
-          id:'',
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 1',
-          description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.NVJIANLVLS DVNVAJVNAD ÁKVJASKJVSAKJV DLDVJALKVLKVNL',
-          dateStart: '2023-07-05',
-          dateEnd:'2023-07-14',
-          status: 3,
-          action: '',
-          uploadFile:''
-        },
+    //     {
+    //       id:'',
+    //       docName: 'Khoa Ngoại Tổng hợp',
+    //       taskName:'Tên công việc 1',
+    //       description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
+    //       dateStart: '2023-07-05',
+    //       dateEnd:'2024-01-01',
+    //       status: 'Hoàn thành',
+    //       action: '',
+    //       uploadFile:''
+    //     },
     
-        {
-          id:'',
-          docName: 'Khoa Ngoại Tổng hợp',
-          taskName:'Tên công việc 2',
-          description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
-          dateStart: '2023-07-05',
-          dateEnd:'2024-01-01',
-          status: 'Hoàn thành',
-          action: '',
-          uploadFile:''
-        },
+    //     {
+    //       id:'',
+    //       docName: 'Khoa Nội',
+    //       taskName:'Tên công việc 1',
+    //       description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
+    //       dateStart: '2023-07-05',
+    //       dateEnd:'2024-01-01',
+    //       status: 3,
+    //       action: '',
+    //       uploadFile:''
+    //     },
     
-        {
-          id:'',
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 3',
-          description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
-          dateStart: '2023-07-05',
-          dateEnd:'2024-01-01',
-          status: 3,
-          action: '',
-          uploadFile:''
-        },
+    //     {
+    //       id:'',
+    //       docName: 'Khoa Nội',
+    //       taskName:'Tên công việc 1',
+    //       description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
+    //       dateStart: '2023-07-05',
+    //       dateEnd:'2024-01-01',
+    //       status: 4,
+    //       action: '',
+    //       uploadFile:''
+    //     },
     
-        {
-          id:'',
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 4',
-          description:'Aliquam dapibus, lorem vel mattis aliquet, purus lorem tincidunt mauris, in blandit quam risus sed ipsum. Maecenas non felis venenatis, porta velit quis, consectetur elit. Sed feugiat venenatis nulla, sit amet dictum nulla convallis sit amet.',
-          dateStart: '2023-07-05',
-          dateEnd:'2024-01-01',
-          status: 4,
-          action: '',
-          uploadFile:''
-        },
-    
-        {
-          id:'',
-          docName: 'Khoa Nội',
-          taskName:'Tên công việc 5',
-          description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-          dateStart: '2023-07-14',
-          dateEnd:'2024-01-01',
-          status: 4,
-          action: '',
-          uploadFile:''
-        },
-        {
-            id:'',
-            docName: 'Khoa Nội',
-            taskName:'Tên công việc 6',
-            description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
-            dateStart: '2023-07-14',
-            dateEnd:'2024-01-01',
-            status: 4,
-            action: '',
-            uploadFile:''
-          }
-      ]
+    //     {
+    //       id:'',
+    //       docName: 'Khoa Nội',
+    //       taskName:'Tên công việc 1',
+    //       description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
+    //       dateStart: '2023-07-14',
+    //       dateEnd:'2024-01-01',
+    //       status: 4,
+    //       action: '',
+    //       uploadFile:''
+    //     },
+    //     {
+    //         id:'',
+    //         docName: 'Khoa Nội',
+    //         taskName:'Tên công việc 1',
+    //         description:'cmkscmlksCn,zjv navlknxzv,nakjvn lznv zm vkzxvnlamv nvldz vnkxzvn,zxvmxv, vz,vn,zvnlznv',
+    //         dateStart: '2023-07-14',
+    //         dateEnd:'2024-01-01',
+    //         status: 4,
+    //         action: '',
+    //         uploadFile:''
+    //       }
+    //   ]
   
       const columns=[
         {
-            field: 'id',
+            field: 'task_Category_Id',
             headerName:'STT',
             sortable: false,
             filterable: false,
             headerAlign:'center',
             align:'center',
-            valueGetter: (params) => params.row.id 
+            valueGetter: (params) => params.row.task_Category_Id 
         }, 
         {
             field: 'docName',
@@ -157,32 +158,31 @@ import {
               <>
                 <h3 
                     style={{
-                    color:'blue', 
                     cursor:'pointer',
                     fontSize:'20px'}}
                   >
-                    <u>{`${params.row.docName}`}</u>
+                    <b>{`${params.row.docName}`}</b>
                 </h3>
               </>
             )
           }
         },
         {
-            field: 'taskName',
+            field: 'category_Name',
             headerName:'TÊN CÔNG VIỆC',
             width:300,
             headerAlign:'center',
             align:'center',
             renderCell: (params) => {
+              console.log(params)
             return(
               <>
                 <h3 
-                    style={{
-                    color:'blue', 
+                    style={{ 
                     cursor:'pointer',
                     fontSize:'20px'}}
                   >
-                    <u>{`${params.row.taskName}`}</u>
+                    <b>{`${params.row.category_Name}`}</b>
                 </h3>
               </>
             )
@@ -194,7 +194,7 @@ import {
             width:500,
             headerAlign:'center',
             align:'center',
-            renderCell: (params) => <ExpandableCell {...params} />,
+            // renderCell: (params) => <ExpandableCell {...params} />,
         },
         {
             field:'time',
@@ -212,19 +212,16 @@ import {
             headerAlign:'center',
             align:'center',
             renderCell: (params) =>{
-            return(
-              <>
-                  {`${params.row.status}`== 3 ?
-                    <>
-                      <span className='status rounded-pill ahead'>Tiếp nhận</span>
-                      
-                    </>
-                    :
-                    <>
-                      <span className='status rounded-pill success'>Hoàn thành</span>
-                    </>} 
-              </>
-            )
+            if(params.row.status===3){
+              return (
+                <span className="status rounded-pill empty">Tiếp nhận</span>
+              )
+            } 
+            else{
+              return(
+                <span className="status rounded-pill processed">Hoàn thành</span>
+              )
+            }
           }
         },
         {
@@ -246,10 +243,10 @@ import {
                 <Button 
                     component="label" 
                     variant="contained" 
-                    onChange={handleOnChangeFile}
                     startIcon={<CloudUploadIcon />}
                     >
                     Tải file lên
+                    <VisuallyHiddenInput type="file"/>
                   </Button>
                 </div>
               </>
@@ -323,10 +320,10 @@ import {
                 },
               }}
             >
-             {data.length > 0 ? ( 
+             {listTask.length > 0 ? ( 
                 <div style={{height: 600, overflow: "auto" }}>
                     <DataGrid
-                        rows={data.map((row, index) => ({
+                        rows={listTask.map((row, index) => ({
                             ...row,
                             id: index + 1,
                         }))}
@@ -353,14 +350,12 @@ import {
                         <i className="fa-solid fa-rotate-right"></i> Tải lại trang
                     </button>
                   </div>
-                  
                 </div>
               )} 
             </Box>
           </Box>
         </>
       )}
-  
     </>
   );
   

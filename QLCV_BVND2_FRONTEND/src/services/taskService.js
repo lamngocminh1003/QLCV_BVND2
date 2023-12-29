@@ -85,6 +85,8 @@ const updateTaskStateSeen = async (taskId) => {
         })
 }
 
+
+
 export {
     createTaskCategory, assignDivineWork,
     getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId,
