@@ -39,19 +39,17 @@
         .selected-file-preview-delete-item{
             width: 20px;
             height: 20px;
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             position: absolute;
             right: 0px;
-            transform: translate(20%, -16%);
+            transform: translate(20%, -35%);
             // box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
             cursor: pointer;
-            color: #fff;
-            background-color: #000;
             opacity: 0;
             transition: opacity 0.3s ease;
+            font-size: 20px;
         }
 
         .selected-file-preview-item-info-img-type-file{
@@ -61,8 +59,12 @@
 
         .selected-file-preview-item-info-label{
             text-align: left;
-            padding: 8px;
+            padding-right: 10px;
+            margin: auto;
+            margin-left: 0px;
+            margin-right: 0px;
             .selected-file-preview-item-info-label-file-name{
+                padding-top: 3px;
                 line-height: 1.45;
                 display: -webkit-box;
                 font-size: .92rem;
@@ -77,8 +79,8 @@
     }
 
     .selected-file-preview-item-info img{
-        width: 64px;
-        height: 64px;
+        width: 80px;
+        height: 72px;
     }
 }
 

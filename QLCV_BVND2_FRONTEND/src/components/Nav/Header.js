@@ -28,7 +28,7 @@ const Header = (props) => {
   const handleLogout = async () => {
     localStorage.removeItem('jwt'); //xóa localStorage
     logoutContext();
-    signalRService.removeFromGroup(user.account.userId);
+    // signalRService.removeFromGroup(user.account.userId);
     toast.success('Đăng xuất thành công!');
     history.push('/login-user');
   }

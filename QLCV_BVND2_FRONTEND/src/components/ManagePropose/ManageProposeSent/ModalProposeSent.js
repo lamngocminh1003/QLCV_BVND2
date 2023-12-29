@@ -23,8 +23,6 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { createPropose, createProposeByHeader } from '../../../services/proposeService';
 import { getAllDepartmentByType } from '../../../services/departmentService';
 
-import img from '../../../assets/image/file-pdf-solid-240.png';
-
 const ModalProposeSent_Delete = (props) => {
     const { user } = useContext(UserContext);
 
@@ -84,13 +82,14 @@ const ModalProposeSent_Delete = (props) => {
             setFileListState(updatedList);
         }
         else {
-            console.log('không có file nào được thêm vào.');
-            console.log('luc dau: ', fileListState)
+            // console.log('không có file nào được thêm vào.');
+            // console.log('luc dau: ', fileListState)
         }
     }
 
     const onDeleteFile = (itemFile) => {
         let updatedList = [...fileListState];
+        //tìm vị trí của itemFile trong mảng updatedList, trả về vị trí chỉ mục, splice để xóa phần tử mà có vị trí chỉ mục đã trả về, 1 là chỉ xóa 1 phần tử khỏi mảng
         updatedList.splice(fileListState.indexOf(itemFile), 1);
         setFileListState(updatedList);
     }
@@ -99,24 +98,35 @@ const ModalProposeSent_Delete = (props) => {
         setSelectedDepartmentId(value.department_ID);
     };
 
+    //tạo giá trị tiến trị trong quá trình gửi đề xuất
+
+    const handleOnUploadProgress = (progressEvent) => {
+        let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+    }
+
     //gửi đề xuất bởi nhân viên
     const handleCreateProposeByEmploy = async () => {
         let formDataFile = new FormData();
 
         let i;
         for (i = 0; i < dataProposeFile.length; i++) {
-            formDataFile.append('proposeFiles', dataProposeFile[i])
+            formDataFile.append('proposeFiles', dataProposeFile[i]);
         }
 
-        dataModalProposeSent.proposeFile = formDataFile;
-        let response = await createPropose(dataModalProposeSent);
-        if (response === 200) {
-            toast.success('Gửi đề xuất thành công!');
-            props.makeModalProposeSentDoing(true);
-            setDataModalProposeSent(dataProposeSentDefault);
-        } else {
-            toast.error('Đã có lỗi xảy ra ở server vui lòng liên hệ quản trị viên để kiểm tra lại!');
-        }
+
+        let updatedList = [...dataModalProposeSent, ...dataModalProposeSent.proposeFile, ...formDataFile];
+
+        console.log(updatedList);
+
+        // dataModalProposeSent.proposeFile = formDataFile;
+        // let response = await createPropose(dataModalProposeSent);
+        // if (response === 200) {
+        //     toast.success('Gửi đề xuất thành công!');
+        //     props.makeModalProposeSentDoing(true);
+        //     setDataModalProposeSent(dataProposeSentDefault);
+        // } else {
+        //     toast.error('Đã có lỗi xảy ra ở server vui lòng liên hệ quản trị viên để kiểm tra lại!');
+        // }
     }
 
     //lấy list phòng chức năng
@@ -129,20 +139,21 @@ const ModalProposeSent_Delete = (props) => {
 
     //gửi đề xuất bởi trưởng phòng
     const handleCreateProposeByHeader = async () => {
-        let formDataFile = new FormData();
-
+        let formDataFilePropose = new FormData();
         let i;
-        for (i = 0; i < dataProposeFile.length; i++) {
-            formDataFile.append('proposeFiles', dataProposeFile[i])
+        for (i = 0; i < fileListState.length; i++) {
+            formDataFilePropose.append('files', fileListState[i]);
         }
-        dataModalProposeSent.proposeFile = formDataFile;
-        let result = await createProposeByHeader(dataModalProposeSent, selectedDepartmentId);
+
+        dataModalProposeSent.proposeFile = formDataFilePropose;
+        let result = await createProposeByHeader(dataModalProposeSent, selectedDepartmentId, handleOnUploadProgress);
         if (result === 200) {
             toast.success('Gửi đề xuất thành công!');
             props.makeModalProposeSentDoing(true);
             setDataModalProposeSent(dataProposeSentDefault);
+            setFileListState([]);
         } else {
-            toast.error(result);
+            console.log(result);
         }
     }
 
@@ -216,16 +227,16 @@ const ModalProposeSent_Delete = (props) => {
                                                                 fileListState.map((itemFile, index) => {
                                                                     return (
                                                                         <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.name} key={index}>
-                                                                            <div className='selected-file-preview-item-info col-5 mt-2'>
+                                                                            <div className='selected-file-preview-item-info col-sm-5 mt-2'>
                                                                                 <div className='selected-file-preview-item-info-img-type-file'>
-                                                                                    <img src={ImageConfig[itemFile.name.split('.')[1]] || ImageConfig['default']} />
+                                                                                    <img alt='' src={ImageConfig[itemFile.type] || ImageConfig['default']} />
                                                                                 </div>
                                                                                 <div className='selected-file-preview-item-info-label'>
                                                                                     <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
                                                                                         {itemFile.name}
                                                                                     </Typography><p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p>
                                                                                 </div>
-                                                                                <span className='selected-file-preview-delete-item' onClick={() => onDeleteFile(itemFile)}>x</span>
+                                                                                <span className='selected-file-preview-delete-item fa fa-times-circle' onClick={() => onDeleteFile(itemFile)}></span>
                                                                             </div>
                                                                         </Tooltip>
                                                                     )
