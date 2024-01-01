@@ -4,23 +4,29 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function SimpleBackdrop(props) {
-    const [progress, setProgress] = React.useState(null);
+export default function CircularProgressWithBackdrop(props) {
+    const [progress, setProgress] = React.useState(0);
     const [open, setOpen] = React.useState(false);
 
     const handleClose = () => {
         props.setOpen(false);
-        setOpen(false)
+        setOpen(false);
+        props.setProgressValue(0);
     };
 
     React.useEffect(() => {
-        setProgress(props.progressValue)
-        setOpen(props.open);
-    }, [props.progressValue])
+        if (props.open === true) {
+            setProgress(props.progressValue)
+            setOpen(props.open);
+        }
+        else if (props.open === false) {
+            handleClose();
+        }
+    }, [props.open, props.progressValue])
 
     return (
         <div>
-            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open} onClick={handleClose}>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open}>
                 <Box>
                     <CircularProgress variant="determinate" value={progress} color="warning" size={60} />
                     <Box sx={{ top: 0, left: 0, bottom: 3, right: 0, position: "absolute", display: "flex", alignItems: "center", justifyContent: "center" }}>

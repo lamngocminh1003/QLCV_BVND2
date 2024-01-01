@@ -44,7 +44,7 @@
             justify-content: center;
             position: absolute;
             right: 0px;
-            transform: translate(20%, -35%);
+            transform: translate(30%, -35%);
             // box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
             cursor: pointer;
             opacity: 0;
@@ -64,6 +64,7 @@
             margin-left: 0px;
             margin-right: 0px;
             .selected-file-preview-item-info-label-file-name{
+                word-break: break-all;
                 padding-top: 3px;
                 line-height: 1.45;
                 display: -webkit-box;

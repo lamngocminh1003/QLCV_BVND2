@@ -5,7 +5,7 @@ import { UserContext } from '../../../context/UserContext';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 //function components
-import Backdrop from "../../FunctionComponents/ProgressBar/Backdrop.js";
+import CircularProgressWithBackdrop from '../../FunctionComponents/ProgressBar/CircularProgressWithBackdrop';
 //bs5
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -254,7 +254,7 @@ function ModalDivineWorkPublic(props) {
 
   return (
     <>
-      <Backdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} />
+      <CircularProgressWithBackdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} />
       <Modal size='lg' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false} >
         <Modal.Header closeButton>
           <Modal.Title>

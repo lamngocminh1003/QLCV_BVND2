@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import { UserContext } from '../../../context/UserContext';
 import Modal from 'react-bootstrap/Modal';
 import { ImageConfig } from '../../../config/ImageConfig.js';
+//function component
+import CircularProgressWithBackdrop from '../../FunctionComponents/ProgressBar/CircularProgressWithBackdrop.js';
 //import some theme from mui
 import Typography from '@mui/material/Typography';
 import Box from "@mui/material/Box";
@@ -60,6 +62,10 @@ const ModalProposeSent_Delete = (props) => {
     const icon = <CheckBoxOutlineBlankIcon fontSize="medium" />
     const checkedIcon = <CheckBoxIcon fontSize="medium" />
 
+    //config backdrop when submit
+    const [progress, setProgress] = useState(0);
+    const [openBackdrop, setOpenBackdrop] = useState();
+
     const handleHideModal = () => {
         props.closeModalProposeSent(false)
         setDataModalProposeSent(dataProposeSentDefault)
@@ -102,6 +108,7 @@ const ModalProposeSent_Delete = (props) => {
 
     const handleOnUploadProgress = (progressEvent) => {
         let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setProgress(percentCompleted);
     }
 
     //gửi đề xuất bởi nhân viên
@@ -139,6 +146,7 @@ const ModalProposeSent_Delete = (props) => {
 
     //gửi đề xuất bởi trưởng phòng
     const handleCreateProposeByHeader = async () => {
+        setOpenBackdrop(true);
         let formDataFilePropose = new FormData();
         let i;
         for (i = 0; i < fileListState.length; i++) {
@@ -146,14 +154,26 @@ const ModalProposeSent_Delete = (props) => {
         }
 
         dataModalProposeSent.proposeFile = formDataFilePropose;
-        let result = await createProposeByHeader(dataModalProposeSent, selectedDepartmentId, handleOnUploadProgress);
-        if (result === 200) {
-            toast.success('Gửi đề xuất thành công!');
-            props.makeModalProposeSentDoing(true);
-            setDataModalProposeSent(dataProposeSentDefault);
-            setFileListState([]);
-        } else {
-            console.log(result);
+
+        try {
+            // Sử dụng Promise để đảm bảo thời gian chờ được hoàn thành
+            await new Promise(resolve => setTimeout(resolve, 2 * 1000));
+
+            let result = await createProposeByHeader(dataModalProposeSent, selectedDepartmentId, handleOnUploadProgress);
+            if (result === 200) {
+                await new Promise(resolve => setTimeout(resolve, 1 * 1000));
+
+                toast.success('Gửi đề xuất thành công!');
+                setOpenBackdrop(false);
+                props.makeModalProposeSentDoing(true);
+                setDataModalProposeSent(dataProposeSentDefault);
+                setFileListState([]);
+            } else {
+                console.log(result);
+            }
+
+        } catch (error) {
+            console.error('Lỗi trong quá trình xử lý:', error);
         }
     }
 
@@ -165,6 +185,7 @@ const ModalProposeSent_Delete = (props) => {
 
     return (
         <>
+            <CircularProgressWithBackdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} setProgressValue={setProgress} />
             <Modal show={props.activeModalProposeSent} onHide={() => handleHideModal()} size='lg' className='mt-4'>
                 <Modal.Header closeButton>
                     <Modal.Title><div className='text-primary text-uppercase'>Gửi đề xuất</div></Modal.Title>
