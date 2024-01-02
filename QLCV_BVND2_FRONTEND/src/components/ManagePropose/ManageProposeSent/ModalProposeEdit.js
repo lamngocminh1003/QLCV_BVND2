@@ -76,14 +76,12 @@ function ModalProposeEdit(props) {
     const [openBackdrop, setOpenBackdrop] = useState();
 
     const handleHideModal = () => {
-        setDataModalProposeEdit(dataModalProposeEditDefault);
         props.closeModalProposeEdit(false);
-        props.setProposeIdModalProposeEdit(null);
     }
 
     const handleOnchange = (value, name) => {
-        let _dataProposeEdit = cloneDeep(dataModalProposeEdit);
-        _dataProposeEdit[name] = value;
+        let _dataProposeEdit = _.cloneDeep(dataModalProposeEdit);
+        _dataProposeEdit.documentIncomming[name] = value;
         setDataModalProposeEdit(_dataProposeEdit);
     }
 
@@ -117,6 +115,9 @@ function ModalProposeEdit(props) {
     const getProposeEditById = async (proposeId) => {
         let propose = await getProposeReceiveById(proposeId);
         setDataModalProposeEdit(propose);
+        if (user.account.userId === user.account.departmentHead) {
+            getDepartmentByType();
+        }
     }
 
     //sửa đề xuất bởi nhân viên
@@ -140,9 +141,6 @@ function ModalProposeEdit(props) {
     useEffect(() => {
         if (props.sendIdToModalProposeEdit !== null) {
             getProposeEditById(props.sendIdToModalProposeEdit);
-            if (user.account.userId === user.account.departmentHead) {
-                getDepartmentByType();
-            }
         }
     }, [props.sendIdToModalProposeEdit])
 
@@ -160,11 +158,11 @@ function ModalProposeEdit(props) {
                                 <div className="row">
                                     <div className='col-sm-12'>
                                         <label className='form-label fs-5' htmlFor='propose'>Tên đề xuất <span className='text-danger'>(*)</span></label>
-                                        <input type='text' className='form-control' id="propose" onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Title')} defaultValue={dataModalProposeEdit.documentIncomming.document_Incomming_Title || ""} autoComplete='off'></input>
+                                        <input type='text' className='form-control' id="propose" autoComplete='off' value={dataModalProposeEdit.documentIncomming.document_Incomming_Title} onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Title')} />
                                     </div>
                                     <div className='col-sm-12 mt-3'>
                                         <label className='form-label fs-5' htmlFor='document_Incomming_Content'>Nội dung đề xuất <span className='text-danger'>(*)</span></label>
-                                        <textarea className='form-control' id="document_Incomming_Content" rows="5" onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Content')} defaultValue={dataModalProposeEdit.documentIncomming.document_Incomming_Content || ""} autoComplete='off'></textarea>
+                                        <textarea className='form-control' id="document_Incomming_Content" rows="5" autoComplete='off' value={dataModalProposeEdit.documentIncomming.document_Incomming_Content} onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Content')} />
                                     </div>
                                     {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ?
                                         <>

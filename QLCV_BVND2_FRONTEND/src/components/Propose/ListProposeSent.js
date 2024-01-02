@@ -239,7 +239,6 @@ function ListProposeSent() {
                 activeModalProposeEdit={showModalProposeEdit}
                 closeModalProposeEdit={setShowModalProposeEdit}
                 sendIdToModalProposeEdit={proposeIdModalProposeEdit}
-                setProposeIdModalProposeEdit={setProposeIdModalProposeEdit}
                 makeModalProposeEditDoing={setDone}
             />
 
