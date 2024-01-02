@@ -5,8 +5,15 @@ import _, { cloneDeep, set } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../context/UserContext';
 import Modal from 'react-bootstrap/Modal';
+import { ImageConfig } from '../../config/ImageConfig';
 //import some theme from mui
 import Typography from '@mui/material/Typography';
+import Box from "@mui/material/Box";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ListItemText from '@mui/material/ListItemText';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
+import Stack from '@mui/material/Stack';
 import LinearProgress from '@mui/material/LinearProgress';
 //import some shit to create assign to department
 import Checkbox from '@mui/material/Checkbox';
@@ -22,7 +29,6 @@ import { getAllDepartmentByType } from '../../services/departmentService';
 //css
 import "./SCSS/ModalPropose.scss"
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
-import { Box } from '@mui/material';
 
 function ModalProposeReceive(props) {
     const { user, logoutContext } = useContext(UserContext);
@@ -57,6 +63,20 @@ function ModalProposeReceive(props) {
     const [dataModalConfirmCreateTask, setDataModalConfirmCreateTask] = useState({});
     //set loại confirm create task public/private
     const [typeModalConfirmCreateTask, setTypeModalConfirmCreateTask] = useState("UNSET");
+
+    //config slotPropsPopper
+    const slotPropsPopper = {
+        popper: {
+            modifiers: [
+                {
+                    name: 'offset',
+                    options: {
+                        offset: [0, -20],
+                    },
+                },
+            ],
+        },
+    }
 
     const handleOnchange = (value, inputName) => {
         let _dataModalProposeReceive = cloneDeep(dataModalProposeReceive);
@@ -139,7 +159,7 @@ function ModalProposeReceive(props) {
     return (
         <>
             <div>
-                <Modal show={props.activeModalProposeReceiveOut} onHide={() => handleHideModal()} size='lg'>
+                <Modal show={props.activeModalProposeReceiveOut} onHide={() => handleHideModal()} backdrop="static" keyboard={false} size='lg' className='mt-4'>
                     <Modal.Header closeButton>
                         <Modal.Title><div className='text-primary text-uppercase'>Thông tin đề xuất</div></Modal.Title>
                     </Modal.Header>
@@ -164,15 +184,42 @@ function ModalProposeReceive(props) {
                                                             <div className='col-sm-12 mt-3 mb-3'>
                                                                 <Typography variant='body1' fontSize={17} color='FireBrick'>Ý kiến giải quyết</Typography>
                                                                 <Typography >
-                                                                    <textarea className='form-control mt-1 fs-6' id="document_Incomming_Comment" rows="4"
+                                                                    <textarea className='form-control mt-1 fs-6' id="document_Incomming_Comment" rows="4" placeholder='nhập ý kiến giải quyết...'
                                                                         onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Comment')} value={dataModalProposeReceive.documentIncomming.document_Incomming_Comment || ""}></textarea>
                                                                 </Typography>
                                                             </div>
-                                                            <div className='col-sm-12 mt-3'>
-                                                                <Typography variant='body1' fontSize={17} color='FireBrick'>File đính kèm</Typography>
-                                                                {/* <input type='file' className='form-control' id="proposeFile"
-                                                accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple></input> */}
-                                                            </div>
+
+                                                            {
+                                                                dataModalProposeReceive.fileIds.length > 0 ?
+                                                                    <div>
+                                                                        <Typography variant='body1' fontSize={17} color='FireBrick'>File đính kèm</Typography>
+                                                                        <div className='selected-file-preview-item col-sm-12 row'>
+                                                                            {
+                                                                                dataModalProposeReceive.fileIds.map((itemFile, index) => {
+                                                                                    return (
+                                                                                        <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.file_Name} key={index}>
+                                                                                            <div className='selected-file-preview-item-info col-sm-5 mt-2'>
+                                                                                                <div className='selected-file-preview-item-info-img-type-file'>
+                                                                                                    <img alt='' src={ImageConfig[itemFile.contentType] || ImageConfig['default']} />
+                                                                                                </div>
+                                                                                                <div className='selected-file-preview-item-info-label'>
+                                                                                                    <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
+                                                                                                        {itemFile.file_Name}
+                                                                                                    </Typography>
+                                                                                                    {/* <p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p> */}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </Tooltip>
+                                                                                    )
+                                                                                })
+                                                                            }
+                                                                        </div>
+                                                                    </div>
+
+                                                                    :
+                                                                    ""
+                                                            }
+
                                                         </>
                                                     )
                                                 } else if (dataModalProposeReceive.documentIncomming.document_Incomming_State === 3) {

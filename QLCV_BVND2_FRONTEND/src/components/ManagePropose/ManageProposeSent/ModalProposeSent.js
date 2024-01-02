@@ -36,7 +36,6 @@ const ModalProposeSent_Delete = (props) => {
 
     //config this modal
     const [dataModalProposeSent, setDataModalProposeSent] = useState(dataProposeSentDefault);
-    const [dataProposeFile, setDataProposeFile] = useState([]);
 
     const [listDepartmentByType, setListDepartmentByType] = useState([]);
     const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
@@ -104,8 +103,7 @@ const ModalProposeSent_Delete = (props) => {
         setSelectedDepartmentId(value.department_ID);
     };
 
-    //tạo giá trị tiến trị trong quá trình gửi đề xuất
-
+    //tạo giá trị tiến trình trong quá trình gửi đề xuất
     const handleOnUploadProgress = (progressEvent) => {
         let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         setProgress(percentCompleted);
@@ -113,27 +111,36 @@ const ModalProposeSent_Delete = (props) => {
 
     //gửi đề xuất bởi nhân viên
     const handleCreateProposeByEmploy = async () => {
-        let formDataFile = new FormData();
+        setOpenBackdrop(true);
 
+        let formDataFilePropose = new FormData();
         let i;
-        for (i = 0; i < dataProposeFile.length; i++) {
-            formDataFile.append('proposeFiles', dataProposeFile[i]);
+        for (i = 0; i < fileListState.length; i++) {
+            formDataFilePropose.append('files', fileListState[i]);
         }
 
+        dataModalProposeSent.proposeFile = formDataFilePropose;
 
-        let updatedList = [...dataModalProposeSent, ...dataModalProposeSent.proposeFile, ...formDataFile];
+        try {
+            // Sử dụng Promise để đảm bảo thời gian chờ được hoàn thành
+            await new Promise(resolve => setTimeout(resolve, 2 * 1000));
 
-        console.log(updatedList);
+            let response = await createPropose(dataModalProposeSent, handleOnUploadProgress);
+            if (response === 200) {
+                await new Promise(resolve => setTimeout(resolve, 1 * 1000));
 
-        // dataModalProposeSent.proposeFile = formDataFile;
-        // let response = await createPropose(dataModalProposeSent);
-        // if (response === 200) {
-        //     toast.success('Gửi đề xuất thành công!');
-        //     props.makeModalProposeSentDoing(true);
-        //     setDataModalProposeSent(dataProposeSentDefault);
-        // } else {
-        //     toast.error('Đã có lỗi xảy ra ở server vui lòng liên hệ quản trị viên để kiểm tra lại!');
-        // }
+                toast.success('Gửi đề xuất thành công!');
+                setOpenBackdrop(false);
+                props.makeModalProposeSentDoing(true);
+                setDataModalProposeSent(dataProposeSentDefault);
+                setFileListState([]);
+            } else {
+                console.log(response);
+            }
+
+        } catch (error) {
+            console.error('Lỗi trong quá trình xử lý:', error);
+        }
     }
 
     //lấy list phòng chức năng
@@ -159,8 +166,8 @@ const ModalProposeSent_Delete = (props) => {
             // Sử dụng Promise để đảm bảo thời gian chờ được hoàn thành
             await new Promise(resolve => setTimeout(resolve, 2 * 1000));
 
-            let result = await createProposeByHeader(dataModalProposeSent, selectedDepartmentId, handleOnUploadProgress);
-            if (result === 200) {
+            let response = await createProposeByHeader(dataModalProposeSent, selectedDepartmentId, handleOnUploadProgress);
+            if (response === 200) {
                 await new Promise(resolve => setTimeout(resolve, 1 * 1000));
 
                 toast.success('Gửi đề xuất thành công!');
@@ -169,7 +176,7 @@ const ModalProposeSent_Delete = (props) => {
                 setDataModalProposeSent(dataProposeSentDefault);
                 setFileListState([]);
             } else {
-                console.log(result);
+                console.log(response);
             }
 
         } catch (error) {
@@ -238,7 +245,7 @@ const ModalProposeSent_Delete = (props) => {
                                                         <Typography variant='subtitle2' fontWeight='600' color='gray' fontSize='0.8rem'>Nhấn vào đây để chọn file</Typography>
                                                     </div>
                                                     <div className='file-input'>
-                                                        <input type='file' multiple onChange={(e) => onSelectFile(e)}></input>
+                                                        <input type='file' accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple onChange={(e) => onSelectFile(e)}></input>
                                                     </div>
                                                 </div>
                                                 {
@@ -266,26 +273,8 @@ const ModalProposeSent_Delete = (props) => {
                                                         </div>
                                                     ) : null
                                                 }
-
-                                                {/* <div className='selected-file-preview-item col-sm-12 row'>
-                                                    <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title="23 08 25- 221TB-TCCB ve viec ra soat doi tuong da va chua qua boi duong kien thuc Quoc phong an ninh">
-                                                        <div className='selected-file-preview-item-info col-5 mt-2'>
-                                                            <div className='selected-file-preview-item-info-img-type-file'>
-                                                                <img src={img} />
-                                                            </div>
-                                                            <div className='selected-file-preview-item-info-label'>
-                                                                <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
-                                                                    23 08 25- 221TB-TCCB ve viec ra soat doi tuong da va chua qua boi duong kien thuc Quoc phong an ninh
-                                                                </Typography><p className='selected-file-preview-item-info-label-file-size'>236 KB</p>
-                                                            </div>
-                                                            <span className='selected-file-preview-delete-item' onClick={() => onDeleteFile()}>x</span>
-                                                        </div>
-                                                    </Tooltip>
-                                                </div> */}
                                             </div>
                                         </Box>
-                                        {/* <input type='file' className='form-control' id="proposeFile" onChange={(e) => handleFile(e)}
-                                            accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple></input> */}
                                     </div>
                                 </div>
                             </div>

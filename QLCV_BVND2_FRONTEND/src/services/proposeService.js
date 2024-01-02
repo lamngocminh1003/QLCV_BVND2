@@ -13,20 +13,21 @@ const createConfig = () => {
     return config;
 }
 
-const createPropose = async (dataObj) => {
+const createPropose = async (dataObj, onUploadProgress) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`,
-        dataObj.proposeFile, {
-        headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-        }
-    })
+    return await axios.post(`${backendURL}/api/DocumentIncomming/SendDepartmentHead?Title=${dataObj.document_Incomming_Title}&Content=${dataObj.document_Incomming_Content}`, dataObj.proposeFile,
+        {
+            headers: {
+                "content-type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            },
+            onUploadProgress,
+        })
         .then(function (response) {
             return response.status
         })
         .catch(function (error) {
-            return error.response.status
+            return error.response.data
         })
 }
 

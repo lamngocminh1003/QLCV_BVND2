@@ -110,6 +110,7 @@ const Header = (props) => {
                         <NavDropdown.Item as={NavLink} exact to="/task-in-department">Nội bộ</NavDropdown.Item>
                       </NavDropdown>
                     </Box>
+                    <NavLink exact to="/my-to-do-list" className="nav-link">Công việc của tôi</NavLink>
                   </>
                   :
                   null
