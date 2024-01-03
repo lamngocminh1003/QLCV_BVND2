@@ -206,7 +206,7 @@ function ModalProposeEdit(props) {
                                                 </div>
                                                 {
                                                     dataModalProposeEdit.fileIds.length > 0 ? (
-                                                        <div className='selected-file-preview-item col-sm-12 row'>
+                                                        <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.75rem' }}>
                                                             {
                                                                 dataModalProposeEdit.fileIds.map((itemFile, index) => {
                                                                     return (

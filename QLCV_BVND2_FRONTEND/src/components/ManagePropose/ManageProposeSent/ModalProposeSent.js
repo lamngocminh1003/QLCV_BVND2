@@ -67,7 +67,8 @@ const ModalProposeSent_Delete = (props) => {
 
     const handleHideModal = () => {
         props.closeModalProposeSent(false)
-        setDataModalProposeSent(dataProposeSentDefault)
+        setDataModalProposeSent(dataProposeSentDefault);
+        setFileListState([]);
     }
 
     const handleOnchange = (value, name) => {
@@ -193,7 +194,7 @@ const ModalProposeSent_Delete = (props) => {
     return (
         <>
             <CircularProgressWithBackdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} setProgressValue={setProgress} />
-            <Modal show={props.activeModalProposeSent} onHide={() => handleHideModal()} size='lg' className='mt-4'>
+            <Modal show={props.activeModalProposeSent} onHide={() => handleHideModal()} size='lg' className='mt-2'>
                 <Modal.Header closeButton>
                     <Modal.Title><div className='text-primary text-uppercase'>Gửi đề xuất</div></Modal.Title>
                 </Modal.Header>
@@ -250,7 +251,7 @@ const ModalProposeSent_Delete = (props) => {
                                                 </div>
                                                 {
                                                     fileListState.length > 0 ? (
-                                                        <div className='selected-file-preview-item col-sm-12 row'>
+                                                        <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.70rem' }}>
                                                             {
                                                                 fileListState.map((itemFile, index) => {
                                                                     return (

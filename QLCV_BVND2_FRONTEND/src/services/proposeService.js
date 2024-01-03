@@ -67,14 +67,15 @@ const moveupProposeByHeader = async (dataObj, idDepartment) => {
 
 //chuyển tiếp đề xuất từ DP type = 2 sang DP type = 2 khác
 const moveupProposeDepartmentOut = async (dataObj, idDepartment) => {
+    console.log(dataObj)
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.documentIncomming.document_Incomming_Title}&Content=${dataObj.documentIncomming.document_Incomming_Content}&Comment=${dataObj.documentIncomming.document_Incomming_Transition_Reason}&DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.documentIncomming.document_Incomming_Id}`,
-        dataObj.proposeFile, {
-        headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-        }
-    })
+    return await axios.post(`${backendURL}/api/DocumentIncomming/CreateSendByDepartmentId?Title=${dataObj.documentIncomming.document_Incomming_Title}&Content=${dataObj.documentIncomming.document_Incomming_Content}&Comment=${dataObj.documentIncomming.document_Incomming_Transition_Reason}&DepartmentIdReceive=${idDepartment}&DocIdForward=${dataObj.documentIncomming.document_Incomming_Id}`, dataObj.proposeFileMoveUp,
+        {
+            headers: {
+                "content-type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            }
+        })
         .then(function (response) {
             return response.status
         })
