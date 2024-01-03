@@ -11,11 +11,8 @@ import { ImageConfig } from '../../config/ImageConfig';
 import Typography from '@mui/material/Typography';
 import Box from "@mui/material/Box";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-import Stack from '@mui/material/Stack';
-import LinearProgress from '@mui/material/LinearProgress';
 //import some shit to create assign to department
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';

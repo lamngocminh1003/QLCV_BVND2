@@ -5,6 +5,13 @@ import { toast } from 'react-toastify';
 import { UserContext } from '../../context/UserContext';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import { ImageConfig } from '../../config/ImageConfig';
+//mui theme
+import Typography from '@mui/material/Typography';
+import Box from "@mui/material/Box";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 //import components react datepicker
 import moment from "moment";
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -43,6 +50,20 @@ function ModalCreateTaskPublic(props) {
     //config thời hạn xử lý
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+
+    //config slotPropsPopper
+    const slotPropsPopper = {
+        popper: {
+            modifiers: [
+                {
+                    name: 'offset',
+                    options: {
+                        offset: [0, -20],
+                    },
+                },
+            ],
+        },
+    }
 
     const onChangeStart = (dateStart) => {
         if (dateStart === null) {
@@ -223,10 +244,32 @@ function ModalCreateTaskPublic(props) {
                                                     })}
                                                 </Form.Select>
                                             </Form.Group>
-                                            <Form.Group>
-                                                <Form.Label className='label-input-create-task'>File đính kèm</Form.Label>
-                                                <Form.Control type="file" multiple />
-                                            </Form.Group>
+                                            {
+                                                dataModalCreateTaskPublic.fileIds.length > 0 ? (
+                                                    <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.60rem' }}>
+                                                        {
+                                                            dataModalCreateTaskPublic.fileIds.map((itemFile, index) => {
+                                                                return (
+                                                                    <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.file_Name} key={index}>
+                                                                        <div className='selected-file-preview-item-info col-sm-5 mt-2'>
+                                                                            <div className='selected-file-preview-item-info-img-type-file'>
+                                                                                <img alt='' src={ImageConfig[itemFile.contentType] || ImageConfig['default']} />
+                                                                            </div>
+                                                                            <div className='selected-file-preview-item-info-label'>
+                                                                                <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
+                                                                                    {itemFile.file_Name}
+                                                                                </Typography>
+                                                                                {/* <p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p> */}
+                                                                            </div>
+                                                                            {/* <span className='selected-file-preview-delete-item fa fa-times-circle' onClick={() => onDeleteFile(itemFile)}></span> */}
+                                                                        </div>
+                                                                    </Tooltip>
+                                                                )
+                                                            })
+                                                        }
+                                                    </div>
+                                                ) : null
+                                            }
                                         </div>
                                     </div>
                                 </div>
