@@ -129,7 +129,7 @@ function ModalAssignDivineWorkPublic(props) {
                                     <legend className="float-none w-auto"
                                         style={{ fontWeight: "bold", color: "#dc3545", fontSize: "1.1rem" }}>Thời hạn xử lý</legend>
                                     <div className="row date-expire-input">
-                                        <DateTimePicker stateExtra1={dataAssignDivineWorkPublic} setStateExtra1={setDataAssignDivineWorkPublic}></DateTimePicker>
+                                        <DateTimePicker stateExtra1={dataAssignDivineWorkPublic} setStateExtra1={setDataAssignDivineWorkPublic} dataModalDivineWork={props.dataModalDivineWorkPublic}></DateTimePicker>
                                     </div>
                                 </fieldset>
                             </div>

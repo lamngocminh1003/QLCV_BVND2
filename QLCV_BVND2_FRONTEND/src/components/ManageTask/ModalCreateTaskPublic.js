@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { UserContext } from '../../context/UserContext';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import { v4 as uuidv4 } from 'uuid';
 import { ImageConfig } from '../../config/ImageConfig';
 //mui theme
 import Typography from '@mui/material/Typography';
@@ -50,6 +51,9 @@ function ModalCreateTaskPublic(props) {
     //config thời hạn xử lý
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+
+    //config select file before push to obj propose file for clicking create task
+    const [fileListState, setFileListState] = useState([]);
 
     //config slotPropsPopper
     const slotPropsPopper = {
@@ -112,7 +116,36 @@ function ModalCreateTaskPublic(props) {
     const [listTaskCategory, setListTaskCategory] = useState([]);
 
     const handleOnchange = (value, name) => {
+        let _dataModalCreateTaskPublic = _.cloneDeep(dataModalCreateTaskPublic);
+        _dataModalCreateTaskPublic.documentIncomming[name] = value;
 
+        console.log(_dataModalCreateTaskPublic);
+        setDataModalCreateTaskPublic(_dataModalCreateTaskPublic);
+
+    }
+
+    const onSelectFile = (e) => {
+        let newListFile = e.target.files;
+        let newObjects = _.differenceBy(newListFile, fileListState, 'name');
+
+        if (newObjects.length !== 0) {
+            newObjects.forEach((object) => {
+                object.file_Id = `File-Clone ${uuidv4()}`;
+            })
+
+            let updatedList = [...fileListState, ...newObjects];
+            setFileListState(updatedList);
+        }
+    }
+
+    const onDeleteFile = (itemFile) => {
+        let _fileListState = _.cloneDeep(fileListState);
+
+        _fileListState = _fileListState.fileIds = _fileListState.filter((object) => {
+            return object.file_Id !== itemFile.file_Id
+        });
+
+        setFileListState(_fileListState);
     }
 
     const handleHideModal = () => {
@@ -122,10 +155,17 @@ function ModalCreateTaskPublic(props) {
 
     const handleCreateDocSend = async () => {
         dataModalCreateTaskPublic.documentIncomming.document_Incomming_Category = taskType;
+
         formatDateISO8601();
-        let formDataFile = new FormData();
-        formDataFile.append('files', '');
-        dataModalCreateTaskPublic.documentIncomming.filesDocSend = formDataFile;
+
+        let formDataFileTask = new FormData();
+        let i;
+        for (i = 0; i < fileListState.length; i++) {
+            formDataFileTask.append('files', fileListState[i]);
+        }
+
+        dataModalCreateTaskPublic.taskFile = formDataFileTask;
+
         let response = await createDocSendPublicByDocIn(dataModalCreateTaskPublic);
         if (response === 200) {
             toast.success('Tạo công việc thành công!');
@@ -165,11 +205,11 @@ function ModalCreateTaskPublic(props) {
                                         <div className="row">
                                             <Form.Group className="mb-3">
                                                 <Form.Label className='label-input-create-task'>Tên công việc <span className='text-danger'>(*)</span></Form.Label>
-                                                <Form.Control type="text" value={dataModalCreateTaskPublic.documentIncomming.document_Incomming_Title || ""} onChange={(e) => handleOnchange(e.value, 'document_Incomming_Title')} />
+                                                <Form.Control type="text" value={dataModalCreateTaskPublic.documentIncomming.document_Incomming_Title || ""} onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Title')} />
                                             </Form.Group>
                                             <Form.Group className='mb-3'>
                                                 <Form.Label className='label-input-create-task'>Nội dung công việc <span className='text-danger'>(*)</span></Form.Label>
-                                                <Form.Control as="textarea" value={dataModalCreateTaskPublic.documentIncomming.document_Incomming_Content || ""} onChange={(e) => handleOnchange(e.value, 'document_Incomming_Content')} rows={4} />
+                                                <Form.Control as="textarea" value={dataModalCreateTaskPublic.documentIncomming.document_Incomming_Content || ""} onChange={(e) => handleOnchange(e.target.value, 'document_Incomming_Content')} rows={4} />
                                             </Form.Group>
                                             <Form.Group className="date-expire-group mb-3">
                                                 <fieldset className="border rounded-3 p-4 ">
@@ -244,32 +284,73 @@ function ModalCreateTaskPublic(props) {
                                                     })}
                                                 </Form.Select>
                                             </Form.Group>
-                                            {
-                                                dataModalCreateTaskPublic.fileIds.length > 0 ? (
-                                                    <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.60rem' }}>
+                                            <div className='select-file' style={{ marginTop: '.80rem' }}>
+                                                <Box sx={{ boxShadow: 'rgba(0, 0, 0, 0.20) 0px 5px 15px', height: 'auto', p: 1, m: 0, borderRadius: 2, textAlign: 'center' }}>
+                                                    <div className='wrap' style={{ width: '100%', margin: 'auto' }}>
+                                                        <Typography variant='body1' fontSize='1.1rem' color='black'>File đính kèm</Typography>
+                                                        <div className='file-input-container'>
+                                                            <div className='file-input-label'>
+                                                                <CloudUploadIcon sx={{ color: 'darkturquoise', fontSize: '70px' }}></CloudUploadIcon>
+                                                                <Typography variant='subtitle2' fontWeight='600' color='gray' fontSize='0.8rem'>Nhấn vào đây để chọn file</Typography>
+                                                            </div>
+                                                            <div className='file-input'>
+                                                                <input type='file' accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple onChange={(e) => onSelectFile(e)}></input>
+                                                            </div>
+                                                        </div>
                                                         {
-                                                            dataModalCreateTaskPublic.fileIds.map((itemFile, index) => {
-                                                                return (
-                                                                    <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.file_Name} key={index}>
-                                                                        <div className='selected-file-preview-item-info col-sm-5 mt-2'>
-                                                                            <div className='selected-file-preview-item-info-img-type-file'>
-                                                                                <img alt='' src={ImageConfig[itemFile.contentType] || ImageConfig['default']} />
-                                                                            </div>
-                                                                            <div className='selected-file-preview-item-info-label'>
-                                                                                <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
-                                                                                    {itemFile.file_Name}
-                                                                                </Typography>
-                                                                                {/* <p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p> */}
-                                                                            </div>
-                                                                            {/* <span className='selected-file-preview-delete-item fa fa-times-circle' onClick={() => onDeleteFile(itemFile)}></span> */}
-                                                                        </div>
-                                                                    </Tooltip>
-                                                                )
-                                                            })
+                                                            dataModalCreateTaskPublic.fileIds.length > 0 ? (
+                                                                <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.60rem' }}>
+                                                                    {
+                                                                        dataModalCreateTaskPublic.fileIds.map((itemFile, index) => {
+                                                                            return (
+                                                                                <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.file_Name} key={index}>
+                                                                                    <div className='selected-file-preview-item-info col-sm-5 mt-2'>
+                                                                                        <div className='selected-file-preview-item-info-img-type-file'>
+                                                                                            <img alt='' src={ImageConfig[itemFile.contentType] || ImageConfig['default']} />
+                                                                                        </div>
+                                                                                        <div className='selected-file-preview-item-info-label'>
+                                                                                            <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
+                                                                                                {itemFile.file_Name}
+                                                                                            </Typography>
+                                                                                            {/* <p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p> */}
+                                                                                        </div>
+                                                                                        {itemFile.file_Id.startsWith("File-Clone") ?
+                                                                                            <span className='selected-file-preview-delete-item fa fa-times-circle' onClick={() => onDeleteFile(itemFile)}></span>
+                                                                                            :
+                                                                                            null
+                                                                                        }
+                                                                                    </div>
+                                                                                </Tooltip>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                    {
+                                                                        fileListState.map((itemFile, index) => {
+                                                                            return (
+                                                                                <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.name} key={index}>
+                                                                                    <div className='selected-file-preview-item-info col-sm-5 mt-2'>
+                                                                                        <div className='selected-file-preview-item-info-img-type-file'>
+                                                                                            <img alt='' src={ImageConfig[itemFile.type] || ImageConfig['default']} />
+                                                                                        </div>
+                                                                                        <div className='selected-file-preview-item-info-label'>
+                                                                                            <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
+                                                                                                {itemFile.name}
+                                                                                            </Typography>
+                                                                                            {/* <p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p> */}
+                                                                                        </div>
+                                                                                        <span className='selected-file-preview-delete-item fa fa-times-circle' onClick={() => onDeleteFile(itemFile)}></span>
+                                                                                    </div>
+                                                                                </Tooltip>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </div>
+                                                            ) : null
                                                         }
                                                     </div>
-                                                ) : null
-                                            }
+                                                </Box>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>

@@ -94,32 +94,22 @@ function ModalProposeReceive(props) {
         let newObjects = _.differenceBy(newListFile, fileListState, 'name');
 
         if (newObjects.length !== 0) {
-            newObjects.forEach(object => {
-                object.file_Id = `File-Clone ${uuidv4()}`;  // Assign the file_Id to each object
-            });
+            newObjects.forEach((object) => {
+                object.file_Id = `File-Clone ${uuidv4()}`;
+            })
 
             let updatedList = [...fileListState, ...newObjects];
-
-            let _dataModalProposeReceive = _.cloneDeep(dataModalProposeReceive);
-
-            updatedList.map((item, index) => {
-                _dataModalProposeReceive.fileIds.push(item);
-                return _dataModalProposeReceive
-            });
-
             setFileListState(updatedList);
-            setDataModalProposeReceive(_dataModalProposeReceive);
         }
     }
 
     const onDeleteFile = (itemFile) => {
-        let _dataModalProposeReceive = _.cloneDeep(dataModalProposeReceive);
         let _fileListState = _.cloneDeep(fileListState);
 
-        _dataModalProposeReceive.fileIds = _dataModalProposeReceive.fileIds.filter(object => object.file_Id !== itemFile.file_Id);
-        _fileListState = _fileListState.filter(object => object.file_Id !== itemFile.file_Id);
+        _fileListState = _fileListState.fileIds = _fileListState.filter((object) => {
+            return object.file_Id !== itemFile.file_Id
+        });
 
-        setDataModalProposeReceive(_dataModalProposeReceive);
         setFileListState(_fileListState);
     }
 
@@ -177,10 +167,9 @@ function ModalProposeReceive(props) {
     }
 
     const handleHideModal = () => {
+        setFileListState([]);
+        //setDataModalProposeReceive(props.props.dataModalProposeReceiveOut);
         props.closeModalProposeReceiveOut(false);
-        if (fileListState.length !== 0) {
-            setFileListState([]);
-        }
     }
 
     //gọi modal confirm create task
@@ -298,22 +287,19 @@ function ModalProposeReceive(props) {
                                                                             </div>
                                                                         </div>
                                                                         {
-                                                                            dataModalProposeReceive.fileIds.length > 0 ? (
+                                                                            dataModalProposeReceive.fileIds.length > 0 || fileListState.length > 0 ? (
                                                                                 <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.60rem' }}>
                                                                                     {
                                                                                         dataModalProposeReceive.fileIds.map((itemFile, index) => {
                                                                                             return (
-                                                                                                <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.file_Name ? itemFile.file_Name : itemFile.name} key={index}>
+                                                                                                <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.file_Name} key={index}>
                                                                                                     <div className='selected-file-preview-item-info col-sm-5 mt-2'>
                                                                                                         <div className='selected-file-preview-item-info-img-type-file'>
-                                                                                                            <img alt='' src={itemFile.contentType ?
-                                                                                                                ImageConfig[itemFile.contentType] || ImageConfig['default']
-                                                                                                                :
-                                                                                                                ImageConfig[itemFile.type] || ImageConfig['default']} />
+                                                                                                            <img alt='' src={ImageConfig[itemFile.contentType] || ImageConfig['default']} />
                                                                                                         </div>
                                                                                                         <div className='selected-file-preview-item-info-label'>
                                                                                                             <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
-                                                                                                                {itemFile.file_Name ? itemFile.file_Name : itemFile.name}
+                                                                                                                {itemFile.file_Name}
                                                                                                             </Typography>
                                                                                                             {/* <p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p> */}
                                                                                                         </div>
@@ -322,6 +308,26 @@ function ModalProposeReceive(props) {
                                                                                                             :
                                                                                                             null
                                                                                                         }
+                                                                                                    </div>
+                                                                                                </Tooltip>
+                                                                                            )
+                                                                                        })
+                                                                                    }
+                                                                                    {
+                                                                                        fileListState.map((itemFile, index) => {
+                                                                                            return (
+                                                                                                <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.name} key={index}>
+                                                                                                    <div className='selected-file-preview-item-info col-sm-5 mt-2'>
+                                                                                                        <div className='selected-file-preview-item-info-img-type-file'>
+                                                                                                            <img alt='' src={ImageConfig[itemFile.type] || ImageConfig['default']} />
+                                                                                                        </div>
+                                                                                                        <div className='selected-file-preview-item-info-label'>
+                                                                                                            <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
+                                                                                                                {itemFile.name}
+                                                                                                            </Typography>
+                                                                                                            {/* <p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p> */}
+                                                                                                        </div>
+                                                                                                        <span className='selected-file-preview-delete-item fa fa-times-circle' onClick={() => onDeleteFile(itemFile)}></span>
                                                                                                     </div>
                                                                                                 </Tooltip>
                                                                                             )

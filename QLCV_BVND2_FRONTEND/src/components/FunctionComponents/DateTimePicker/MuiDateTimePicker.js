@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import _, { assign, cloneDeep, set } from 'lodash';
+import Dayjs from "dayjs";
 //mui react date time picker
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 //mui theme
 import Box from '@mui/material/Box';
 
@@ -44,12 +44,14 @@ export default function DateTimePickerViewRenderers(props) {
             <DemoContainer components={['DateTimePicker', 'DateTimePicker']} sx={{ paddingBottom: '14px', paddingTop: '0px' }}>
                 <div className='row col-12 pt-2'>
                     <div className='col-6' style={{ left: '30px' }}>
-                        <DateTimePicker ampm={false} format='DD/MM/YYYY HH:mm' label="Từ ngày" views={['month', 'day']} onChange={(e) => handleSelectedDateTimeStartAssignWork(JSON.stringify(e.$d))}
-                            viewRenderers={{ hours: null, minutes: null, seconds: null, }} />
+                        <DateTimePicker ampm={false} format='DD/MM/YYYY HH:mm' label="Từ ngày" views={['month', 'day']} value={props.stateExtra1.task_DateStart !== "" ? Dayjs(props.stateExtra1.task_DateStart) : null}
+                            minDate={Dayjs(props.dataModalDivineWork.documentSend.document_Send_TimeStart)} maxDate={Dayjs(props.dataModalDivineWork.documentSend.document_Send_Deadline)}
+                            onChange={(e) => handleSelectedDateTimeStartAssignWork(JSON.stringify(e.$d))} viewRenderers={{ hours: null, minutes: null, seconds: null, }} />
                     </div>
                     <div className='col-6' style={{ left: '25px' }}>
-                        <DateTimePicker ampm={false} format='DD/MM/YYYY HH:mm' label="Đến ngày" views={['month', 'day']} onChange={(e) => handleSelectedDateTimeEndAssignWork(JSON.stringify(e.$d))}
-                            viewRenderers={{ hours: null, minutes: null, seconds: null, }} />
+                        <DateTimePicker ampm={false} format='DD/MM/YYYY HH:mm' label="Đến ngày" views={['month', 'day']} value={props.stateExtra1.task_DateEnd !== "" ? Dayjs(props.stateExtra1.task_DateEnd) : null}
+                            minDate={Dayjs(props.dataModalDivineWork.documentSend.document_Send_TimeStart)} maxDate={Dayjs(props.dataModalDivineWork.documentSend.document_Send_Deadline)}
+                            onChange={(e) => handleSelectedDateTimeEndAssignWork(JSON.stringify(e.$d))} viewRenderers={{ hours: null, minutes: null, seconds: null, }} />
                     </div>
                 </div>
             </DemoContainer>
