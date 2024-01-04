@@ -86,6 +86,17 @@ const getDocByDocId = async (docSendId) => {
         })
 }
 
+const getListDiscussByTaskId = async (TaskId) => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/Task/GetListDiscussByTaskId/${TaskId}`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 const updateTaskStateSeen = async (taskId) => {
     const config = createConfig();
     return await axios.put(`${backendURL}/api/Task/UpdateSendTaskTrue?TaskId=${taskId}`, '', config)
@@ -99,6 +110,6 @@ const updateTaskStateSeen = async (taskId) => {
 
 export {
     createTaskCategory, assignDivineWork,
-    getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId, getDocByDocId,
+    getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId, getDocByDocId, getListDiscussByTaskId,
     updateTaskStateSeen
 };

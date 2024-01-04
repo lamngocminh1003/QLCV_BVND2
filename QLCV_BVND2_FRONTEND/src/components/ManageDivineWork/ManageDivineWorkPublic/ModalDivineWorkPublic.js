@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import _, { assign, cloneDeep, set } from 'lodash';
+import React, { useEffect, useState, useContext } from 'react'
+import _, { assign, cloneDeep, forEach, set } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../../context/UserContext';
 import moment from 'moment';
@@ -44,7 +44,7 @@ import "../SCSS/DivineWork.scss";
 //modal
 import ModalAssignDivineWorkPublic from './ModalAssignDivineWorkPublic';
 //api
-import { assignDivineWork, getListTaskByDocSendId, getDocByDocId } from '../../../services/taskService';
+import { assignDivineWork, getListTaskByDocSendId, getDocByDocId, getListDiscussByTaskId } from '../../../services/taskService';
 import { getDate } from 'date-fns';
 //cdn
 <style>
@@ -53,6 +53,8 @@ import { getDate } from 'date-fns';
 
 
 function ModalDivineWorkPublic(props) {
+  const { user } = useContext(UserContext);
+
   // const dataModalDivineWorkPublicDefault = {
   //   task_Id: '',
   //   task_Title: '',
@@ -145,8 +147,8 @@ function ModalDivineWorkPublic(props) {
       task_Catagory_Name: '',
       userReceive_Id: '',
       userReceive_FullName: '',
-      userSend_Id: '',
-      userSend_FullName: '',
+      userSend_Id: user.account.userId,
+      userSend_FullName: user.account.fullName,
       task_file: '',
       task_Clone: true
     }
@@ -253,7 +255,13 @@ function ModalDivineWorkPublic(props) {
 
   const handleGetListTaskByDocSendId = async (docSendId) => {
     let resultListDivineWork = await getListTaskByDocSendId(docSendId);
+    for (let object of resultListDivineWork) {
+      let resultListDiscuss = await getListDiscussByTaskId(object.task_Id);
+      console.log(resultListDiscuss);
+    }
+
     setListDivineWork(resultListDivineWork);
+
   }
 
   const handleGetDetailsTaskByDocSendId = async (docSendId) => {
@@ -316,7 +324,7 @@ function ModalDivineWorkPublic(props) {
                       <Typography variant="h6" color='red' sx={{ mb: 0.8 }}>Danh sách công việc</Typography>
                       {Object.entries(listDivineWork).map(([itemKey, itemValue]) => {
                         let expire = getExpireDateTime(itemValue.task_DateEnd)
-                        console.log(itemValue);
+                        // console.log(itemValue);
                         return (
                           <Accordion key={`task-${itemKey}`} className={`list-title ${itemKey > 0 ? 'mt-3' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}>
                             <div className='list-parent-task p-1'>
@@ -370,9 +378,7 @@ function ModalDivineWorkPublic(props) {
                                   </Stack>
                                 </div>
 
-                                {itemValue.task_Id.startsWith("task-clone") && itemValue.task_Person_Receive === itemValue.task_Person_Send ?
-                                  null
-                                  :
+                                {itemValue.task_Person_Receive !== itemValue.task_Person_Send ?
                                   <div className='task-discuss mt-1'>
                                     <List sx={{ mt: 0 }}>
                                       <ListItem sx={{ px: 0 }}>
@@ -400,7 +406,15 @@ function ModalDivineWorkPublic(props) {
                                       </div>
                                     </div>
                                   </div>
+                                  :
+                                  null
                                 }
+
+                                {/* {itemValue.task_Person_Receive === itemValue.task_Person_Send || itemValue.userReceive_Id === itemValue.userSend_Id || itemValue.task_Id.startsWith("task-clone") ?
+                                  console.log('vao day 1')
+                                  :
+                                  console.log('vao day 2')
+                                } */}
 
                               </AccordionDetails>
                             </div>

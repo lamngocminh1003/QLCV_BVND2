@@ -39,6 +39,7 @@ function ModalAssignDivineWorkPublic(props) {
         task_Title: '',
         userReceive_Id: '',
         userReceive_FullName: '',
+        userSend_Id: '',
         userSend_FullName: ''
     }
 
