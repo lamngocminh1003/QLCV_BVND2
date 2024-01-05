@@ -104,7 +104,7 @@ function ModalAssignDivineWorkPublic(props) {
     }, [props.dataModalAssignDivineWorkPublic])
 
     return (
-        <Modal size='lg' show={props.activeModalAssignDivineWorkPublic} onHide={() => handleOnHide()} style={{ background: 'rgba(0, 0, 0, 0.6)' }}
+        <Modal size='lg' animation={false} show={props.activeModalAssignDivineWorkPublic} onHide={() => handleOnHide()} style={{ background: 'rgba(0, 0, 0, 0.6)' }}
             backdrop={'static'} keyboard={false} >
             <Modal.Header closeButton>
                 <Modal.Title><div className='text-primary text-uppercase'>Thông tin giao việc</div></Modal.Title>

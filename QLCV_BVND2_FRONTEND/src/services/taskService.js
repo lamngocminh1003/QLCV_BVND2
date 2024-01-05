@@ -42,6 +42,17 @@ const assignDivineWork = async (dataObj) => {
         })
 }
 
+const createSendDiscuss = async (dataObj) => {
+    const config = createConfig();
+    return await axios.post(`${backendURL}/api/Task/CreateSendDiscuss?TaskId=${dataObj.task_Id}&Content=${dataObj.task_DiscussContent}`, '', config)
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 const getTaskCategory = async () => {
     const config = createConfig();
     return await axios.get(`${backendURL}/api/TaskCategory`, config)
@@ -109,7 +120,7 @@ const updateTaskStateSeen = async (taskId) => {
 }
 
 export {
-    createTaskCategory, assignDivineWork,
+    createTaskCategory, assignDivineWork, createSendDiscuss,
     getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId, getDocByDocId, getListDiscussByTaskId,
     updateTaskStateSeen
 };
