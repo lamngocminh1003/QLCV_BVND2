@@ -275,17 +275,23 @@ function ModalDivineWorkPublic(props) {
   }
 
   const handleGetListDicussAfterCreate = async (taskId) => {
-    let listDiscussByTaskId = await getListTaskByDocSendId(taskId);
+    let listDiscussByTaskId = await getListDiscussByTaskId(taskId);
     let _listDivineWork = _.cloneDeep(listDivineWork);
 
-    console.log(listDiscussByTaskId);
-
     let _listDivineWorkUpdated = _listDivineWork.map(task => {
-      let _listDiscussByTaskIdUpdated = listDiscussByTaskId.filter(discuss => discuss.discuss_Task === task.task_Id);
-      return { ...task, task_Discuss: _listDiscussByTaskIdUpdated };
+      let _listDiscussByTaskIdUpdated = listDiscussByTaskId.find(discuss => discuss.discuss_Task === task.task_Id);
+      return { task_Discuss: _listDiscussByTaskIdUpdated };
+    }).filter(item => item.task_Discuss !== undefined);
+
+    _listDivineWorkUpdated.forEach(discuss => {
+      let foundTask = listDivineWork.find(task => task.task_Id === discuss.task_Discuss.discuss_Task);
+      if (foundTask) {
+        foundTask.task_Discuss.push(discuss.task_Discuss);
+      }
+      //listDivineWork.task_Discuss.push(discuss.task_Discuss);
     })
 
-    console.log(_listDivineWorkUpdated);
+    // console.log(_listDivineWork);
   }
 
   const handleGetDetailsTaskByDocSendId = async (docSendId) => {
@@ -391,7 +397,7 @@ function ModalDivineWorkPublic(props) {
                                 </div>
 
                                 {itemValue.task_Person_Receive !== itemValue.task_Person_Send ?
-                                  <div className='task-discuss mt-1'>
+                                  <div className='task-discuss mt-1' style={{ overflow: 'scroll', height: '20rem' }}>
                                     {
                                       itemValue.task_Discuss.length !== 0 ?
                                         itemValue.task_Discuss.map((discuss, index) => {
