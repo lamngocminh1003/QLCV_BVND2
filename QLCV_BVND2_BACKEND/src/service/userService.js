@@ -1,77 +1,81 @@
 import bcrypt from "bcryptjs";
 import db from "../models/index";
+
 const salt = bcrypt.genSaltSync(10);
 const hashPassword = (password) => {
   let hashPassword = bcrypt.hashSync(password, salt);
   return hashPassword;
 };
-const createNewUser = async (data) => {
-  let { email, userName, password } = data;
-  let hashPasswordUser = hashPassword(password);
-  try {
-    await db.user.create({
-      email: email,
-      password: hashPasswordUser,
-      userName: userName,
-    });
-  } catch (error) {
-    console.log("check error", error);
-  }
-};
+
+const createNewUser = async (userFullName, userUserName, userUserPassword, userUserPhone, userUserEmail, userUserRole, userUserPosition, userUserDepartment, userUserImage) => {
+  let hash_userUserPassword = hashPassword(userUserPassword);
+  await db.user.create({
+    fullName: userFullName,
+    userName: userUserName,
+    password: hash_userUserPassword,
+    phone: userUserPhone,
+    email: userUserEmail,
+    roleId: userUserRole,
+    positionId: userUserPosition,
+    departmentId: userUserDepartment,
+    image: userUserImage,
+  });
+}
+
 const getUserList = async () => {
-  //test relationships
-
-  const users = await db.user.findAll({
-    attributes: ["id", "userName", "email"],
-    include: { model: db.group, attributes: ["id", "name", "des"] },
-    raw: "true",
+  let users = [];
+  users = await db.user.findAll({
+    attributes: ["id", "fullName", "userName", "phone", "email", "roleId", "positionId", "departmentId"],
+    include: [{ model: db.department }, { model: db.position }, { model: db.role }],
+    raw: true,
     nest: true,
   });
-  const role = await db.role.findAll({
-    include: { model: db.group, attributes: ["id", "name", "des"] },
-    attributes: ["id", "url", "des"],
-    raw: "true",
+  console.log(users);
+  return users;
+}
+
+const getUserById = async (userId) => {
+  let foundUser = {}
+  foundUser = await db.user.findAll({
+    where: { id: userId },
+    include: [{ model: db.department }, { model: db.position }, { model: db.role }],
+    raw: true,
     nest: true,
   });
-  console.log("users", users);
-  console.log("role", role);
+  return foundUser;
+}
 
-  let user = [];
-  user = await db.user.findAll();
-  return user;
-};
-const deleteUser = async (userId) => {
-  let { id } = userId;
-  await db.user.destroy({
-    where: { id: id },
-  });
-};
-const handleGetUserByIdService = async (userId) => {
-  let { id } = userId;
-  let user = await db.user.findOne({
-    where: { id: id },
-  });
-  
-  return user;
-};
-const handleUpdateUserService = async (data) => {
-  let { id, email, userName } = data;
+const handleUpdateUserById = async (userId, userFullName, userUserPhone, userUserEmail, userUserRole, userUserPosition, userUserDepartment) => {
   await db.user.update(
-    {
-      email: email,
-      userName: userName,
-    },
-    {
-      where: {
-        id: id,
-      },
-    }
+    { fullName: userFullName, phone: userUserPhone, email: userUserEmail, roleId: userUserRole, positionId: userUserPosition, departmentId: userUserDepartment },
+    { where: { id: userId } }
   );
-};
+}
+
+const deleteUser = async (userId) => {
+  await db.user.destroy(
+    { where: { id: userId } }
+  );
+}
+
+const getAllRole = async () => {
+  let listRole = [];
+  listRole = await db.role.findAll({ raw: true });
+  return listRole;
+}
+
+const getAllPosition = async () => {
+  let listPosition = [];
+  listPosition = await db.position.findAll({ raw: true });
+  return listPosition;
+}
+
+const getAllDepartment = async () => {
+  let listDepartMent = [];
+  listDepartMent = await db.department.findAll({ raw: true });
+  return listDepartMent;
+}
+
 module.exports = {
-  createNewUser,
-  getUserList,
-  deleteUser,
-  handleGetUserByIdService,
-  handleUpdateUserService,
+  createNewUser, getUserList, deleteUser, getUserById, handleUpdateUserById, getAllRole, getAllPosition, getAllDepartment
 };

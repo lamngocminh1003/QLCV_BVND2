@@ -1,20 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, useHistory } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { UserContext } from '../context/UserContext';
 
 const PrivateRoutes = (props) => {
-  let history = useHistory();
-  const user = useSelector((state) => state.user.user);
+  const { user } = useContext(UserContext);
 
-  useEffect(() => {
-    if (user && user.auth === false) {
-      history.push("/login");
-    }
-  }, [user]);
-  return (
-    <>
-      <Route path={props.path} component={props.component}></Route>
-    </>
-  );
+  if (user && user.isAuthenticated === true) {
+    return (
+      <>
+        <Route path={props.path} component={props.component}></Route>
+      </>
+    );
+  }
+  else {
+    return (
+      <>
+        <Redirect to='/login-user'></Redirect>
+      </>
+    )
+  }
 };
 export default PrivateRoutes;

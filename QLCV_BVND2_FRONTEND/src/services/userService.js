@@ -1,21 +1,51 @@
 import axios from "axios";
-const registerNewUser = (data) => {
-  let { email, userName, phone, password } = data;
-  return axios.post("http://localhost:8080/api/v1/register", {
-    email,
-    userName,
-    phone,
-    password,
-  });
+
+const backendURL = 'http://146.190.89.3:9090';
+
+const createConfig = () => {
+  const token = localStorage.getItem("jwt");
+  // Thiết lập tiêu đề "Authorization" trong yêu cầu Axios
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return config;
+}
+
+const userLogin = async (userId, password) => {
+  return await axios.post(`${backendURL}/api/UserAccount/Login`, { userId, password })
+    .then(function (response) {
+      return response.data
+    })
+    .catch(function (error) {
+      return error.response.status
+    })
 };
-const userLogin = (data) => {
-  let { userName, password } = data;
-  return axios.post("http://localhost:8080/api/v1/login", {
-    userName,
-    password,
-  });
+
+const getUserAccount = async () => {
+  const config = createConfig();
+  return await axios.get(`${backendURL}/api/UserAccount/GetUserLogin`, config)
+    .then(function (response) {
+      return response.data
+    })
+    .catch(function (error) {
+      return error.response.status
+    })
+}
+
+const getTotalNotification = async () => {
+  const config = createConfig();
+  return await axios.get(`${backendURL}/api/UserAccount/GetTotalNumberNotification`, config)
+    .then(function (response) {
+      return response.data
+    })
+    .catch(function (error) {
+      return error.response.status
+    })
+}
+
+export {
+  userLogin,
+  getUserAccount, getTotalNotification,
 };
-const fetchAllUsers = () => {
-  return axios.get("http://localhost:8080/api/v1/user/read");
-};
-export { registerNewUser, userLogin, fetchAllUsers };

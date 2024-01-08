@@ -15,6 +15,7 @@ module.exports = {
       userName: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true
       },
       password: {
         type: Sequelize.STRING,
@@ -47,6 +48,13 @@ module.exports = {
         type: Sequelize.INTEGER,
         defaultValue: 1,
       }
+    }, {
+      indexes: [
+        {
+          unique: true,
+          fields: ['userName']
+        }
+      ]
     });
   },
   down: async (queryInterface, Sequelize) => {

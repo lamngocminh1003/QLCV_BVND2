@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User</title>
+    <title>Sửa Thông Tin Người dùng</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -21,54 +21,77 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body>
-    <div class="edit-info-container">
-      <form method="POST" action="/user/update-user">
-        <div class="container mt-5">
+    <div class="edit-user-info-container">
+      <form method="POST" action="/user/update-user-by-id">
+        <% foundUser.forEach(function(itemFoundUser,index){ %>
+        <div class="container mt-4">
+          
           <div class="text-center">
-            <h2 class="text-primary">UPDATE USER</h2>
+            <h2 class="text-primary text-uppercase">Sửa thông tin người dùng</h2>
           </div>
-          <input
-            type="id"
-            class="form-control"
-            id="id"
-            name="id"
-            hidden
-            required
-            value="<%= dataUser.id %>"
-          />
-          <div class="row d-flex justify-content-center">
-            <div class="mb-3 col-7">
-              <label for="email" class="form-label">Email address</label>
-              <input
-                type="email"
-                class="form-control"
-                id="email"
-                name="email"
-                value="<%= dataUser.email %>"
-                required
-              />
+
+          <div class="row mt-3 d-flex justify-content-center">
+            <div class="mb-3 col-2">
+              <input type="hidden" class="form-label" id="idUser" name="idUser" value="<%= itemFoundUser.id %>">
+              <label for="fullName" class="form-label">Họ tên</label>
+              <input type="text" class="form-control" id="fullName" name="fullName" value="<%= itemFoundUser.fullName %>"/>
+            </div>
+            <div class="mb-3 col-2">
+              <label for="userPhone" class="form-label">Số điện thoại</label>
+              <input type="tel" class="form-control" id="userPhone" name="userPhone" value="<%= itemFoundUser.phone %>"/>
             </div>
           </div>
-          <div class="row d-flex justify-content-center">
-            <div class="mb-3 col-7">
-              <label for="userName" class="form-label">User name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="userName"
-                name="userName"
-                value="<%= dataUser.userName %>"
-                required
-              />
+
+          <div class="row mt-3 row mt-3 d-flex justify-content-center">
+            <div class="mb-3 col-2">
+              <label for="userEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="userEmail" name="userEmail" value="<%= itemFoundUser.email %>"/>
+            </div>
+            
+            <div class="mb-3 col-2">
+              <label for="userRole" class="form-label">Vai trò</label>
+              <select name="userRole" id="userRole" class="form-select">
+                <% roleList.forEach(function(itemRole,index){ 
+                    var selected_Role = (itemRole.id === itemFoundUser.roleId) ? "selected" : ""; %>
+                    <option value="<%= itemRole.id %>" <%= selected_Role %>> <%= itemRole.roleName%></option>
+                <% }) %>
+              </select>
             </div>
           </div>
-          <div class="row d-flex justify-content-center">
-            <div class="col-7 d-flex justify-content-center">
-              <button type="submit" class="btn btn-primary">
-                Save changes
-              </button>
+
+          <div class="row mt-3 row mt-3 d-flex justify-content-center">
+            <div class="mb-3 col-2">
+              <label for="userPosition" class="form-label">Vị trí</label>
+              <select name="userPosition" id="userPosition" class="form-select">
+                <% positionList.forEach(function(itemPosition,index){ 
+                    var selected_Position = (itemPosition.id === itemFoundUser.positionId ) ? "selected" : ""; %>
+                    <option value="<%= itemPosition.id %>" <%= selected_Position %>> <%= itemPosition.positionName%></option>
+                <% }) %>
+            </select>
+              </select>
+            </div>
+            <div class="mb-3 col-2">
+              <label for="userPosition" class="form-label">Khoa Phòng</label>
+              <select name="userDepartment" id="userDepartment" class="form-select">
+                <% departmentList.forEach(function(itemDepartment,index){
+                    var selected_Department = (itemDepartment.id === itemFoundUser.departmentId ) ? "selected" : ""; %>
+                    <option value="<%= itemDepartment.id %>" <%= selected_Department %>> <%= itemDepartment.departmentName%></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div class="mb-3 col-2">
+              <label for="userImage" class="form-label">Ảnh chân dung</label>
+              <input type="image" class="form-control" id="userImage" name="userImage" src="<%= itemFoundUser.image %>" >
             </div>
           </div>
+      
+          <div class="row d-flex justify-content-center">
+            <div class="col-6 d-flex justify-content-center mt-3 mb-3">
+              <button type="submit" class="btn btn-primary">Sửa người dùng</button>
+            </div>
+          </div>
+          <% }) %>
         </div>
       </form>
     </div>
