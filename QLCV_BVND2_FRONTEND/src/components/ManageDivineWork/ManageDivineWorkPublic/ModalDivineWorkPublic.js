@@ -11,8 +11,6 @@ import CircularProgressWithBackdrop from '../../FunctionComponents/ProgressBar/C
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-//ant theme
-import { Input } from 'antd';
 //mui theme
 import Tooltip from '@mui/material/Tooltip';
 import Typography from "@mui/material/Typography";
@@ -369,9 +367,9 @@ function ModalDivineWorkPublic(props) {
                                 </Box>
                               </AccordionSummary>
                             </div>
-                            <div className='list-children-task border border-top-0 rounded-bottom' style={{ backgroundColor: "#fff" }}>
+                            <div className='list-children-task border border-top-0 rounded-bottom'
+                              style={itemValue.task_Person_Receive !== itemValue.task_Person_Send ? { overflowY: 'scroll', height: '500px' } : {}}>
                               <AccordionDetails>
-
                                 <div className='task-content'>
                                   <Typography variant="h6">{itemValue.task_Content}</Typography>
                                 </div>
