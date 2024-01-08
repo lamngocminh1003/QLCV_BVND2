@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
-import _, { assign, cloneDeep, forEach, set } from 'lodash';
+import React, { useEffect, useState, useContext, useMemo } from 'react'
+import _, { assign, cloneDeep, forEach, set, debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../../context/UserContext';
 import moment from 'moment';
@@ -11,6 +11,8 @@ import CircularProgressWithBackdrop from '../../FunctionComponents/ProgressBar/C
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+//ant theme
+import { Input } from 'antd';
 //mui theme
 import Tooltip from '@mui/material/Tooltip';
 import Typography from "@mui/material/Typography";
@@ -104,6 +106,9 @@ function ModalDivineWorkPublic(props) {
 
   //config backdrop when submit
   const [openBackdrop, setOpenBackdrop] = useState(false);
+
+  //config discuss
+  let [listDiscuss, setListDiscuss] = useState([]);
 
   const getExpireDateTime = (task_DateEnd) => {
     const expiration = moment(task_DateEnd);
@@ -210,14 +215,37 @@ function ModalDivineWorkPublic(props) {
   }
 
   //gửi bình luận
-  const handleOnChangeDiscussContent = (taskId, value, e) => {
-    let _listDivineWork = _.cloneDeep(listDivineWork);
+  const delayedHandleChange = debounce((taskId, value) => {
+    const updatedList = listDiscuss.map(itemDiscuss => itemDiscuss.task_Id === taskId ? { ...itemDiscuss, task_DiscussContent: value } : itemDiscuss);
+    setListDiscuss(updatedList);
+    console.log(listDiscuss);
+  })
 
-    let _listDivineWorkUpdated = _listDivineWork.map(item =>
-      item.task_Id === taskId ? { ...item, task_DiscussContent: value } : item
-    );
+  const handleOnChangeDiscussContent = (taskId, value) => {
+    delayedHandleChange(taskId, value)
 
-    setListDivineWork(_listDivineWorkUpdated);
+
+    // let _listDiscuss = _.cloneDeep(listDiscuss);
+
+    // _listDiscuss.forEach(itemDiscuss => {
+    //   if (itemDiscuss.task_Id === taskId) {
+    //     itemDiscuss.task_DiscussContent = value;
+    //   }
+    // })
+    // setListDiscuss(_listDiscuss);
+
+
+
+    //let _listDiscussUpdated = _listDiscuss.map(itemDiscuss => itemDiscuss.task_Id === taskId ? { ...itemDiscuss, task_DiscussContent: value } : itemDiscuss)
+
+    //setListDiscuss([..._listDiscuss]);
+
+
+    // let _listDivineWorkUpdated = _listDivineWork.map(item =>
+    //   item.task_Id === taskId ? { ...item, task_DiscussContent: value } : item
+    // );
+
+    // setListDivineWork(_listDivineWorkUpdated);
   }
 
   const handleOnKeyDownEnter = (event, task_Id) => {
@@ -268,6 +296,9 @@ function ModalDivineWorkPublic(props) {
       });
 
       setListDivineWork(resultListDivineWorkWithDiscuss);
+
+      let findTaskId = resultListDivineWorkWithDiscuss.map(task => ({ "task_Id": task.task_Id, "task_DiscussContent": '' }));
+      setListDiscuss(findTaskId);
     }
     else {
       setListDivineWork(resultListDivineWork);
@@ -275,23 +306,36 @@ function ModalDivineWorkPublic(props) {
   }
 
   const handleGetListDicussAfterCreate = async (taskId) => {
-    let listDiscussByTaskId = await getListDiscussByTaskId(taskId);
     let _listDivineWork = _.cloneDeep(listDivineWork);
+    let listDiscussByTaskId = await getListDiscussByTaskId(taskId);
 
-    let _listDivineWorkUpdated = _listDivineWork.map(task => {
-      let _listDiscussByTaskIdUpdated = listDiscussByTaskId.find(discuss => discuss.discuss_Task === task.task_Id);
-      return { task_Discuss: _listDiscussByTaskIdUpdated };
-    }).filter(item => item.task_Discuss !== undefined);
+    let lastListDiscussByTaskId = listDiscussByTaskId[listDiscussByTaskId.length - 1];
 
-    _listDivineWorkUpdated.forEach(discuss => {
-      let foundTask = listDivineWork.find(task => task.task_Id === discuss.task_Discuss.discuss_Task);
-      if (foundTask) {
-        foundTask.task_Discuss.push(discuss.task_Discuss);
-      }
-      //listDivineWork.task_Discuss.push(discuss.task_Discuss);
-    })
+    let foundTask = _listDivineWork.find(task => task.task_Id === lastListDiscussByTaskId.discuss_Task);
+    if (foundTask) {
+      foundTask.task_Discuss.push(lastListDiscussByTaskId);
+      foundTask.task_DiscussContent = '';
+    }
 
-    // console.log(_listDivineWork);
+    setListDivineWork(_listDivineWork);
+    // let _listDivineWorkUpdated = _listDivineWork.map(task => {
+    //   let _listDiscussByTaskIdUpdated = listDiscussByTaskId.find(discuss => discuss.discuss_Task === task.task_Id);
+    //   return { task_Discuss: _listDiscussByTaskIdUpdated };
+    // }).filter(item => item.task_Discuss !== undefined);
+
+    // _listDivineWorkUpdated.forEach(discuss => {
+    //   let foundTask = _listDivineWork.find(task => task.task_Id === discuss.task_Discuss.discuss_Task);
+    //   if (foundTask) {
+    //     console.log(discuss);
+    //     console.log(discuss.task_Discuss);
+    //     console.log(foundTask);
+    //     // foundTask.task_Discuss.push(discuss.task_Discuss);
+    //     // foundTask.task_DiscussContent = '';
+    //   }
+    //   //listDivineWork.task_Discuss.push(discuss.task_Discuss);
+    // })
+
+    //console.log(_listDivineWork);
   }
 
   const handleGetDetailsTaskByDocSendId = async (docSendId) => {
@@ -397,43 +441,62 @@ function ModalDivineWorkPublic(props) {
                                 </div>
 
                                 {itemValue.task_Person_Receive !== itemValue.task_Person_Send ?
-                                  <div className='task-discuss mt-1' style={{ overflow: 'scroll', height: '20rem' }}>
+                                  <div className='task-discuss mt-1' >
                                     {
                                       itemValue.task_Discuss.length !== 0 ?
-                                        itemValue.task_Discuss.map((discuss, index) => {
-                                          return (
-                                            <div className='warp-comment' key={index}>
-                                              <List sx={{ mt: 0, p: 0 }}>
-                                                <ListItem sx={{ px: 0 }}>
-                                                  <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
-                                                  <Box className='discuss-box'>
-                                                    <ListItemText className='dissucss-content'
-                                                      primary={discuss.userSend_Fullname}
-                                                      secondary={discuss.discuss_Content} />
-                                                  </Box>
-                                                </ListItem>
-                                              </List>
-                                            </div>
-                                          )
-                                        })
+                                        <div className='discuss-show'>
+                                          {
+                                            itemValue.task_Discuss.map((discuss, index) => {
+                                              return (
+                                                <div className='warp-comment' key={index}>
+                                                  <List sx={{ mt: 0, p: 0 }}>
+                                                    <ListItem sx={{ px: 0 }}>
+                                                      <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
+                                                      <Box className='discuss-box'>
+                                                        <ListItemText className='dissucss-content'
+                                                          primary={discuss.userSend_Fullname}
+                                                          secondary={discuss.discuss_Content} />
+                                                      </Box>
+                                                    </ListItem>
+                                                  </List>
+                                                </div>
+                                              )
+                                            })
+                                          }
+                                        </div>
                                         :
                                         "Hiện chưa có bình luận."
                                     }
 
-                                    <div className='task-discuss-input mt-2 d-flex '>
-                                      <div className='input-area'>
-                                        <div
-                                          className='child-1' contentEditable='true' aria-label='Viết bình luận...'
-                                          onInput={(e) => handleOnChangeDiscussContent(itemValue.task_Id, e.currentTarget.textContent, e)}
-                                          onKeyPress={(e) => handleOnKeyDownEnter(e, itemValue.task_Id)} onPaste={(e) => pasteAsPlainText(e)}></div>
-                                      </div>
-                                      <div className='input-send-icon' style={itemValue.task_DiscussContent === "" ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}>
-                                        <IconButton color={itemValue.task_DiscussContent === "" ? 'default' : 'primary'}
-                                          disabled={itemValue.task_DiscussContent === "" ? true : false} size="large" onClick={() => handleSendDiscuss(itemValue.task_Id)}>
-                                          <SendIcon />
-                                        </IconButton>
-                                      </div>
-                                    </div>
+                                    {
+                                      listDiscuss.map((itemDiscuss, index) => {
+                                        if (itemDiscuss.task_Id === itemValue.task_Id) {
+                                          return (
+                                            <div className='task-discuss-input mt-2 d-flex ' key={index}>
+                                              <div className='input-area'>
+                                                {/* <Input value={itemDiscuss.task_DiscussContent} onChange={(e) => handleOnChangeDiscussContent(itemDiscuss.task_Id, e.target.value)}
+                                                  placeholder="Controlled autosize" autoSize={{ minRows: 1 }}
+                                                /> */}
+                                                <div
+                                                  className='child-1' contentEditable='true' aria-label='Viết bình luận...'
+                                                  onInput={(e) => handleOnChangeDiscussContent(itemDiscuss.task_Id, e.currentTarget.textContent)}
+                                                  onKeyPress={(e) => handleOnKeyDownEnter(e, itemValue.task_Id)} onPaste={(e) => pasteAsPlainText(e)}>
+
+                                                </div>
+                                              </div>
+                                              <div className='input-send-icon' style={itemDiscuss.task_DiscussContent === "" ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}>
+                                                <IconButton color={itemDiscuss.task_DiscussContent === "" ? 'default' : 'primary'}
+                                                  disabled={itemDiscuss.task_DiscussContent === "" ? true : false} size="large" onClick={() => handleSendDiscuss(itemDiscuss.task_Id)}>
+                                                  <SendIcon />
+                                                </IconButton>
+                                              </div>
+                                            </div>)
+                                        }
+                                        else {
+                                          return null
+                                        }
+                                      })
+                                    }
                                   </div>
                                   :
                                   null
