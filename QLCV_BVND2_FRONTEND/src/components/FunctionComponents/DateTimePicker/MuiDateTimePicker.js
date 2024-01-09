@@ -65,8 +65,6 @@ export default function DateTimePickerViewRenderers(props) {
     }
 
     const handleSelectedDateTimeEndAssignWork = (dateTime) => {
-        let hour = Dayjs().hour(23);
-
         let DateSelectedWithCurrentTime = Dayjs().set('date', dateTime.$D).set('month', dateTime.$M).set('hour', 23).set('minute', 59);
         setTaskDateEnd(DateSelectedWithCurrentTime)
 
