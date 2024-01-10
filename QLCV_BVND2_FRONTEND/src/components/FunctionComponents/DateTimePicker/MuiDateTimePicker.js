@@ -26,71 +26,67 @@ export default function DateTimePickerViewRenderers(props) {
         let minutes = Dayjs().minute();
 
         if (taskDateStart) {
-            setTaskDateStart(dateTime);
-            handleSaveDateTimeStartAssignWork(dateTime);
+            if (docDateStart.$D > dateTime.$D || docDateEnd.$D < dateTime.$D || docDateStart.$M > dateTime.$M || docDateEnd.$M < dateTime.$M || docDateStart.$y > dateTime.$y || docDateEnd.$y < dateTime.$y) {
+                toast.error('Ngày bắt đầu công việc không hợp lệ.');
+            }
+            else {
+                setTaskDateStart(dateTime);
+                handleSaveDateTimeStartAssignWork(dateTime);
+            }
         }
         else {
             let DateSelectedWithCurrentTime = Dayjs().set('date', dateTime.$D).set('month', dateTime.$M).set('hour', hour).set('minute', minutes);
             setTaskDateStart(DateSelectedWithCurrentTime);
-        }
-    }
-
-    const handleSaveDateTimeStartAssignWork = (TaskDateStart) => {
-        TaskDateStart = Dayjs(TaskDateStart, "YYYY-MM-DD");
-
-        //lấy thời hạn của task tổng để so sánh
-        let compareDate = Dayjs(props.dataModalDivineWork.documentSend.document_Send_TimeStart, "YYYY-MM-DD");
-        let compareDate2 = Dayjs(props.dataModalDivineWork.documentSend.document_Send_Deadline, "YYYY-MM-DD");
-        console.log(compareDate2);
-
-        let isValid = Dayjs(TaskDateStart).isAfter(compareDate);
-        if (isValid === true) {
-            let isValid2 = Dayjs(TaskDateStart).isBefore(compareDate2);
-            console.log(Dayjs(TaskDateStart))
-            if (isValid2 === true) {
-                let value = JSON.stringify(TaskDateStart);
-
-                let replaceFirst = _.replace(value, "\"", "");
-                let replaceSecond = _.replace(replaceFirst, "\"", "");
-
-                let input_task_DateStart = 'task_DateStart';
-                let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataModalAssignDivineWorkPublic);
-                _dataModalAssignDivineWorkPublic[input_task_DateStart] = replaceSecond;
-                props.setStateExtra1(_dataModalAssignDivineWorkPublic);
-            }
-            else {
-                toast.error('Ngày bắt đầu công việc không hợp lệ.');
-            }
+            handleSaveDateTimeStartAssignWork(DateSelectedWithCurrentTime);
         }
     }
 
     const handleSelectedDateTimeEndAssignWork = (dateTime) => {
-        let DateSelectedWithCurrentTime = Dayjs().set('date', dateTime.$D).set('month', dateTime.$M).set('hour', 23).set('minute', 59);
-        setTaskDateEnd(DateSelectedWithCurrentTime)
+        if (taskDateEnd) {
+            if (docDateStart.$D > dateTime.$D || docDateEnd.$D < dateTime.$D || docDateStart.$M > dateTime.$M || docDateEnd.$M < dateTime.$M || docDateStart.$y > dateTime.$y || docDateEnd.$y < dateTime.$y) {
+                toast.error('Ngày kết thúc công việc không hợp lệ.');
+            }
+            else {
+                setTaskDateEnd(dateTime);
+                handleSaveDateTimeEndAssignWork(dateTime);
+            }
+        }
+        else {
+            let DateSelectedWithCurrentTime = Dayjs().set('date', dateTime.$D).set('month', dateTime.$M).set('hour', 23).set('minute', 59);
+            setTaskDateEnd(DateSelectedWithCurrentTime);
+            handleSaveDateTimeEndAssignWork(DateSelectedWithCurrentTime);
+        }
+    }
 
-        // if (taskDateStart) {
-        //     setTaskDateEnd(dateTime);
-        //     //handleSaveDateTimeStartAssignWork(dateTime);
-        // }
-        // else {
-        //     let DateSelectedWithCurrentTime = Dayjs().set('date', dateTime.$D).set('month', dateTime.$M).set('hour', hour).set('minute', minutes);
-        //     setTaskDateEnd(DateSelectedWithCurrentTime);
-        // }
-        // let replaceFirst = _.replace(value, "\"", "");
-        // let replaceSecond = _.replace(replaceFirst, "\"", "");
+    const handleSaveDateTimeStartAssignWork = (TaskDateStart) => {
+        let value = JSON.stringify(TaskDateStart);
 
-        // let input_task_DateEnd = 'task_DateEnd';
-        // let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataModalAssignDivineWorkPublic);
-        // _dataModalAssignDivineWorkPublic[input_task_DateEnd] = replaceSecond;
-        // props.setStateExtra1(_dataModalAssignDivineWorkPublic);
+        let replaceFirst = _.replace(value, "\"", "");
+        let replaceSecond = _.replace(replaceFirst, "\"", "");
+
+        let input_task_DateStart = 'task_DateStart';
+        let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataModalAssignDivineWorkPublic);
+        _dataModalAssignDivineWorkPublic[input_task_DateStart] = replaceSecond;
+        props.setStateExtra1(_dataModalAssignDivineWorkPublic);
+    }
+
+    const handleSaveDateTimeEndAssignWork = (TaskDateEnd) => {
+        let value = JSON.stringify(TaskDateEnd);
+
+        let replaceFirst = _.replace(value, "\"", "");
+        let replaceSecond = _.replace(replaceFirst, "\"", "");
+
+        let input_task_DateStart = 'task_DateEnd';
+        let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataModalAssignDivineWorkPublic);
+        _dataModalAssignDivineWorkPublic[input_task_DateStart] = replaceSecond;
+        props.setStateExtra1(_dataModalAssignDivineWorkPublic);
     }
 
     useEffect(() => {
         if (Object.values(props.stateExtra1).every(value => value !== null || value !== '')) {
             setDataModalAssignDivineWorkPublic(props.stateExtra1);
-            setDocDateStart(Dayjs(props.dataModalDivineWork.documentSend.document_Send_TimeStart, "YYYY-MM-DD"));
-            setDocDateEnd(Dayjs(props.dataModalDivineWork.documentSend.document_Send_Deadline, "YYYY-MM-DD"));
-            //console.log(props.dataModalDivineWork);
+            setDocDateStart(Dayjs(props.dataModalDivineWork.documentSend.document_Send_TimeStart));
+            setDocDateEnd(Dayjs(props.dataModalDivineWork.documentSend.document_Send_Deadline));
         }
     }, [props.stateExtra1])
 

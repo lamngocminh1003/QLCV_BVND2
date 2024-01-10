@@ -148,6 +148,7 @@ function ModalDivineWorkPublic(props) {
       task_file: '',
       task_Clone: true
     }
+    _objDivineWork.fileIds = dataModalDivineWorkPublic.fileIds;
     setObjDivineWork(_objDivineWork);
 
     //push obj to listDivineWork array
@@ -196,6 +197,7 @@ function ModalDivineWorkPublic(props) {
 
   //lưu công việc đã tạo
   const handleSaveListDivineWork = async () => {
+    console.log(listDivineWork);
     //tìm những obj có key clone là true
     let arrayToHandleDivineWork = _.filter(listDivineWork, (item) => item.task_Clone === true);
 
