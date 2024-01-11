@@ -24,21 +24,21 @@ const createTaskCategory = async (category_Name) => {
         })
 }
 
-const assignDivineWork = async (dataObj) => {
+const assignDivineWork = async (dataObj, onUploadProgress) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/Task/CreateTaskByDocSendId?DocSendId=${dataObj.document_Send_Id}&UserReceive=${dataObj.userReceive_Id}&Title=${dataObj.task_Title}&Content=${dataObj.task_Content}&TimeStart=${dataObj.task_DateStart}&Deadline=${dataObj.task_DateEnd}&CatagoryId=${dataObj.task_Catagory_Id}`,
-        dataObj.taskFile, {
-        onUploadProgress: (progressEvent) => { console.log(progressEvent) },
-        headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-        }
-    })
+    return await axios.post(`${backendURL}/api/Task/CreateTaskByDocSendId?DocSendId=${dataObj.document_Send_Id}&UserReceive=${dataObj.userReceive_Id}&Title=${dataObj.task_Title}&Content=${dataObj.task_Content}&TimeStart=${dataObj.task_DateStart}&Deadline=${dataObj.task_DateEnd}&CatagoryId=${dataObj.task_Catagory_Id}`, dataObj.filesKeep,
+        {
+            headers: {
+                "content-type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            },
+            onUploadProgress,
+        })
         .then(function (response) {
             return response.status
         })
         .catch(function (error) {
-            return error.response.status
+            return error.response.data
         })
 }
 

@@ -91,6 +91,7 @@ function ModalDivineWorkPublic(props) {
 
   //config this modal
   const [dataModalDivineWorkPublic, setDataModalDivineWorkPublic] = useState(dataModalDivineWorkPublicDefault);
+  const [doSomething, setDoSomething] = useState(false);
 
   //config divine work
   const [divineWork, setDivineWork] = useState(''); //1 divine work
@@ -103,7 +104,8 @@ function ModalDivineWorkPublic(props) {
   const [dataModalAssignDivineWorkPublic, setDataModalAssignDivineWorkPublic] = useState({});
 
   //config backdrop when submit
-  const [openBackdrop, setOpenBackdrop] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [openBackdrop, setOpenBackdrop] = useState();
 
   //config discuss
   let [listDiscuss, setListDiscuss] = useState([]);
@@ -195,23 +197,56 @@ function ModalDivineWorkPublic(props) {
     alert('user nhan viec khong rong');
   }
 
+  //tạo giá trị tiến trình trong quá trình gửi đề xuất
+  const handleOnUploadProgress = (progressEvent) => {
+    let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+    setProgress(percentCompleted);
+  }
+
   //lưu công việc đã tạo
   const handleSaveListDivineWork = async () => {
-
     //tìm những obj có key clone là true
     let arrayToHandleDivineWork = _.filter(listDivineWork, (item) => item.task_Clone === true);
-    let arrayToHandleKeepFile = _.filter(arrayToHandleDivineWork);
-    console.log(arrayToHandleDivineWork);
-    // let count = 0;
-    // for (let item of arrayToHandleDivineWork) {
-    //   let response = await assignDivineWork(item);
-    //   if (response === 200) {
-    //     console.log(response);
-    //     count++;
-    //     if (count === arrayToHandleDivineWork.length) {
-    //       toast.success('Lưu công việc thành công!');
+    let formArrayIdFileToKeep = new FormData();
+    arrayToHandleDivineWork.forEach(work => {
+      work.fileIds.forEach(file => {
+        if (file.not_Check !== true) {
+          formArrayIdFileToKeep.append('fileDocSends', file.file_Id);
+        }
+      })
+      work.filesKeep = formArrayIdFileToKeep;
+    })
+
+    let count = 0;
+
+    // console.log(arrayToHandleDivineWork);
+
+    arrayToHandleDivineWork.forEach(item => {
+      const filesKeepObject = item.filesKeep;
+      for (let pair of filesKeepObject) {
+        console.log(pair[0] + ', ' + pair[1]);
+      }
+    })
+
+    //setOpenBackdrop(true);
+
+    // try {
+    //   await new Promise(resolve => setTimeout(resolve, 2 * 1000));
+    //   for (let item of arrayToHandleDivineWork) {
+    //     let response = await assignDivineWork(item, handleOnUploadProgress);
+    //     if (response === 200) {
+    //       count++;
+    //       if (count === arrayToHandleDivineWork.length) {
+    //         await new Promise(resolve => setTimeout(resolve, 1 * 1000));
+    //         toast.success('Lưu công việc thành công!');
+    //         setDoSomething(true);
+    //         setOpenBackdrop(false);
+    //       }
     //     }
     //   }
+
+    // } catch (error) {
+    //   console.log(error);
     // }
   }
 
@@ -308,7 +343,13 @@ function ModalDivineWorkPublic(props) {
       handleGetListTaskByDocSendId(props.taskSendId);
       handleGetDetailsTaskByDocSendId(props.taskSendId);
     }
-  }, [props.taskSendId])
+
+    if (doSomething === true) {
+      handleGetListTaskByDocSendId(props.taskSendId);
+      handleGetDetailsTaskByDocSendId(props.taskSendId);
+      setDoSomething(false);
+    }
+  }, [props.taskSendId, doSomething])
 
   useEffect(() => {
     if (objDivineWorkEdit !== null) {
@@ -320,7 +361,7 @@ function ModalDivineWorkPublic(props) {
 
   return (
     <>
-      {/* <CircularProgressWithBackdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} /> */}
+      <CircularProgressWithBackdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} setProgressValue={setProgress} />
       <Modal size='md' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false} >
         <Modal.Header closeButton>
           <Modal.Title style={{ width: '100%' }}>

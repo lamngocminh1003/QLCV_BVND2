@@ -118,10 +118,7 @@ function ModalCreateTaskPublic(props) {
     const handleOnchange = (value, name) => {
         let _dataModalCreateTaskPublic = _.cloneDeep(dataModalCreateTaskPublic);
         _dataModalCreateTaskPublic.documentIncomming[name] = value;
-
-        console.log(_dataModalCreateTaskPublic);
         setDataModalCreateTaskPublic(_dataModalCreateTaskPublic);
-
     }
 
     const onSelectFile = (e) => {
@@ -154,17 +151,24 @@ function ModalCreateTaskPublic(props) {
     }
 
     const handleCreateDocSend = async () => {
-        dataModalCreateTaskPublic.documentIncomming.document_Incomming_Category = taskType;
+        //lấy all id của file đề xuất để tạo công việc lớn
+        let formArrayFile = new FormData();
+        dataModalCreateTaskPublic.fileIds.forEach(item => {
+            formArrayFile.append('filesDocIn', item.file_Id);
+        })
+
+        //lấy data các file đã chọn từ máy để tạo công việc lớn
+        let i;
+        for (i = 0; i < fileListState.length; i++) {
+            formArrayFile.append('files', fileListState[i]);
+        }
 
         formatDateISO8601();
 
-        let formDataFileTask = new FormData();
-        let i;
-        for (i = 0; i < fileListState.length; i++) {
-            formDataFileTask.append('files', fileListState[i]);
-        }
-
-        dataModalCreateTaskPublic.taskFile = formDataFileTask;
+        dataModalCreateTaskPublic.documentIncomming.document_Incomming_Category = taskType;
+        dataModalCreateTaskPublic.fileIds = formArrayFile;
+        // dataModalCreateTaskPublic.taskFile = formDataFileTask;
+        // dataModalCreateTaskPublic.proposeFileRecive = formArrayProposeFile;
 
         let response = await createDocSendPublicByDocIn(dataModalCreateTaskPublic);
         if (response === 200) {
@@ -291,7 +295,7 @@ function ModalCreateTaskPublic(props) {
                                                         <div className='file-input-container'>
                                                             <div className='file-input-label'>
                                                                 <CloudUploadIcon sx={{ color: 'darkturquoise', fontSize: '70px' }}></CloudUploadIcon>
-                                                                <Typography variant='subtitle2' fontWeight='600' color='gray' fontSize='0.8rem'>Nhấn vào đây để chọn file</Typography>
+                                                                <Typography variant='subtitle2' fontWeight='600' color='gray' fontSize='0.8rem'>Nhấn vào để chọn file</Typography>
                                                             </div>
                                                             <div className='file-input'>
                                                                 <input type='file' accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple onChange={(e) => onSelectFile(e)}></input>
