@@ -101,7 +101,7 @@ export default function DateTimePickerViewRenderers(props) {
                     </div>
                     <div className='col-6' style={{ left: '25px' }}>
                         <DateTimePicker ampm={false} format='DD/MM/YYYY HH:mm' label="Đến ngày" views={['month', 'day']} value={props.stateExtra1.task_DateEnd !== "" ? Dayjs(props.stateExtra1.task_DateEnd) : taskDateEnd ? taskDateEnd : null}
-                            minDate={Dayjs(props.dataModalDivineWork.documentSend.document_Send_TimeStart)} maxDate={Dayjs(props.dataModalDivineWork.documentSend.document_Send_Deadline)}
+                            minDate={Dayjs(taskDateStart)} maxDate={Dayjs(props.dataModalDivineWork.documentSend.document_Send_Deadline)}
                             onChange={(e) => handleSelectedDateTimeEndAssignWork(e)} />
                     </div>
                 </div>

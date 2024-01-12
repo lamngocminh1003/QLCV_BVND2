@@ -93,6 +93,7 @@ function ModalAssignDivineWorkPublic(props) {
     }
 
     const onClickCheckBox = (checked, idFile) => {
+        let inputName = 'not_CheckFile';
         if (checked === false) {
             let _dataAssignDivineWorkPublicFile = _.cloneDeep(dataAssignDivineWorkPublic.fileIds);
             for (let i = 0; i < _dataAssignDivineWorkPublicFile.length; i++) {
@@ -101,8 +102,11 @@ function ModalAssignDivineWorkPublic(props) {
                     break;
                 }
             }
-            dataAssignDivineWorkPublic.fileIds = _dataAssignDivineWorkPublicFile;
-            setDoSomething(true);
+
+            let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
+            _dataModalAssignDivineWorkPublic[inputName] = true;
+            _dataModalAssignDivineWorkPublic.fileIds = _dataAssignDivineWorkPublicFile;
+            setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
         }
         else {
             let _dataAssignDivineWorkPublicFile = _.cloneDeep(dataAssignDivineWorkPublic.fileIds);
@@ -112,8 +116,19 @@ function ModalAssignDivineWorkPublic(props) {
                 }
                 return obj;
             })
-            dataAssignDivineWorkPublic.fileIds = _dataAssignDivineWorkPublicFile;
-            setDoSomething(true);
+
+            let check = _dataAssignDivineWorkPublicFile.some(file => file.not_Check === true);
+            if (check === false) {
+                let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
+                _dataModalAssignDivineWorkPublic[inputName] = false;
+                _dataModalAssignDivineWorkPublic.fileIds = _dataAssignDivineWorkPublicFile;
+                setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
+            }
+            else {
+                let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
+                _dataModalAssignDivineWorkPublic.fileIds = _dataAssignDivineWorkPublicFile;
+                setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
+            }
         }
     }
 
@@ -158,10 +173,8 @@ function ModalAssignDivineWorkPublic(props) {
     }, [props.dataModalAssignDivineWorkPublic])
 
     useEffect(() => {
-        if (doSomething === true) {
-            setDoSomething(false);
-        }
-    }, [doSomething])
+
+    }, [dataAssignDivineWorkPublic])
 
     return (
         <Modal size='lg' animation={false} show={props.activeModalAssignDivineWorkPublic} onHide={() => handleOnHide()} style={{ background: 'rgba(0, 0, 0, 0.6)' }}

@@ -34,6 +34,8 @@ import Divider from '@mui/material/Divider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PersonIcon from '@mui/icons-material/Person';
 import Person2Icon from '@mui/icons-material/Person2';
+import CheckIcon from '@mui/icons-material/Check';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import SendIcon from '@mui/icons-material/Send';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -43,6 +45,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import "../SCSS/DivineWork.scss";
 //modal
 import ModalAssignDivineWorkPublic from './ModalAssignDivineWorkPublic';
+import ModalCompleteInfoDivineWork from './ModalCompleteInfoDivineWork';
 //api
 import { assignDivineWork, getListTaskByDocSendId, getDocByDocId, getListDiscussByTaskId, createSendDiscuss } from '../../../services/taskService';
 import { getDate } from 'date-fns';
@@ -103,6 +106,10 @@ function ModalDivineWorkPublic(props) {
   const [showModalAssignDivineWorkPublic, setShowModalAssignDivineWorkPublic] = useState(false);
   const [dataModalAssignDivineWorkPublic, setDataModalAssignDivineWorkPublic] = useState({});
 
+  //config modal complete divine work
+  const [showModalCompleteInfoDivineWork, setShowModalCompleteInfoDivineWork] = useState(false);
+  const [dataModalCompleteInfoDivineWork, setDataModalCompleteInfoDivineWork] = useState({});
+
   //config backdrop when submit
   const [progress, setProgress] = useState(0);
   const [openBackdrop, setOpenBackdrop] = useState();
@@ -156,6 +163,9 @@ function ModalDivineWorkPublic(props) {
     //push obj to listDivineWork array
     let _listDivineWork = _.cloneDeep(listDivineWork);
     _listDivineWork.push(_objDivineWork);
+
+    _listDivineWork.sort((object, b) => (object.task_Clone === true ? -1 : 1));
+
     setListDivineWork(_listDivineWork);
     setDivineWork('');
   }
@@ -185,6 +195,12 @@ function ModalDivineWorkPublic(props) {
     setListDivineWork(_listDivineWork);
   }
 
+  //mở modal hoàn thành công việc
+  const completeInfoDivineWork = (e, itemValue) => {
+    e.stopPropagation();
+    console.log(itemValue);
+  }
+
   //mở modal giao việc
   const assignInfoDivineWork = (e, itemValue) => {
     e.stopPropagation();
@@ -197,10 +213,15 @@ function ModalDivineWorkPublic(props) {
     alert('user nhan viec khong rong');
   }
 
-  //tạo giá trị tiến trình trong quá trình gửi đề xuất
+  //tạo giá trị tiến trình trong quá trình gửi
   const handleOnUploadProgress = (progressEvent) => {
     let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
     setProgress(percentCompleted);
+  }
+
+  //hoàn thành công việc (docSend)
+  const handleCompleteListDivineWork = () => {
+
   }
 
   //lưu công việc đã tạo
@@ -215,39 +236,32 @@ function ModalDivineWorkPublic(props) {
         }
       })
       work.filesKeep = formArrayIdFileToKeep;
+      formArrayIdFileToKeep = new FormData();
     })
 
     let count = 0;
 
-    // console.log(arrayToHandleDivineWork);
+    setOpenBackdrop(true);
 
-    arrayToHandleDivineWork.forEach(item => {
-      const filesKeepObject = item.filesKeep;
-      for (let pair of filesKeepObject) {
-        console.log(pair[0] + ', ' + pair[1]);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2 * 1000));
+      for (let item of arrayToHandleDivineWork) {
+        let response = await assignDivineWork(item, handleOnUploadProgress);
+        if (response === 200) {
+          count++;
+          console.log(count);
+          if (count === arrayToHandleDivineWork.length) {
+            await new Promise(resolve => setTimeout(resolve, 1 * 1000));
+            toast.success('Lưu công việc thành công!');
+            setDoSomething(true);
+            setOpenBackdrop(false);
+          }
+        }
       }
-    })
 
-    //setOpenBackdrop(true);
-
-    // try {
-    //   await new Promise(resolve => setTimeout(resolve, 2 * 1000));
-    //   for (let item of arrayToHandleDivineWork) {
-    //     let response = await assignDivineWork(item, handleOnUploadProgress);
-    //     if (response === 200) {
-    //       count++;
-    //       if (count === arrayToHandleDivineWork.length) {
-    //         await new Promise(resolve => setTimeout(resolve, 1 * 1000));
-    //         toast.success('Lưu công việc thành công!');
-    //         setDoSomething(true);
-    //         setOpenBackdrop(false);
-    //       }
-    //     }
-    //   }
-
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   //gửi bình luận
@@ -362,7 +376,7 @@ function ModalDivineWorkPublic(props) {
   return (
     <>
       <CircularProgressWithBackdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} setProgressValue={setProgress} />
-      <Modal size='md' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false} >
+      <Modal size='md' className='mt-4' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false} >
         <Modal.Header closeButton>
           <Modal.Title style={{ width: '100%' }}>
             <div className='text-primary text-uppercase d-flex justify-content-center'>{`${dataModalDivineWorkPublic.documentSend.document_Send_Title} 
@@ -371,7 +385,7 @@ function ModalDivineWorkPublic(props) {
             </div>
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={listDivineWork.length !== 0 ? { overflowY: 'scroll', height: '720px' } : {}}>
           <div className="col-xs-12">
             <div className='row d-flex justify-content-center'>
               <div className='row col-8 p-0'>
@@ -391,19 +405,22 @@ function ModalDivineWorkPublic(props) {
                       {Object.entries(memoizedData).map(([itemKey, itemValue]) => {
                         let expire = getExpireDateTime(itemValue.task_DateEnd)
                         return (
-                          <Accordion key={`task-${itemKey}`} className={`list-title ${itemKey > 0 ? 'mt-3' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}>
+                          <Accordion key={`task-${itemValue.task_Id}`} className={`list-title ${itemKey > 0 ? 'mt-3' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}>
                             <div className='list-parent-task p-1'>
                               <AccordionSummary>
-                                <Typography className={`item child ${itemKey} text-uppercase text-white fw-bolder col-10 px-0`} sx={{ fontSize: '17px' }}>
+                                <Typography className={`item child ${itemValue.task_Id} text-uppercase text-white fw-bolder col-10 px-0`} sx={{ fontSize: '17px' }}>
                                   {itemValue.task_Title}
                                 </Typography>
                                 <Box className='text-white d-flex flex-row col-2 justify-content-end p-0'>
+                                  <Tooltip title="Công việc đã hoàn thành">
+                                    <CheckIcon className='mr-2' sx={{ width: '1.15em', height: '1.15em' }} onClick={(e) => completeInfoDivineWork(e, itemValue)} />
+                                  </Tooltip>
                                   <Tooltip title="Thông tin giao việc">
-                                    <AssignmentIndIcon className='mr-2' fontSize='medium' onClick={(e) => itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ? assignInfoDivineWork(e, itemValue) : editInfoDivineWork(e, itemValue)} />
+                                    <AssignmentIndIcon className='mr-2' sx={{ width: '1.15em', height: '1.15em' }} onClick={(e) => itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ? assignInfoDivineWork(e, itemValue) : editInfoDivineWork(e, itemValue)} />
                                   </Tooltip>
                                   {itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ?
                                     <Tooltip title="Xóa công việc">
-                                      <DeleteIcon fontSize='medium' onClick={(event) => deleteDivineWork(itemValue.task_Id, event)} />
+                                      <DeleteIcon sx={{ width: '1.15em', height: '1.15em' }} onClick={(event) => deleteDivineWork(itemValue.task_Id, event)} />
                                     </Tooltip>
                                     :
                                     ""
@@ -411,8 +428,7 @@ function ModalDivineWorkPublic(props) {
                                 </Box>
                               </AccordionSummary>
                             </div>
-                            <div className='list-children-task border border-top-0 rounded-bottom'
-                              style={itemValue.task_Person_Receive !== itemValue.task_Person_Send ? { overflowY: 'scroll', height: '500px' } : {}}>
+                            <div className='list-children-task border border-top-0 rounded-bottom'>
                               <AccordionDetails>
                                 <div className='task-content'>
                                   <Typography variant="h6">{itemValue.task_Content}</Typography>
@@ -447,7 +463,7 @@ function ModalDivineWorkPublic(props) {
                                   <div className='task-discuss mt-1' >
                                     {
                                       itemValue.task_Discuss.length !== 0 ?
-                                        <div className='discuss-show'>
+                                        <div className='discuss-show' style={itemValue.task_Person_Receive !== itemValue.task_Person_Send ? { overflow: 'hidden' } : {}}>
                                           {
                                             itemValue.task_Discuss.map((discuss, index) => {
                                               return (
@@ -469,7 +485,10 @@ function ModalDivineWorkPublic(props) {
                                           }
                                         </div>
                                         :
-                                        "Hiện chưa có bình luận."
+                                        <div className='empty-comment '>
+                                          <QuestionAnswerIcon sx={{ height: 70, width: 70, color: 'slategray' }} />
+                                          <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Chưa có bình luận nào.</Typography>
+                                        </div>
                                     }
 
                                     {
@@ -515,7 +534,7 @@ function ModalDivineWorkPublic(props) {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          {/* <LoadingButton sx={{ textTransform: 'none' }} endIcon={<SendIcon />} loading loadingPosition="end" variant="contained"> Lưu </LoadingButton> */}
+          <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="success" onClick={(e) => handleCompleteListDivineWork()}>Hoàn thành</ButtonMui>
           <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="primary" onClick={(e) => handleSaveListDivineWork()}>Lưu</ButtonMui>
           <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
         </Modal.Footer>
@@ -529,6 +548,12 @@ function ModalDivineWorkPublic(props) {
         dataModalDivineWorkPublic={dataModalDivineWorkPublic}
 
         setDataObjDivineWorkEdit={setObjDivineWorkEdit}
+      />
+
+      <ModalCompleteInfoDivineWork
+        activeModalCompleteInfoDivineWork={showModalCompleteInfoDivineWork}
+        closeModalCompleteInfoDivineWork={setShowModalCompleteInfoDivineWork}
+        dataModalCompleteInfoDivineWork={dataModalCompleteInfoDivineWork}
       />
     </>
   )
