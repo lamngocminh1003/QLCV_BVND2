@@ -1,3 +1,24 @@
+.responsive-screen-body-modal{
+    overflow-y: auto;
+    height: 720px;
+    .responsive-screen-body-modal:active::-webkit-scrollbar-thumb,
+    .responsive-screen-body-modal:hover::-webkit-scrollbar-thumb,
+    .responsive-screen-body-modal:focus::-webkit-scrollbar-thumb{
+        visibility: visible;
+    }
+
+    .responsive-screen-body-modal::-webkit-scrollbar-thumb{
+        background-color: red;
+        visibility: hidden;
+        border-radius: 0.45rem;
+        height: 26vh;
+    }
+
+    .responsive-screen-body-modal::-webkit-scrollbar{
+        width: 6px;
+    } 
+}
+
 .list-title{
     background: linear-gradient(90deg, rgb(255, 134, 249) 100%, rgba(250, 0, 135, 1) 100%); //5
     border-radius: .5rem!important;
@@ -95,6 +116,12 @@
 
 .modal-assign{
     top: 22px;
+}
+
+@media (min-width: 576px) {
+    .responsive-screen-body-modal{
+        height: 545px!important;
+    }
 }
 
 @media (min-width: 992px) { 

@@ -162,9 +162,7 @@ function ModalDivineWorkPublic(props) {
 
     //push obj to listDivineWork array
     let _listDivineWork = _.cloneDeep(listDivineWork);
-    _listDivineWork.push(_objDivineWork);
-
-    _listDivineWork.sort((object, b) => (object.task_Clone === true ? -1 : 1));
+    _listDivineWork.unshift(_objDivineWork);
 
     setListDivineWork(_listDivineWork);
     setDivineWork('');
@@ -385,7 +383,7 @@ function ModalDivineWorkPublic(props) {
             </div>
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={listDivineWork.length !== 0 ? { overflowY: 'scroll', height: '720px' } : {}}>
+        <Modal.Body className={listDivineWork.length !== 0 ? listDivineWork.length >= 6 ? "responsive-screen-body-modal" : "" : ""}>
           <div className="col-xs-12">
             <div className='row d-flex justify-content-center'>
               <div className='row col-8 p-0'>
@@ -445,8 +443,11 @@ function ModalDivineWorkPublic(props) {
                                     <Typography variant='subtitle1' color='#0e9193'>Thời hạn: </Typography>
                                     <Typography variant="subtitle1">
                                       {itemValue.task_DateStart && itemValue.task_DateEnd !== '' ?
-                                        `${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} 
-                                      (còn lại ${expire.days() !== 0 ? expire.days() + ' ngày' : expire.hours() + ' giờ'}) -`
+                                        moment() > moment(itemValue.task_DateEnd) ?
+                                          `${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} (hết hạn)`
+                                          :
+                                          `${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} 
+                                          (còn lại ${expire.days() !== 0 ? expire.days() + ' ngày' : expire.hours() + ' giờ'}) -`
                                         :
                                         ""
                                       }
@@ -469,7 +470,7 @@ function ModalDivineWorkPublic(props) {
                                               return (
                                                 <div className='warp-comment' key={index}>
                                                   <List sx={{ mt: 0, p: 0 }}>
-                                                    <ListItem sx={{ px: 0, paddingBottom: 0 }}>
+                                                    <ListItem sx={{ px: 0, paddingBottom: 0, overflowY: 'hidden' }}>
                                                       <ListItemAvatar sx={{ minWidth: '48px' }}><Avatar sx={{ bgcolor: 'rgb(160, 166, 255)', width: 36, height: 36 }}></Avatar></ListItemAvatar>
                                                       <Box className='discuss-box'>
                                                         <ListItemText className='dissucss-content'
