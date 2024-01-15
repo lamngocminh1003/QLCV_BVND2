@@ -123,12 +123,6 @@
     top: 22px;
 }
 
-@media (max-width: 768px) {
-    .responsive-screen-body-modal{
-        height: 545px!important;
-    }
-}
-
 @media (min-width: 992px) { 
     .modal-md{
         max-width: none!important;
@@ -137,7 +131,11 @@
     }
 }
 
-
+@media screen and (min-device-width: 576px) {
+    .responsive-screen-body-modal{
+        height: 545px!important;
+    }
+}
 
 
 .p-mention{

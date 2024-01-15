@@ -427,7 +427,7 @@ function ModalDivineWorkPublic(props) {
             </div>
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className={listDivineWork.length !== 0 ? listDivineWork.length >= 8 ? "responsive-screen-body-modal" : "" : ""}>
+        <Modal.Body className={listDivineWork.length !== 0 ? listDivineWork.length >= 6 ? "responsive-screen-body-modal sm" : "" : ""}>
           <div className="col-xs-12">
             <div className='row d-flex justify-content-center'>
               <div className='row col-8 p-0'>
