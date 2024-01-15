@@ -26,7 +26,7 @@ const createTaskCategory = async (category_Name) => {
 
 const assignDivineWork = async (dataObj, onUploadProgress) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/Task/CreateTaskByDocSendId?DocSendId=${dataObj.document_Send_Id}&UserReceive=${dataObj.userReceive_Id}&Title=${dataObj.task_Title}&Content=${dataObj.task_Content}&TimeStart=${dataObj.task_DateStart}&Deadline=${dataObj.task_DateEnd}&CatagoryId=${dataObj.task_Catagory_Id}`, dataObj.filesKeep,
+    return await axios.post(`${backendURL}/api/Task/CreateTaskByDocSendId?DocSendId=${dataObj.document_Send_Id}&UserReceive=${dataObj.userReceive_Id}&Title=${dataObj.task_Title}&Content=${dataObj.task_Content}&TimeStart=${dataObj.task_DateStart}&Deadline=${dataObj.task_DateEnd}&CatagoryId=${dataObj.task_Catagory_Id}`, dataObj.fileArray,
         {
             headers: {
                 "content-type": "multipart/form-data",

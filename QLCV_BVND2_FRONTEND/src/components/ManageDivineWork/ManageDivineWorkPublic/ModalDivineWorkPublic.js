@@ -226,6 +226,7 @@ function ModalDivineWorkPublic(props) {
   const handleSaveListDivineWork = async () => {
     //tìm những obj có key clone là true
     let arrayToHandleDivineWork = _.filter(listDivineWork, (item) => item.task_Clone === true);
+
     let formArrayIdFileToKeep = new FormData();
     arrayToHandleDivineWork.forEach(work => {
       work.fileIds.forEach(file => {
@@ -237,8 +238,36 @@ function ModalDivineWorkPublic(props) {
       formArrayIdFileToKeep = new FormData();
     })
 
-    let count = 0;
+    let formArrayFileToSend = new FormData();
+    arrayToHandleDivineWork.forEach(work => {
+      work.fileListState.forEach(file => {
+        formArrayFileToSend.append('files', file);
+      })
+      work.filesSend = formArrayFileToSend;
+      formArrayFileToSend = new FormData();
+    })
 
+    let formArrayFile = new FormData();
+
+    arrayToHandleDivineWork.forEach(work => {
+      for (let fileKeep of work.filesKeep.entries()) {
+        formArrayFile.append(fileKeep[0], fileKeep[1]);
+      }
+      for (let fileSend of work.filesSend.entries()) {
+        formArrayFile.append(fileSend[0], fileSend[1]);
+      }
+      work.fileArray = formArrayFile;
+      formArrayFile = new FormData();
+    })
+
+    // arrayToHandleDivineWork.forEach(item => {
+    //   const filesSendObject = item.fileArray;
+    //   for (let pair of filesSendObject) {
+    //     console.log(pair[0] + ', ' + pair[1]);
+    //   }
+    // })
+
+    let count = 0;
     setOpenBackdrop(true);
 
     try {
@@ -247,7 +276,6 @@ function ModalDivineWorkPublic(props) {
         let response = await assignDivineWork(item, handleOnUploadProgress);
         if (response === 200) {
           count++;
-          console.log(count);
           if (count === arrayToHandleDivineWork.length) {
             await new Promise(resolve => setTimeout(resolve, 1 * 1000));
             toast.success('Lưu công việc thành công!');
@@ -267,6 +295,16 @@ function ModalDivineWorkPublic(props) {
     const updatedList = listDiscuss.map(itemDiscuss => itemDiscuss.task_Id === taskId ? { ...itemDiscuss, task_DiscussContent: value } : itemDiscuss);
     setListDiscuss(updatedList);
   })
+
+  const handleClickAccordion = (event, expanded, taskId) => {
+    if (expanded === true) {
+      // Lấy thẻ div cần cuộn
+      let scrollableDiv = document.getElementById(`discuss ${taskId}`);
+
+      // Đặt giá trị scrollTop để đưa thanh cuộn xuống cuối thẻ div
+      scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+    }
+  }
 
   const handleOnChangeDiscussContent = (taskId, value) => {
     delayedHandleChange(taskId, value)
@@ -343,6 +381,12 @@ function ModalDivineWorkPublic(props) {
       foundTask.task_Discuss.push(lastListDiscussByTaskId);
     }
     setListDivineWork(_listDivineWork);
+
+    // Lấy thẻ div cần cuộn
+    let scrollableDiv = document.getElementById(`discuss ${taskId}`);
+
+    // Đặt giá trị scrollTop để đưa thanh cuộn xuống cuối thẻ div
+    scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
   }
 
   const handleGetDetailsTaskByDocSendId = async (docSendId) => {
@@ -383,7 +427,7 @@ function ModalDivineWorkPublic(props) {
             </div>
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className={listDivineWork.length !== 0 ? listDivineWork.length >= 6 ? "responsive-screen-body-modal" : "" : ""}>
+        <Modal.Body className={listDivineWork.length !== 0 ? listDivineWork.length >= 8 ? "responsive-screen-body-modal" : "" : ""}>
           <div className="col-xs-12">
             <div className='row d-flex justify-content-center'>
               <div className='row col-8 p-0'>
@@ -403,7 +447,9 @@ function ModalDivineWorkPublic(props) {
                       {Object.entries(memoizedData).map(([itemKey, itemValue]) => {
                         let expire = getExpireDateTime(itemValue.task_DateEnd)
                         return (
-                          <Accordion key={`task-${itemValue.task_Id}`} className={`list-title ${itemKey > 0 ? 'mt-3' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}>
+                          <Accordion key={`task-${itemValue.task_Id}`} className={`list-title ${itemKey > 0 ? 'mt-4' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}
+                            onChange={itemValue.task_Person_Receive !== itemValue.task_Person_Send ?
+                              itemValue.task_Discuss.length >= 5 ? (event, expanded) => handleClickAccordion(event, expanded, itemValue.task_Id) : null : null}>
                             <div className='list-parent-task p-1'>
                               <AccordionSummary>
                                 <Typography className={`item child ${itemValue.task_Id} text-uppercase text-white fw-bolder col-10 px-0`} sx={{ fontSize: '17px' }}>
@@ -464,7 +510,7 @@ function ModalDivineWorkPublic(props) {
                                   <div className='task-discuss mt-1' >
                                     {
                                       itemValue.task_Discuss.length !== 0 ?
-                                        <div className='discuss-show' style={itemValue.task_Person_Receive !== itemValue.task_Person_Send ? { overflow: 'hidden' } : {}}>
+                                        <div id={`discuss ${itemValue.task_Id}`} className={itemValue.task_Discuss.length >= 5 ? "discuss-show" : ""}>
                                           {
                                             itemValue.task_Discuss.map((discuss, index) => {
                                               return (

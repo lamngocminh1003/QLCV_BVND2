@@ -33,6 +33,11 @@
         background-color: #fff;
     }
 
+    .discuss-show{
+        height: 350px;
+        overflow-y: auto;
+    }
+
     .task-discuss{
         border-top: 1.8px solid silver;
         height: auto;
@@ -118,7 +123,7 @@
     top: 22px;
 }
 
-@media (min-width: 576px) {
+@media (max-width: 768px) {
     .responsive-screen-body-modal{
         height: 545px!important;
     }

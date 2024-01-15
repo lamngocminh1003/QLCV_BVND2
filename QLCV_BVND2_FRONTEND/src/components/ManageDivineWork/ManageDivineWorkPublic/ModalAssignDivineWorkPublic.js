@@ -82,6 +82,12 @@ function ModalAssignDivineWorkPublic(props) {
         if (newObjects.length !== 0) {
             let updatedList = [...fileListState, ...newObjects];
             setFileListState(updatedList);
+
+            let inputName = 'fileListState';
+
+            let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
+            _dataModalAssignDivineWorkPublic[inputName] = updatedList;
+            setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
         }
     }
 
@@ -90,6 +96,12 @@ function ModalAssignDivineWorkPublic(props) {
         //tìm vị trí của itemFile trong mảng updatedList, trả về vị trí chỉ mục, splice để xóa phần tử mà có vị trí chỉ mục đã trả về, 1 là chỉ xóa 1 phần tử khỏi mảng
         updatedList.splice(fileListState.indexOf(itemFile), 1);
         setFileListState(updatedList);
+
+        let inputName = 'fileListState';
+
+        let _dataModalAssignDivineWorkPublic = _.cloneDeep(dataAssignDivineWorkPublic);
+        _dataModalAssignDivineWorkPublic[inputName] = updatedList;
+        setDataAssignDivineWorkPublic(_dataModalAssignDivineWorkPublic);
     }
 
     const onClickCheckBox = (checked, idFile) => {
@@ -168,6 +180,9 @@ function ModalAssignDivineWorkPublic(props) {
         if (Object.keys(props.dataModalAssignDivineWorkPublic).length !== 0) {
             setDataAssignDivineWorkPublic(props.dataModalAssignDivineWorkPublic);
             setdataAssignDivineWorkPublicEdit(props.dataModalAssignDivineWorkPublic);
+            if (props.dataModalAssignDivineWorkPublic.fileListState) {
+                setFileListState(props.dataModalAssignDivineWorkPublic.fileListState);
+            }
             handleGetListUserInDepartment(user.account.departmentId);
         }
     }, [props.dataModalAssignDivineWorkPublic])
@@ -181,8 +196,13 @@ function ModalAssignDivineWorkPublic(props) {
             backdrop={'static'} keyboard={false} >
             <Modal.Header closeButton>
                 <Modal.Title><div className='text-primary text-uppercase'>Thông tin giao việc</div>
-                    <p style={{ margin: 0, marginLeft: '3px', fontFamily: 'sans-serif', fontSize: '15px', color: 'black' }}>{`Hiệu lực ${Dayjs(props.dataModalDivineWorkPublic.documentSend.document_Send_TimeStart).format('DD/MM/YYYY')} - ${Dayjs(props.dataModalDivineWorkPublic.documentSend.document_Send_Deadline).format('DD/MM/YYYY')}`}</p>
-                    {/* {console.log(props.dataModalDivineWorkPublic)} */}
+                    {props.dataModalDivineWorkPublic.documentSend.document_Send_TimeStart !== "" ?
+                        <p style={{ margin: 0, marginLeft: '3px', fontFamily: 'sans-serif', fontSize: '15px', color: 'black' }}>
+                            {`Hiệu lực ${Dayjs(props.dataModalDivineWorkPublic.documentSend.document_Send_TimeStart).format('DD/MM/YYYY')} - ${Dayjs(props.dataModalDivineWorkPublic.documentSend.document_Send_Deadline).format('DD/MM/YYYY')}`}
+                        </p>
+                        :
+                        null
+                    }
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
