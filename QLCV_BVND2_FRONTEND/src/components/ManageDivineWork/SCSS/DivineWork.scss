@@ -1,6 +1,11 @@
+.modal-md{
+    max-width: none!important;
+    width: 55%!important;
+    margin-top: 0px!important;
+}
+
 .responsive-screen-body-modal{
     overflow-y: auto;
-    height: 720px;
     .responsive-screen-body-modal:active::-webkit-scrollbar-thumb,
     .responsive-screen-body-modal:hover::-webkit-scrollbar-thumb,
     .responsive-screen-body-modal:focus::-webkit-scrollbar-thumb{
@@ -123,15 +128,13 @@
     top: 22px;
 }
 
-@media screen and (min-width: 1400px) { 
-    .modal-md{
-        max-width: none!important;
-        width: 55%!important;
-        margin-top: 0px!important;
+@media screen and (min-width: 1900px) { 
+    .responsive-screen-body-modal{
+        height: 720px;
     }
 }
 
-@media screen and (min-width: 1200px) and (max-width: 1399.98px) {
+@media screen and (min-width: 1055.98px) and (max-width: 1699.98px) {
     .responsive-screen-body-modal{
         height: 545px!important;
         background-color: red;

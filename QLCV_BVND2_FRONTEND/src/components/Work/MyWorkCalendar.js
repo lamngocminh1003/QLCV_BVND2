@@ -11,7 +11,13 @@ function MyWorkCalendar() {
                     <FullCalendar
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"
+                        headerToolbar={{
+                            start: 'today prev,next',
+                            center: 'title',
+                            right: 'dayGridDay,dayGridWeek,dayGridMonth'
+                        }}
                         locale={viLocale}
+                        height={"720px"}
                     />
                 </div>
             </div>
