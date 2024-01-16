@@ -183,7 +183,7 @@ function ModalAssignDivineWorkPublic(props) {
             if (props.dataModalAssignDivineWorkPublic.fileListState) {
                 setFileListState(props.dataModalAssignDivineWorkPublic.fileListState);
             }
-            console.log(props.dataModalAssignDivineWorkPublic);
+            //console.log(props.dataModalAssignDivineWorkPublic);
             handleGetListUserInDepartment(user.account.departmentId);
         }
     }, [props.dataModalAssignDivineWorkPublic])

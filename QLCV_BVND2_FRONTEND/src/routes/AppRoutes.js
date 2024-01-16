@@ -11,8 +11,8 @@ import ListDoc from "../components/User/ListDoc";
 import ListDocOfDepartment from "../components/User/ListDocOfDepartment";
 import TaskOutDepartment from "../components/Task/TaskOutDepartment";
 import TaskInDepartment from "../components/Task/TaskInDepartment";
+import MyWorkCalendar from "../components/Work/MyWorkCalendar";
 import Header from "../components/Nav/Header";
-
 
 const AppRoutes = (props) => {
   return (
@@ -32,6 +32,7 @@ const AppRoutes = (props) => {
           <PrivateRoutes path="/list-doc-department" component={ListDocOfDepartment} />
           <PrivateRoutes path="/task-out-department" component={TaskOutDepartment} />
           <PrivateRoutes path="/task-in-department" component={TaskInDepartment} />
+          <PrivateRoutes path="/my-to-do-list" component={MyWorkCalendar} />
           <Route path="*">
             <Page404 />{" "}
           </Route>

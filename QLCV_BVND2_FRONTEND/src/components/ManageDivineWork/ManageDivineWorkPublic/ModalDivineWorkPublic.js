@@ -117,6 +117,8 @@ function ModalDivineWorkPublic(props) {
   //config discuss
   let [listDiscuss, setListDiscuss] = useState([]);
 
+  let screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
   const getExpireDateTime = (task_DateEnd) => {
     const expiration = moment(task_DateEnd);
     // get the difference between the moments
@@ -276,6 +278,7 @@ function ModalDivineWorkPublic(props) {
         let response = await assignDivineWork(item, handleOnUploadProgress);
         if (response === 200) {
           count++;
+          console.log(count)
           if (count === arrayToHandleDivineWork.length) {
             await new Promise(resolve => setTimeout(resolve, 1 * 1000));
             toast.success('Lưu công việc thành công!');
@@ -427,7 +430,7 @@ function ModalDivineWorkPublic(props) {
             </div>
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className={listDivineWork.length !== 0 ? listDivineWork.length >= 6 ? "responsive-screen-body-modal sm" : "" : ""}>
+        <Modal.Body className={screenWidth >= 1900 ? listDivineWork.length !== 0 ? listDivineWork.length >= 8 ? "responsive-screen-body-modal" : "" : "" : listDivineWork.length !== 0 ? listDivineWork.length >= 6 ? "responsive-screen-body-modal" : "" : ""}>
           <div className="col-xs-12">
             <div className='row d-flex justify-content-center'>
               <div className='row col-8 p-0'>
@@ -452,13 +455,20 @@ function ModalDivineWorkPublic(props) {
                               itemValue.task_Discuss.length >= 5 ? (event, expanded) => handleClickAccordion(event, expanded, itemValue.task_Id) : null : null}>
                             <div className='list-parent-task p-1'>
                               <AccordionSummary>
-                                <Typography className={`item child ${itemValue.task_Id} text-uppercase text-white fw-bolder col-10 px-0`} sx={{ fontSize: '17px' }}>
+                                <Typography className={`item child ${itemValue.task_Id} text-uppercase text-white fw-bolder col-7 px-0`} sx={{ fontSize: '17px' }}>
                                   {itemValue.task_Title}
                                 </Typography>
-                                <Box className='text-white d-flex flex-row col-2 justify-content-end p-0'>
-                                  <Tooltip title="Công việc đã hoàn thành">
-                                    <CheckIcon className='mr-2' sx={{ width: '1.15em', height: '1.15em' }} onClick={(e) => completeInfoDivineWork(e, itemValue)} />
-                                  </Tooltip>
+                                <Typography className='col-4'>
+
+                                </Typography>
+                                <Box className='text-white d-flex flex-row col-1 justify-content-end p-0'>
+                                  {itemValue.task_State === 5 ?
+                                    <Tooltip title="Công việc đã hoàn thành">
+                                      <CheckIcon className='mr-2' sx={{ width: '1.15em', height: '1.15em' }} onClick={(e) => completeInfoDivineWork(e, itemValue)} />
+                                    </Tooltip>
+                                    :
+                                    null
+                                  }
                                   <Tooltip title="Thông tin giao việc">
                                     <AssignmentIndIcon className='mr-2' sx={{ width: '1.15em', height: '1.15em' }} onClick={(e) => itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ? assignInfoDivineWork(e, itemValue) : editInfoDivineWork(e, itemValue)} />
                                   </Tooltip>
