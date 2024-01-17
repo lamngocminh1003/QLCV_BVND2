@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
 import viLocale from '@fullcalendar/core/locales/vi';
+import 'moment/locale/vi'; // Import ngôn ngữ tiếng Việt
 //api
 import { getListTaskReceiveCurrentMonth } from '../../services/taskService';
 
@@ -11,6 +12,12 @@ function MyWorkCalendar() {
 
     const handleEventAddDateTimeTask = () => {
 
+    }
+
+    const addText = () => {
+        let myDiv = document.getElementById("fc-dom-1");
+        let newText = document.createTextNode("Lịch công việc");
+        myDiv.prepend("Lịch công việc ");
     }
 
     const handleGetTaskScheduleByUserId = async () => {
@@ -24,13 +31,12 @@ function MyWorkCalendar() {
         }))
 
         setEventList(events);
+        addText();
     }
 
     useEffect(() => {
         handleGetTaskScheduleByUserId();
     }, [])
-
-    const text = 'của tôi';
 
     return (
         <div className='container mt-3'>
@@ -41,12 +47,15 @@ function MyWorkCalendar() {
                         initialView="dayGridMonth"
                         headerToolbar={{
                             start: 'today prev,next',
-                            center: `title ${text}`,
+                            center: 'title',
                             right: 'dayGridDay,dayGridWeek,dayGridMonth'
                         }}
+                        buttonText={{ list: 'list' }}
+                        // titleFormat={}
                         locale={viLocale}
                         height={"80vh"}
                         dayMaxEvents={3}
+                        dayHeaderFormat={{ weekday: 'long' }}
                         events={[
                             { title: 'tập đọc', start: '2024-01-01' },
                             { title: 'tô màu', start: '2024-01-01' },
