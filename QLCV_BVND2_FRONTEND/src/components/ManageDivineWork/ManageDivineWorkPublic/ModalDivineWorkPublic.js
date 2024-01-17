@@ -118,7 +118,6 @@ function ModalDivineWorkPublic(props) {
   let [listDiscuss, setListDiscuss] = useState([]);
 
   let screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-  console.log(screenWidth);
 
   const getExpireDateTime = (task_DateEnd) => {
     const expiration = moment(task_DateEnd);
