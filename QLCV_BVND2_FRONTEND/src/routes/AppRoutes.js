@@ -32,7 +32,7 @@ const AppRoutes = (props) => {
           <PrivateRoutes path="/list-doc-department" component={ListDocOfDepartment} />
           <PrivateRoutes path="/task-out-department" component={TaskOutDepartment} />
           <PrivateRoutes path="/task-in-department" component={TaskInDepartment} />
-          <PrivateRoutes path="/my-to-do-list" component={MyWorkCalendar} />
+          <PrivateRoutes path="/my-to-do-list-schedule" component={MyWorkCalendar} />
           <Route path="*">
             <Page404 />{" "}
           </Route>
