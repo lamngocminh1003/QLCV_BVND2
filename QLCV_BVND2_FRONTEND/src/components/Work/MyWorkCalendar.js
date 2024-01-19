@@ -7,6 +7,13 @@ import viLocale from '@fullcalendar/core/locales/vi';
 import moment from 'moment';
 //mui them
 import Tooltip from '@mui/material/Tooltip';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+//css
+import "./SCSS/Work.scss";
 //api
 import { getListTaskReceiveCurrentMonth } from '../../services/taskService';
 
@@ -32,11 +39,12 @@ function MyWorkCalendar() {
             title: task.task_Title,
             start: task.task_DateStart,
             end: task.task_DateEnd,
-            backgroundColor: handleRenderColor(task.task_DateEnd, task.task_DateStart, task.task_State)
+            titleColor: 'black',
+            backgroundColor: handleRenderColor(task.task_DateEnd, task.task_DateStart, task.task_State),
+            borderColor: handleRenderColor(task.task_DateEnd, task.task_DateStart, task.task_State)
         }))
 
         setEventList(events);
-
     }
 
     const handleRenderColor = (end, start, state) => {
@@ -45,16 +53,18 @@ function MyWorkCalendar() {
         let today = moment();
 
         if (state === 5) {
-            return 'SeaGreen';
+            return '#66bb6a';
         }
         else if (endDay.diff(today, 'days') < 0) {
-            return 'red';
+            return '#ef5350';
         }
         else if (endDay.diff(today, 'days') === 0) {
-            return 'Orange';
+            //gần hết hạn
+            return '#ffa726';
         }
         else {
-            return '#3788d8';
+            //đang thực hiện
+            return '#4fc3f7';
         }
     }
 
@@ -63,58 +73,75 @@ function MyWorkCalendar() {
     }, [])
 
     return (
-        <div className='container sm mt-3' >
-            {/* <div className='instruction' style={{ width: '10%' }}>
-                <div className='instruction-processing' style={{ display: 'inline-flex', width: '100%' }}>
-                    <div className='instruction-processing-bg p-2' style={{ height: '1px', backgroundColor: '#3788d8' }}></div>
-                    <div className='instruction-text p-2' style={{ lineHeight: '0px' }}>Đang thực hiện</div>
+        <div className='sm mt-3' style={{ marginLeft: '70px' }}>
+            <div className='d-flex'>
+                <div className='instruction' style={{ padding: '0px', width: '10%' }} >
+                    <FormGroup>
+                        <Typography variant="body1" sx={{ color: '#e91e63', fontSize: '24px' }}>Bộ lọc</Typography>
+                        <FormControlLabel control={<Checkbox sx={{
+                            color: '#03a9f4',
+                            fill: '#03a9f4',
+                            '&.Mui-checked': {
+                                color: '#03a9f4',
+                            },
+                        }} />} label="Đang thực hiện" />
+
+                        <FormControlLabel control={<Checkbox sx={{
+                            color: '#ff9800',
+                            fill: '#ff9800',
+                            '&.Mui-checked': {
+                                color: '#ff9800',
+                            },
+                        }} />} label="Gần hết hạn" />
+
+                        <FormControlLabel control={<Checkbox sx={{
+                            color: 'red',
+                            fill: 'red',
+                            '&.Mui-checked': {
+                                color: 'red',
+                            },
+                        }} />} label="Hết hạn" />
+
+                        <FormControlLabel control={<Checkbox sx={{
+                            color: '#4caf50',
+                            fill: '#4caf50',
+                            '&.Mui-checked': {
+                                color: '#4caf50',
+                            },
+                        }} />} label="Hoàn thành" />
+
+                    </FormGroup>
                 </div>
+                <div className='schedule col-10' style={{ padding: '0px' }}>
+                    <FullCalendar
+                        plugins={[dayGridPlugin, listPlugin]}
+                        initialView="dayGridMonth"
+                        headerToolbar={{
+                            start: 'today prev,next',
+                            center: 'title',
+                            right: 'dayGridDay,dayGridWeek,dayGridMonth,listWeek',
+                        }}
+                        views={
+                            {
+                                dayGridMonth: { dayHeaderFormat: { weekday: 'long' } },
+                                dayGridWeek: { titleFormat: { year: 'numeric', month: 'long', day: 'numeric' } }
+                            }
+                        }
+                        eventDidMount={(event) => console.log(event)}
+                        //showNonCurrentDates={false}
+                        fixedWeekCount={false}
+                        displayEventEnd={true}
+                        eventTimeFormat={{
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false
+                        }}
+                        locale={viLocale}
+                        events={eventList}
 
-                <div className='instruction-nearing-deadline' style={{ display: 'inline-flex', width: '100%' }}>
-                    <div className='instruction-nearing-deadline-bg p-2' style={{ height: '1px', backgroundColor: 'orange' }}></div>
-                    <div className='instruction-text p-2' style={{ lineHeight: '0px' }}>Gần hết hạn</div>
+                    />
                 </div>
-
-                <div className='instruction-expired' style={{ display: 'inline-flex', width: '100%' }}>
-                    <div className='instruction-expired-bg p-2' style={{ height: '1px', backgroundColor: 'red' }}></div>
-                    <div className='instruction-text p-2' style={{ lineHeight: '0px' }}>Hết hạn</div>
-                </div>
-
-                <div className='instruction-complete' style={{ display: 'inline-flex', width: '100%' }}>
-                    <div className='instruction-complete-bg p-2' style={{ height: '1px', backgroundColor: 'SeaGreen' }}></div>
-                    <div className='instruction-text p-2' style={{ lineHeight: '0px' }}>Hoàn thành</div>
-                </div>
-            </div> */}
-            <div className='schedule'>
-                <FullCalendar
-                    plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
-                    initialView="dayGridMonth"
-                    headerToolbar={{
-                        start: 'today prev,next',
-                        center: 'title',
-                        right: 'dayGridDay,dayGridWeek,dayGridMonth,listWeek'
-                    }}
-                    views={
-                        { dayGridMonth: { dayMaxEventRows: 3, dayHeaderFormat: { weekday: 'long' } } }
-                    }
-
-                    eventMouseEnter={(event) => {
-                        <Tooltip title={event.event.title} arrow>
-
-                        </Tooltip>
-
-
-                    }}
-                    eventRender
-                    //showNonCurrentDates={false}
-                    fixedWeekCount={false}
-                    displayEventEnd={true}
-                    locale={viLocale}
-                    height={"90vh"}
-                    events={eventList}
-                />
             </div>
-
         </div>
     )
 }
