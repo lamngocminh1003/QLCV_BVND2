@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import _, { assign, cloneDeep, set } from 'lodash';
+import React, { useEffect, useState, useContext, useMemo } from 'react'
+import _, { assign, cloneDeep, forEach, set, debounce } from 'lodash';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../../context/UserContext';
 import moment from 'moment';
+import Dayjs from "dayjs";
 import { v4 as uuidv4 } from 'uuid';
+//function components
+import CircularProgressWithBackdrop from '../../FunctionComponents/ProgressBar/CircularProgressWithBackdrop';
 //bs5
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -12,6 +15,7 @@ import Form from 'react-bootstrap/Form';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from "@mui/material/Typography";
 import ButtonMui from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -30,6 +34,8 @@ import Divider from '@mui/material/Divider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PersonIcon from '@mui/icons-material/Person';
 import Person2Icon from '@mui/icons-material/Person2';
+import CheckIcon from '@mui/icons-material/Check';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import SendIcon from '@mui/icons-material/Send';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -39,8 +45,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import "../SCSS/DivineWork.scss";
 //modal
 import ModalAssignDivineWorkPublic from './ModalAssignDivineWorkPublic';
+import ModalCompleteInfoDivineWork from './ModalCompleteInfoDivineWork';
 //api
-import { assignDivineWork, getListTaskByDocSendId } from '../../../services/taskService';
+import { assignDivineWork, getListTaskByDocSendId, getDocByDocId, getListDiscussByTaskId, createSendDiscuss } from '../../../services/taskService';
 import { getDate } from 'date-fns';
 //cdn
 <style>
@@ -49,35 +56,68 @@ import { getDate } from 'date-fns';
 
 
 function ModalDivineWorkPublic(props) {
+  const { user } = useContext(UserContext);
+
+  // const dataModalDivineWorkPublicDefault = {
+  //   task_Id: '',
+  //   task_Title: '',
+  //   task_Content: '',
+  //   task_DateStart: '',
+  //   task_DateEnd: '',
+  //   task_Catagory_Id: '',
+  //   task_Catagory_Name: '',
+  //   userReceive_FullName: '',
+  //   userSend_FullName: '',
+  //   task_State: '',
+  // }
+
   const dataModalDivineWorkPublicDefault = {
-    task_Id: '',
-    task_Title: '',
-    task_Content: '',
-    task_DateStart: '',
-    task_DateEnd: '',
-    task_Catagory_Id: '',
-    task_Catagory_Name: '',
-    userReceive_FullName: '',
-    userSend_FullName: '',
-    task_State: '',
+    documentSend: {
+      document_Send_Id: '',
+      document_Send_Title: '',
+      document_Send_Content: '',
+      document_Send_Time: '',
+      document_Send_TimeStart: '',
+      document_Send_Deadline: '',
+      document_Send_UserSend: '',
+      userSend_FullName: '',
+      department_Name_Receive: '',
+      catagory_Name: '',
+      document_Send_Comment: '',
+      document_Send_State: '',
+      document_Send_TimeUpdate: '',
+      document_Send_Percent: '',
+    },
+    fileIds: [],
+    userIdReceive: ''
   }
 
-  const dataDiscussContentDefault = {
-    taskId: '',
-    discussContent: ''
-  }
+  //config this modal
+  const [dataModalDivineWorkPublic, setDataModalDivineWorkPublic] = useState(dataModalDivineWorkPublicDefault);
+  const [doSomething, setDoSomething] = useState(false);
 
+  //config divine work
   const [divineWork, setDivineWork] = useState(''); //1 divine work
   const [objDivineWork, setObjDivineWork] = useState({}); //1 obj divine work
   const [objDivineWorkEdit, setObjDivineWorkEdit] = useState(null); //1 obj divine work eidt dùng khi cập nhật thông tin của 1 task
-  const [listDivineWork, setListDivineWork] = useState([]); //1 list chứa 1 đống obj divine work
-
-  //config discuss
-  const [dataDiscussContent, setDataDiscussContent] = useState(dataDiscussContentDefault);
+  let [listDivineWork, setListDivineWork] = useState([]); //1 list chứa 1 đống obj divine work
 
   //config modal assign divine work public
   const [showModalAssignDivineWorkPublic, setShowModalAssignDivineWorkPublic] = useState(false);
   const [dataModalAssignDivineWorkPublic, setDataModalAssignDivineWorkPublic] = useState({});
+
+  //config modal complete divine work
+  const [showModalCompleteInfoDivineWork, setShowModalCompleteInfoDivineWork] = useState(false);
+  const [dataModalCompleteInfoDivineWork, setDataModalCompleteInfoDivineWork] = useState({});
+
+  //config backdrop when submit
+  const [progress, setProgress] = useState(0);
+  const [openBackdrop, setOpenBackdrop] = useState();
+
+  //config discuss
+  let [listDiscuss, setListDiscuss] = useState([]);
+
+  let screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
   const getExpireDateTime = (task_DateEnd) => {
     const expiration = moment(task_DateEnd);
@@ -98,6 +138,7 @@ function ModalDivineWorkPublic(props) {
     }
   }
 
+  //tạo công việc
   const createDivineWork = () => {
     //create new obj devine work
     let _objDivineWork = _.cloneDeep(objDivineWork);
@@ -113,14 +154,18 @@ function ModalDivineWorkPublic(props) {
       task_Catagory_Name: '',
       userReceive_Id: '',
       userReceive_FullName: '',
-      userSend_FullName: '',
+      userSend_Id: user.account.userId,
+      userSend_FullName: user.account.fullName,
+      task_file: '',
+      fileIds: dataModalDivineWorkPublic.fileIds,
       task_Clone: true
     }
     setObjDivineWork(_objDivineWork);
 
     //push obj to listDivineWork array
     let _listDivineWork = _.cloneDeep(listDivineWork);
-    _listDivineWork.push(_objDivineWork);
+    _listDivineWork.unshift(_objDivineWork);
+
     setListDivineWork(_listDivineWork);
     setDivineWork('');
   }
@@ -150,6 +195,13 @@ function ModalDivineWorkPublic(props) {
     setListDivineWork(_listDivineWork);
   }
 
+  //mở modal hoàn thành công việc
+  const completeInfoDivineWork = (e, itemValue) => {
+    e.stopPropagation();
+    console.log(itemValue);
+  }
+
+  //mở modal giao việc
   const assignInfoDivineWork = (e, itemValue) => {
     e.stopPropagation();
     setDataModalAssignDivineWorkPublic(itemValue)
@@ -161,49 +213,124 @@ function ModalDivineWorkPublic(props) {
     alert('user nhan viec khong rong');
   }
 
+  //tạo giá trị tiến trình trong quá trình gửi
+  const handleOnUploadProgress = (progressEvent) => {
+    let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+    setProgress(percentCompleted);
+  }
+
+  //hoàn thành công việc (docSend)
+  const handleCompleteListDivineWork = () => {
+
+  }
+
+  //lưu công việc đã tạo
   const handleSaveListDivineWork = async () => {
     //tìm những obj có key clone là true
     let arrayToHandleDivineWork = _.filter(listDivineWork, (item) => item.task_Clone === true);
+
+    let formArrayIdFileToKeep = new FormData();
+    arrayToHandleDivineWork.forEach(work => {
+      work.fileIds.forEach(file => {
+        if (file.not_Check !== true) {
+          formArrayIdFileToKeep.append('fileDocSends', file.file_Id);
+        }
+      })
+      work.filesKeep = formArrayIdFileToKeep;
+      formArrayIdFileToKeep = new FormData();
+    })
+
+    let formArrayFileToSend = new FormData();
+    arrayToHandleDivineWork.forEach(work => {
+      work.fileListState.forEach(file => {
+        formArrayFileToSend.append('files', file);
+      })
+      work.filesSend = formArrayFileToSend;
+      formArrayFileToSend = new FormData();
+    })
+
+    let formArrayFile = new FormData();
+
+    arrayToHandleDivineWork.forEach(work => {
+      for (let fileKeep of work.filesKeep.entries()) {
+        formArrayFile.append(fileKeep[0], fileKeep[1]);
+      }
+      for (let fileSend of work.filesSend.entries()) {
+        formArrayFile.append(fileSend[0], fileSend[1]);
+      }
+      work.fileArray = formArrayFile;
+      formArrayFile = new FormData();
+    })
+
+    // arrayToHandleDivineWork.forEach(item => {
+    //   const filesSendObject = item.fileArray;
+    //   for (let pair of filesSendObject) {
+    //     console.log(pair[0] + ', ' + pair[1]);
+    //   }
+    // })
+
     let count = 0;
-    for (let item of arrayToHandleDivineWork) {
-      let response = await assignDivineWork(item);
-      if (response === 200) {
-        count++;
-        if (count === arrayToHandleDivineWork.length) {
-          toast.success('Lưu công việc thành công!');
+    setOpenBackdrop(true);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2 * 1000));
+      for (let item of arrayToHandleDivineWork) {
+        let response = await assignDivineWork(item, handleOnUploadProgress);
+        if (response === 200) {
+          count++;
+          console.log(count)
+          if (count === arrayToHandleDivineWork.length) {
+            await new Promise(resolve => setTimeout(resolve, 1 * 1000));
+            toast.success('Lưu công việc thành công!');
+            setDoSomething(true);
+            setOpenBackdrop(false);
+          }
         }
       }
+
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  const handleOnChangeDiscussContent = (value, inputNameDiscussContent, taskId, inputNameTaskId, e) => {
-    if (dataDiscussContent.discussContent === '') {
-      if (dataDiscussContent.taskId === '') {
-        let _dataDiscussContent = _.cloneDeep(dataDiscussContent);
-        _dataDiscussContent[inputNameTaskId] = taskId;
-        _dataDiscussContent[inputNameDiscussContent] = value;
-        setDataDiscussContent(_dataDiscussContent);
-      }
-      else {
-        let _dataDiscussContent = _.cloneDeep(dataDiscussContent);
-        _dataDiscussContent[inputNameDiscussContent] = value;
-        setDataDiscussContent(_dataDiscussContent);
-      }
-    }
-    else {
-      let _dataDiscussContent = _.cloneDeep(dataDiscussContent);
-      _dataDiscussContent[inputNameTaskId] = taskId;
-      _dataDiscussContent[inputNameDiscussContent] = value;
-      setDataDiscussContent(_dataDiscussContent);
+  //gửi bình luận
+  const delayedHandleChange = debounce((taskId, value) => {
+    const updatedList = listDiscuss.map(itemDiscuss => itemDiscuss.task_Id === taskId ? { ...itemDiscuss, task_DiscussContent: value } : itemDiscuss);
+    setListDiscuss(updatedList);
+  })
+
+  const handleClickAccordion = (event, expanded, taskId) => {
+    if (expanded === true) {
+      // Lấy thẻ div cần cuộn
+      let scrollableDiv = document.getElementById(`discuss ${taskId}`);
+
+      // Đặt giá trị scrollTop để đưa thanh cuộn xuống cuối thẻ div
+      scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
     }
   }
 
-  const handleOnKeyDownDelete = (e) => {
-    const keyCode = e.keyCode || e.which;
-    if (keyCode === 8 && dataDiscussContent.discussContent === '') {
-      let _dataDiscussContent = _.cloneDeep(dataDiscussContent);
-      _dataDiscussContent.taskId = '';
-      setDataDiscussContent(_dataDiscussContent.taskId);
+  const handleOnChangeDiscussContent = (taskId, value) => {
+    delayedHandleChange(taskId, value)
+  }
+
+  const handleOnKeyDownEnter = (event, task_Id) => {
+    if (event.which === 13 && event.code === "Enter") {
+      event.preventDefault();
+      handleSendDiscuss(task_Id);
+    }
+  }
+
+  const handleSendDiscuss = async (task_Id) => {
+    let _listDiscuss = _.cloneDeep(listDiscuss);
+    let _listDiscussUpdated = _listDiscuss.filter(item => item.task_Id === task_Id);
+    let _listDivineWorkSendDisucss = _listDiscussUpdated[0];
+    let response = await createSendDiscuss(_listDivineWorkSendDisucss);
+    if (response === 200) {
+      handleGetListDicussAfterCreate(task_Id);
+      let inputAreaByTaskId = document.getElementById(`input-area ${task_Id}`);
+      const updatedList = listDiscuss.map(itemDiscuss => itemDiscuss.task_Id === task_Id ? { ...itemDiscuss, task_DiscussContent: '' } : itemDiscuss);
+      setListDiscuss(updatedList);
+      inputAreaByTaskId.textContent = '';
     }
   }
 
@@ -215,16 +342,73 @@ function ModalDivineWorkPublic(props) {
     document.execCommand('insertHTML', false, text)
   }
 
+  //lấy danh sách bình luận bởi từng id công việc
   const handleGetListTaskByDocSendId = async (docSendId) => {
     let resultListDivineWork = await getListTaskByDocSendId(docSendId);
-    setListDivineWork(resultListDivineWork);
+    let resultListDiscuss = []; //n list discuss
+    let discussByTask; //1 list discuss
+
+    if (resultListDivineWork.length !== 0) {
+      //gọi n lần api discuss và dùng biến resultListDiscuss hứng bằng cách đẩy vào array
+      for (let object of resultListDivineWork) {
+        discussByTask = await getListDiscussByTaskId(object.task_Id);
+        resultListDiscuss.push(discussByTask);
+      }
+
+      let resultListDivineWorkWithDiscuss = resultListDivineWork.map(task => {
+        let resultListDiscussForTask = resultListDiscuss.find(discuss => discuss.some(discuss => discuss.discuss_Task === task.task_Id));
+        return {
+          ...task,
+          task_Discuss: resultListDiscussForTask || []
+        };
+      });
+
+      setListDivineWork(resultListDivineWorkWithDiscuss);
+
+      let findTaskId = resultListDivineWorkWithDiscuss.map(task => ({ "task_Id": task.task_Id, "task_DiscussContent": '' }));
+      setListDiscuss(findTaskId);
+    }
+    else {
+      setListDivineWork(resultListDivineWork);
+    }
+  }
+
+  const handleGetListDicussAfterCreate = async (taskId) => {
+    let _listDivineWork = _.cloneDeep(listDivineWork);
+    let listDiscussByTaskId = await getListDiscussByTaskId(taskId);
+
+    let lastListDiscussByTaskId = listDiscussByTaskId[listDiscussByTaskId.length - 1];
+
+    let foundTask = _listDivineWork.find(task => task.task_Id === lastListDiscussByTaskId.discuss_Task);
+    if (foundTask) {
+      foundTask.task_Discuss.push(lastListDiscussByTaskId);
+    }
+    setListDivineWork(_listDivineWork);
+
+    // Lấy thẻ div cần cuộn
+    let scrollableDiv = document.getElementById(`discuss ${taskId}`);
+
+    // Đặt giá trị scrollTop để đưa thanh cuộn xuống cuối thẻ div
+    scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+  }
+
+  const handleGetDetailsTaskByDocSendId = async (docSendId) => {
+    let resultDetailsTask = await getDocByDocId(docSendId);
+    setDataModalDivineWorkPublic(resultDetailsTask);
   }
 
   useEffect(() => {
     if (props.taskSendId.length !== 0) {
       handleGetListTaskByDocSendId(props.taskSendId);
+      handleGetDetailsTaskByDocSendId(props.taskSendId);
     }
-  }, [props.taskSendId])
+
+    if (doSomething === true) {
+      handleGetListTaskByDocSendId(props.taskSendId);
+      handleGetDetailsTaskByDocSendId(props.taskSendId);
+      setDoSomething(false);
+    }
+  }, [props.taskSendId, doSomething])
 
   useEffect(() => {
     if (objDivineWorkEdit !== null) {
@@ -232,15 +416,21 @@ function ModalDivineWorkPublic(props) {
     }
   }, [objDivineWorkEdit])
 
+  const memoizedData = useMemo(() => listDivineWork, [listDivineWork]);
+
   return (
     <>
-      <Modal size='lg' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false} >
+      <CircularProgressWithBackdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} setProgressValue={setProgress} />
+      <Modal size='md' className='mt-4' show={props.activeModalDivineWorkPublic} onHide={() => handleHideModal()} backdrop={'static'} keyboard={false} >
         <Modal.Header closeButton>
-          <Modal.Title>
-            <div className='text-primary text-uppercase'>{`Công việc cho ${props.taskSendTitle}`}</div>
+          <Modal.Title style={{ width: '100%' }}>
+            <div className='text-primary text-uppercase d-flex justify-content-center'>{`${dataModalDivineWorkPublic.documentSend.document_Send_Title} 
+              (${Dayjs(dataModalDivineWorkPublic.documentSend.document_Send_TimeStart).format('DD/MM/YYYY')} - 
+              ${Dayjs(dataModalDivineWorkPublic.documentSend.document_Send_Deadline).format('DD/MM/YYYY')})`}
+            </div>
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className={screenWidth >= 1900 ? listDivineWork.length !== 0 ? listDivineWork.length >= 8 ? "responsive-screen-body-modal" : "" : "" : listDivineWork.length !== 0 ? listDivineWork.length >= 6 ? "responsive-screen-body-modal" : "" : ""}>
           <div className="col-xs-12">
             <div className='row d-flex justify-content-center'>
               <div className='row col-8 p-0'>
@@ -257,22 +447,34 @@ function ModalDivineWorkPublic(props) {
                   {listDivineWork.length !== 0 ?
                     <>
                       <Typography variant="h6" color='red' sx={{ mb: 0.8 }}>Danh sách công việc</Typography>
-                      {Object.entries(listDivineWork).map(([itemKey, itemValue]) => {
+                      {Object.entries(memoizedData).map(([itemKey, itemValue]) => {
                         let expire = getExpireDateTime(itemValue.task_DateEnd)
                         return (
-                          <Accordion key={`task-${itemKey}`} className={`list-title ${itemKey > 0 ? 'mt-3' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}>
+                          <Accordion key={`task-${itemValue.task_Id}`} className={`list-title ${itemKey > 0 ? 'mt-4' : ''}`} sx={{ wordBreak: 'break-all', boxShadow: 3 }}
+                            onChange={itemValue.task_Person_Receive !== itemValue.task_Person_Send ?
+                              itemValue.task_Discuss.length >= 5 ? (event, expanded) => handleClickAccordion(event, expanded, itemValue.task_Id) : null : null}>
                             <div className='list-parent-task p-1'>
                               <AccordionSummary>
-                                <Typography className={`item child ${itemKey} text-uppercase text-white fw-bolder col-10 px-0`} sx={{ fontSize: '17px' }}>
+                                <Typography className={`item child ${itemValue.task_Id} text-uppercase text-white fw-bolder col-7 px-0`} sx={{ fontSize: '17px' }}>
                                   {itemValue.task_Title}
                                 </Typography>
-                                <Box className='text-white d-flex flex-row col-2 justify-content-end p-0'>
+                                <Typography className='col-4'>
+
+                                </Typography>
+                                <Box className='text-white d-flex flex-row col-1 justify-content-end p-0'>
+                                  {itemValue.task_State === 5 ?
+                                    <Tooltip title="Công việc đã hoàn thành">
+                                      <CheckIcon className='mr-2' sx={{ width: '1.15em', height: '1.15em' }} onClick={(e) => completeInfoDivineWork(e, itemValue)} />
+                                    </Tooltip>
+                                    :
+                                    null
+                                  }
                                   <Tooltip title="Thông tin giao việc">
-                                    <AssignmentIndIcon className='mr-2' fontSize='medium' onClick={(e) => itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ? assignInfoDivineWork(e, itemValue) : editInfoDivineWork(e, itemValue)} />
+                                    <AssignmentIndIcon className='mr-2' sx={{ width: '1.15em', height: '1.15em' }} onClick={(e) => itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ? assignInfoDivineWork(e, itemValue) : editInfoDivineWork(e, itemValue)} />
                                   </Tooltip>
                                   {itemValue.userReceive_FullName === "" || itemValue.task_Clone === true ?
                                     <Tooltip title="Xóa công việc">
-                                      <DeleteIcon fontSize='medium' onClick={(event) => deleteDivineWork(itemValue.task_Id, event)} />
+                                      <DeleteIcon sx={{ width: '1.15em', height: '1.15em' }} onClick={(event) => deleteDivineWork(itemValue.task_Id, event)} />
                                     </Tooltip>
                                     :
                                     ""
@@ -280,9 +482,8 @@ function ModalDivineWorkPublic(props) {
                                 </Box>
                               </AccordionSummary>
                             </div>
-                            <div className='list-children-task border border-top-0 rounded-bottom' style={{ backgroundColor: "#fff" }}>
+                            <div className='list-children-task border border-top-0 rounded-bottom'>
                               <AccordionDetails>
-
                                 <div className='task-content'>
                                   <Typography variant="h6">{itemValue.task_Content}</Typography>
                                 </div>
@@ -298,8 +499,11 @@ function ModalDivineWorkPublic(props) {
                                     <Typography variant='subtitle1' color='#0e9193'>Thời hạn: </Typography>
                                     <Typography variant="subtitle1">
                                       {itemValue.task_DateStart && itemValue.task_DateEnd !== '' ?
-                                        `${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} 
-                                      (còn lại ${expire.days() !== 0 ? expire.days() + ' ngày' : expire.hours() + ' giờ'}) -`
+                                        moment() > moment(itemValue.task_DateEnd) ?
+                                          `${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} (hết hạn)`
+                                          :
+                                          `${moment(itemValue.task_DateStart).format('L')} - ${moment(itemValue.task_DateEnd).format('L')} 
+                                          (còn lại ${expire.days() !== 0 ? expire.days() + ' ngày' : expire.hours() + ' giờ'}) -`
                                         :
                                         ""
                                       }
@@ -312,59 +516,65 @@ function ModalDivineWorkPublic(props) {
                                   </Stack>
                                 </div>
 
-                                <div className='task-discuss mt-1'>
-                                  <List sx={{ mt: 0 }}>
-                                    <ListItem sx={{ px: 0 }}>
-                                      <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
-                                      <Box className='discuss-box'>
-                                        <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận' />
-                                      </Box>
-                                    </ListItem>
+                                {itemValue.task_Person_Receive !== itemValue.task_Person_Send ?
+                                  <div className='task-discuss mt-1' >
+                                    {
+                                      itemValue.task_Discuss.length !== 0 ?
+                                        <div id={`discuss ${itemValue.task_Id}`} className={itemValue.task_Discuss.length >= 5 ? "discuss-show" : ""}>
+                                          {
+                                            itemValue.task_Discuss.map((discuss, index) => {
+                                              return (
+                                                <div className='warp-comment' key={index}>
+                                                  <List sx={{ mt: 0, p: 0 }}>
+                                                    <ListItem sx={{ px: 0, paddingBottom: 0, overflowY: 'hidden' }}>
+                                                      <ListItemAvatar sx={{ minWidth: '48px' }}><Avatar sx={{ bgcolor: 'rgb(160, 166, 255)', width: 36, height: 36 }}></Avatar></ListItemAvatar>
+                                                      <Box className='discuss-box'>
+                                                        <ListItemText className='dissucss-content'
+                                                          primary={discuss.userSend_Fullname}
+                                                          secondary={discuss.discuss_Content} />
+                                                      </Box>
+                                                    </ListItem>
+                                                    <span className='discuss-time-send'>{moment(discuss.discuss_Time).startOf().fromNow()}</span>
+                                                  </List>
+                                                </div>
+                                              )
+                                            })
+                                          }
+                                        </div>
+                                        :
+                                        <div className='empty-comment '>
+                                          <QuestionAnswerIcon sx={{ height: 70, width: 70, color: 'slategray' }} />
+                                          <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Chưa có bình luận nào.</Typography>
+                                        </div>
+                                    }
 
-                                    <ListItem sx={{ px: 0 }}>
-                                      <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
-                                      <Box className='discuss-box'>
-                                        <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận bình luận' />
-                                      </Box>
-                                    </ListItem>
-
-                                    <ListItem sx={{ px: 0 }}>
-                                      <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
-                                      <Box className='discuss-box'>
-                                        <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='bình luận bình luận bình luận' />
-                                      </Box>
-                                    </ListItem>
-
-                                    <ListItem sx={{ px: 0 }}>
-                                      <ListItemAvatar sx={{ minWidth: '52px' }}><Avatar alt="Profile Picture" sx={{ bgcolor: 'rgb(160, 166, 255)' }}></Avatar></ListItemAvatar>
-                                      <Box className='discuss-box'>
-                                        <ListItemText className='dissucss-content' primary='Lê Phú Quí' secondary='luận bình luận bình luận bình luận luận bình luận bình luận bình luận' />
-                                      </Box>
-                                    </ListItem>
-                                  </List>
-
-                                  <div className='task-discuss-input mt-2 d-flex '>
-                                    <div className='input-area'>
-                                      <div
-                                        className='child-1'
-                                        contentEditable='true'
-                                        aria-label='Viết bình luận...'
-                                        onInput={(e) => handleOnChangeDiscussContent(e.currentTarget.textContent, 'discussContent', itemValue.task_Id, 'taskId', e)}
-                                        onKeyPress={(e) => handleOnKeyDownDelete(e)}
-                                        onPaste={(e) => pasteAsPlainText(e)}
-                                      >
-                                      </div>
-                                    </div>
-                                    <div className='input-send-icon' style={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}>
-                                      <IconButton
-                                        color={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? 'default' : 'primary'}
-                                        disabled={dataDiscussContent.discussContent === '' || dataDiscussContent.taskId !== itemValue.task_Id ? true : false} size="large"
-                                      >
-                                        <SendIcon />
-                                      </IconButton>
-                                    </div>
+                                    {
+                                      listDiscuss.map((itemDiscuss, index) => {
+                                        if (itemDiscuss.task_Id === itemValue.task_Id) {
+                                          return (
+                                            <div className='task-discuss-input d-flex ' key={index}>
+                                              <div className='input-area'>
+                                                <div className={`child-1 ${itemDiscuss.task_Id}`} id={`input-area ${itemDiscuss.task_Id}`} contentEditable='true' aria-label='Viết bình luận...' onPaste={(e) => pasteAsPlainText(e)}
+                                                  onInput={(e) => handleOnChangeDiscussContent(itemDiscuss.task_Id, e.currentTarget.textContent)} onKeyPress={(e) => handleOnKeyDownEnter(e, itemValue.task_Id)}>
+                                                </div>
+                                              </div>
+                                              <div className='input-send-icon' style={itemDiscuss.task_DiscussContent === "" ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}>
+                                                <IconButton color={itemDiscuss.task_DiscussContent === "" ? 'default' : 'primary'}
+                                                  disabled={itemDiscuss.task_DiscussContent === "" ? true : false} size="large" onClick={() => handleSendDiscuss(itemDiscuss.task_Id)}>
+                                                  <SendIcon />
+                                                </IconButton>
+                                              </div>
+                                            </div>)
+                                        }
+                                        else {
+                                          return null
+                                        }
+                                      })
+                                    }
                                   </div>
-                                </div>
+                                  :
+                                  null
+                                }
                               </AccordionDetails>
                             </div>
 
@@ -381,6 +591,7 @@ function ModalDivineWorkPublic(props) {
           </div>
         </Modal.Body>
         <Modal.Footer>
+          <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="success" onClick={(e) => handleCompleteListDivineWork()}>Hoàn thành</ButtonMui>
           <ButtonMui sx={{ textTransform: 'none' }} variant="contained" color="primary" onClick={(e) => handleSaveListDivineWork()}>Lưu</ButtonMui>
           <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
         </Modal.Footer>
@@ -391,8 +602,15 @@ function ModalDivineWorkPublic(props) {
         closeModalAssignDivineWorkPublic={setShowModalAssignDivineWorkPublic}
         dataModalAssignDivineWorkPublic={dataModalAssignDivineWorkPublic}
         setDataModalAssignDivineWorkPublic={setDataModalAssignDivineWorkPublic}
+        dataModalDivineWorkPublic={dataModalDivineWorkPublic}
 
         setDataObjDivineWorkEdit={setObjDivineWorkEdit}
+      />
+
+      <ModalCompleteInfoDivineWork
+        activeModalCompleteInfoDivineWork={showModalCompleteInfoDivineWork}
+        closeModalCompleteInfoDivineWork={setShowModalCompleteInfoDivineWork}
+        dataModalCompleteInfoDivineWork={dataModalCompleteInfoDivineWork}
       />
     </>
   )

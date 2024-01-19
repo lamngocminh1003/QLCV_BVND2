@@ -24,15 +24,27 @@ const createTaskCategory = async (category_Name) => {
         })
 }
 
-const assignDivineWork = async (dataObj) => {
+const assignDivineWork = async (dataObj, onUploadProgress) => {
     const token = localStorage.getItem("jwt");
-    return await axios.post(`${backendURL}/api/Task/CreateTaskByDocSendId?DocSendId=${dataObj.document_Send_Id}&UserReceive=${dataObj.userReceive_Id}&Title=${dataObj.task_Title}&Content=${dataObj.task_Content}&TimeStart=${dataObj.task_DateStart}&Deadline=${dataObj.task_DateEnd}&CatagoryId=${dataObj.task_Catagory_Id}`,
-        dataObj.taskFile, {
-        headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-        }
-    })
+    return await axios.post(`${backendURL}/api/Task/CreateTaskByDocSendId?DocSendId=${dataObj.document_Send_Id}&UserReceive=${dataObj.userReceive_Id}&Title=${dataObj.task_Title}&Content=${dataObj.task_Content}&TimeStart=${dataObj.task_DateStart}&Deadline=${dataObj.task_DateEnd}&CatagoryId=${dataObj.task_Catagory_Id}`, dataObj.fileArray,
+        {
+            headers: {
+                "content-type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            },
+            onUploadProgress,
+        })
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.data
+        })
+}
+
+const createSendDiscuss = async (dataObj) => {
+    const config = createConfig();
+    return await axios.post(`${backendURL}/api/Task/CreateSendDiscuss?TaskId=${dataObj.task_Id}&Content=${dataObj.task_DiscussContent}`, '', config)
         .then(function (response) {
             return response.status
         })
@@ -74,6 +86,39 @@ const getListTaskByDocSendId = async (docSendId) => {
         })
 }
 
+const getDocByDocId = async (docSendId) => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/DocumentSend/GetDocByDocId/${docSendId}`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
+const getListDiscussByTaskId = async (TaskId) => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/Task/GetListDiscussByTaskId/${TaskId}`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
+const getListTaskReceiveCurrentMonth = async () => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/Task/GetListTaskReceiveCurrentMonth`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 const updateTaskStateSeen = async (taskId) => {
     const config = createConfig();
     return await axios.put(`${backendURL}/api/Task/UpdateSendTaskTrue?TaskId=${taskId}`, '', config)
@@ -88,7 +133,7 @@ const updateTaskStateSeen = async (taskId) => {
 
 
 export {
-    createTaskCategory, assignDivineWork,
-    getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId,
+    createTaskCategory, assignDivineWork, createSendDiscuss,
+    getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId, getDocByDocId, getListDiscussByTaskId, getListTaskReceiveCurrentMonth,
     updateTaskStateSeen
 };

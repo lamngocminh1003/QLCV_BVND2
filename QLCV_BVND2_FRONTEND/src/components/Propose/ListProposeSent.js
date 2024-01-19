@@ -8,7 +8,7 @@ import Link from '@mui/material/Link';
 //modal
 import ModalProposeSent from '../ManagePropose/ManageProposeSent/ModalProposeSent';
 import ModalProposeCheck from '../ManagePropose/ManageProposeSent/ModalProposeCheck';
-import ModalProposeEdit from '../ManagePropose/ManageProposeSent/ModalProposeCheck';
+import ModalProposeEdit from '../ManagePropose/ManageProposeSent/ModalProposeEdit';
 import ModalProposeDelete from '../ManagePropose/ManageProposeSent/ModalProposeDelete';
 //api
 import { getProposeSend } from '../../services/proposeService';
@@ -122,6 +122,10 @@ function ListProposeSent() {
     //config modal propose sent
     const [showModalProposeSent, setShowModalProposeSent] = useState(false);
 
+    //config modal propose edit
+    const [showModalProposeEdit, setShowModalProposeEdit] = useState(false);
+    const [proposeIdModalProposeEdit, setProposeIdModalProposeEdit] = useState(null);
+
     //config modal propose check
     const [showModalProposeCheck, setShowModalProposeCheck] = useState(false);
     const [proposeIdModalProposeCheck, setProposeIdModalProposeCheck] = useState("");
@@ -133,6 +137,8 @@ function ListProposeSent() {
     const setModalProposeAction = (itemListPropose) => {
         if (itemListPropose.document_Incomming_State === 0 || itemListPropose.document_Incomming_State === 1 || itemListPropose.document_Incomming_State === 2) {
             //hiện modal chỉnh sửa
+            setProposeIdModalProposeEdit(itemListPropose.document_Incomming_Id);
+            setShowModalProposeEdit(true);
         }
         else if (itemListPropose.document_Incomming_State === 3 || itemListPropose.document_Incomming_State === 5 || itemListPropose.document_Incomming_State === 6) {
             //hiện modal check
@@ -142,6 +148,10 @@ function ListProposeSent() {
         else {
             //hiện modal moveup
         }
+    }
+
+    const confirmDeletePropose = (params, event) => {
+
     }
 
     const fetchAllPropose = async () => {
@@ -202,6 +212,7 @@ function ListProposeSent() {
                                         rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
                                         getRowId={(row) => row.document_Incomming_Id}
                                         onRowDoubleClick={(value) => setModalProposeAction(value.row)}
+                                        onCellKeyDown={(params, event) => confirmDeletePropose(params, event)}
                                         sx={{
                                             '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
                                                 py: '10px',
@@ -222,6 +233,13 @@ function ListProposeSent() {
                 activeModalProposeSent={showModalProposeSent}
                 closeModalProposeSent={setShowModalProposeSent}
                 makeModalProposeSentDoing={setDone}
+            />
+
+            <ModalProposeEdit
+                activeModalProposeEdit={showModalProposeEdit}
+                closeModalProposeEdit={setShowModalProposeEdit}
+                sendIdToModalProposeEdit={proposeIdModalProposeEdit}
+                makeModalProposeEditDoing={setDone}
             />
 
             <ModalProposeCheck

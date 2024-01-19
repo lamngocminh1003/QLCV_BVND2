@@ -88,7 +88,7 @@ function DocSendOutDepartment() {
 
     //config modal divine work public
     const [taskId, setTaskId] = useState('');
-    const [taskTitle, setTaskTitle] = useState('');
+
     const [showModalDivineWorkPublic, setShowModalDivineWorkPublic] = useState(false);
 
     const getAllDocSendPublic = async () => {
@@ -135,7 +135,7 @@ function DocSendOutDepartment() {
                                         pagination={true}
                                         pageSize={pageSize}
                                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                                        onRowDoubleClick={(value) => [setTaskId(value.row.document_Send_Id), setTaskTitle(value.row.document_Send_Title), setShowModalDivineWorkPublic(true)]}
+                                        onRowDoubleClick={(value) => [setTaskId(value.row.document_Send_Id), setShowModalDivineWorkPublic(true)]}
                                         rowsPerPageOptions={[5, 10, 15, 20, 30, 50, 100]}
                                         getRowId={(row) => row.document_Send_Id}
                                         // onRowDoubleClick={(value) => btnActiveModalProposeActionInfo(value.row)}
@@ -157,7 +157,6 @@ function DocSendOutDepartment() {
 
             <ModalDivineWorkPublic
                 taskSendId={taskId}
-                taskSendTitle={taskTitle}
                 activeModalDivineWorkPublic={showModalDivineWorkPublic}
                 closeModalDivineWorkPublic={setShowModalDivineWorkPublic}
             />
