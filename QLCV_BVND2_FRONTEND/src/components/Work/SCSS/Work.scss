@@ -1,8 +1,31 @@
 .fc-event{
     font-size: 14.5px;
+    cursor: pointer;
     .fc-event-title{
         color: black;
-    
     }
+}
+
+a.fc-daygrid-dot-event{
+    color: black;
+}
+
+.tooltip-fake{
+    background-color: #955fb5;
+    z-index: 100;
+    border-radius: 5px;
+    border: 2px solid #955fb5;
+    padding: 5px;
+}
+
+.tooltip-fake::after{
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent #955fb5 transparent;
 }
 

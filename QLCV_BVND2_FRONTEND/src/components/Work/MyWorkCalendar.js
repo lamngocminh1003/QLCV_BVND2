@@ -5,7 +5,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import viLocale from '@fullcalendar/core/locales/vi';
 import moment from 'moment';
-//mui them
+//mui theme
 import Tooltip from '@mui/material/Tooltip';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -15,11 +15,13 @@ import TextField from '@mui/material/TextField';
 //css
 import "./SCSS/Work.scss";
 //api
-import { getListTaskReceiveCurrentMonth } from '../../services/taskService';
+import { getListTaskReceiveCurrentMonth, getByTaskId } from '../../services/taskService';
 
 function MyWorkCalendar() {
     const [workCalenderList, setWorkCalenderList] = useState([]);
     const [eventList, setEventList] = useState([]);
+
+    const [tooltipEvent, setTooltipEvent] = useState();
 
     const handleEventAddDateTimeTask = () => {
 
@@ -37,6 +39,7 @@ function MyWorkCalendar() {
         let events = responseWorkCalenderList.map((task) => ({
             id: task.task_Id,
             title: task.task_Title,
+            description: task.task_Content,
             start: task.task_DateStart,
             end: task.task_DateEnd,
             titleColor: 'black',
@@ -66,6 +69,30 @@ function MyWorkCalendar() {
             //đang thực hiện
             return '#4fc3f7';
         }
+    }
+
+    const handleMouseEnter = (info) => {
+        const start = info.event.start;
+        const end = info.event.end;
+        const title = info.event.title;
+        const description = info.event._def.extendedProps.description;
+
+        // Lấy vị trí của sự kiện
+        const rect = info.el.getBoundingClientRect();
+        const top = rect.top + window.scrollY + 33;
+        const left = rect.left + window.scrollX;
+        const right = rect.right + window.scrollX;
+
+        // Hiển thị Tooltip với vị trí tùy thuộc vào ngày và vị trí của sự kiện
+        setTooltipEvent({ eventDateStart: start, eventDateEnd: end, eventTitle: title, eventDescription: description, top, left, right });
+    }
+
+    const handleMouseLeave = () => {
+        setTooltipEvent(null);
+    }
+
+    const handleDateClick = (info) => {
+        let taskId = info.id;
     }
 
     useEffect(() => {
@@ -127,7 +154,6 @@ function MyWorkCalendar() {
                                 dayGridWeek: { titleFormat: { year: 'numeric', month: 'long', day: 'numeric' } }
                             }
                         }
-                        eventDidMount={(event) => console.log(event)}
                         //showNonCurrentDates={false}
                         fixedWeekCount={false}
                         displayEventEnd={true}
@@ -138,9 +164,19 @@ function MyWorkCalendar() {
                         }}
                         locale={viLocale}
                         events={eventList}
-
+                        eventMouseEnter={handleMouseEnter}
+                        eventMouseLeave={handleMouseLeave}
+                        eventClick={handleDateClick}
                     />
                 </div>
+                {tooltipEvent && (
+                    <Tooltip>
+                        <div className='tooltip-fake' style={{ top: tooltipEvent.top, left: tooltipEvent.left, position: 'absolute' }}>
+                            <Typography sx={{ color: '#fff', textAlign: 'center' }}>{tooltipEvent.eventTitle}</Typography>
+                            <Typography sx={{ color: '#fff' }}>{`${moment(tooltipEvent.eventDateStart).format('DD/MM/YYYY HH:mm')} - ${moment(tooltipEvent.eventDateEnd).format('DD/MM/YYYY HH:mm')}`}</Typography>
+                        </div>
+                    </Tooltip>
+                )}
             </div>
         </div>
     )

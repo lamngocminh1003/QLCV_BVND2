@@ -119,6 +119,17 @@ const getListTaskReceiveCurrentMonth = async () => {
         })
 }
 
+const getByTaskId = async (id) => {
+    const config = createConfig();
+    return await axios.get(`${backendURL}/api/Task/GetByTaskId/${id}`, config)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error.response.status
+        })
+}
+
 const updateTaskStateSeen = async (taskId) => {
     const config = createConfig();
     return await axios.put(`${backendURL}/api/Task/UpdateSendTaskTrue?TaskId=${taskId}`, '', config)
@@ -132,6 +143,6 @@ const updateTaskStateSeen = async (taskId) => {
 
 export {
     createTaskCategory, assignDivineWork, createSendDiscuss,
-    getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId, getDocByDocId, getListDiscussByTaskId, getListTaskReceiveCurrentMonth,
+    getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId, getDocByDocId, getListDiscussByTaskId, getListTaskReceiveCurrentMonth, getByTaskId,
     updateTaskStateSeen
 };
