@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import viLocale from '@fullcalendar/core/locales/vi';
 import moment from 'moment';
@@ -97,9 +98,14 @@ function MyWorkCalendar() {
         setTooltipEvent(null);
     }
 
-    const handleDateClick = (info) => {
+    const handleEventClick = (info) => {
         setTaskId(info.event.id);
         setOpenModalWork(true);
+    }
+
+    const handleDateClick = (info) => {
+        const calendarApi = info.view.calendar;
+        calendarApi.changeView('dayGridDay', info.date);
     }
 
     useEffect(() => {
@@ -149,7 +155,7 @@ function MyWorkCalendar() {
                     </div>
                     <div className='schedule col-10' style={{ padding: '0px' }}>
                         <FullCalendar
-                            plugins={[dayGridPlugin, listPlugin]}
+                            plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
                             initialView="dayGridMonth"
                             headerToolbar={{
                                 start: 'today prev,next',
@@ -158,7 +164,7 @@ function MyWorkCalendar() {
                             }}
                             views={
                                 {
-                                    dayGridMonth: { dayHeaderFormat: { weekday: 'long' } },
+                                    dayGridMonth: { dayHeaderFormat: { weekday: 'long' }, dayMaxEvents: 6 },
                                     dayGridWeek: { titleFormat: { year: 'numeric', month: 'long', day: 'numeric' } }
                                 }
                             }
@@ -174,7 +180,8 @@ function MyWorkCalendar() {
                             events={eventList}
                             eventMouseEnter={handleMouseEnter}
                             eventMouseLeave={handleMouseLeave}
-                            eventClick={handleDateClick}
+                            eventClick={handleEventClick}
+                            dateClick={handleDateClick}
                         />
                     </div>
                     {tooltipEvent && (

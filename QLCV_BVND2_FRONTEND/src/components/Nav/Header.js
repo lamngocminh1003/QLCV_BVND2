@@ -101,15 +101,20 @@ const Header = (props) => {
                   }
                 })()}
 
+                {user && user.isAuthenticated === true && user.account.userId === user.account.departmentHead ?
+                  <Box id="menu-dropdown-task">
+                    <NavDropdown title="Công việc" active={activeTaskDropDown} onToggle={handleToggleTask}
+                      className={location.pathname === '/task-out-department' || location.pathname === '/task-in-department' ? "nav-item-replace" : ""}>
+                      <NavDropdown.Item as={NavLink} exact to="/task-out-department">Ngoại bộ</NavDropdown.Item>
+                      <NavDropdown.Item as={NavLink} exact to="/task-in-department">Nội bộ</NavDropdown.Item>
+                    </NavDropdown>
+                  </Box>
+                  :
+                  null
+                }
+
                 {user && user.isAuthenticated === true ?
                   <>
-                    <Box id="menu-dropdown-task">
-                      <NavDropdown title="Công việc" active={activeTaskDropDown} onToggle={handleToggleTask}
-                        className={location.pathname === '/task-out-department' || location.pathname === '/task-in-department' ? "nav-item-replace" : ""}>
-                        <NavDropdown.Item as={NavLink} exact to="/task-out-department">Ngoại bộ</NavDropdown.Item>
-                        <NavDropdown.Item as={NavLink} exact to="/task-in-department">Nội bộ</NavDropdown.Item>
-                      </NavDropdown>
-                    </Box>
                     <NavLink exact to="/my-to-do-list-schedule" className="nav-link">Công việc của tôi</NavLink>
                   </>
                   :

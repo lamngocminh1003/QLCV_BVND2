@@ -544,7 +544,7 @@ function ModalDivineWorkPublic(props) {
                                         :
                                         <div className='empty-comment '>
                                           <QuestionAnswerIcon sx={{ height: 70, width: 70, color: 'slategray' }} />
-                                          <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Chưa có bình luận nào.</Typography>
+                                          <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Hiện chưa có bình luận.</Typography>
                                         </div>
                                     }
 
