@@ -527,7 +527,7 @@ function ModalDivineWorkPublic(props) {
                                                 <div className='warp-comment' key={index}>
                                                   <List sx={{ mt: 0, p: 0 }}>
                                                     <ListItem sx={{ px: 0, paddingBottom: 0, overflowY: 'hidden' }}>
-                                                      <ListItemAvatar sx={{ minWidth: '48px' }}><Avatar sx={{ bgcolor: 'rgb(160, 166, 255)', width: 36, height: 36 }}></Avatar></ListItemAvatar>
+                                                      <ListItemAvatar sx={{ minWidth: '48px' }}><Avatar sx={{ bgcolor: discuss.discuss_User === user.account.userId ? 'rgb(11, 229, 222)' : 'rgb(183, 96, 77)', width: 36, height: 36 }}></Avatar></ListItemAvatar>
                                                       <Box className='discuss-box'>
                                                         <ListItemText className='dissucss-content'
                                                           primary={discuss.userSend_Fullname}

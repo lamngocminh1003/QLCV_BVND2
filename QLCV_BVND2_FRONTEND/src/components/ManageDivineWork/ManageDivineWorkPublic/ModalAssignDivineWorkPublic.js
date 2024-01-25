@@ -240,7 +240,7 @@ function ModalAssignDivineWorkPublic(props) {
                             <div className='col-sm-6 mt-3 mb-1'>
                                 <Form.Group>
                                     <Autocomplete
-                                        value={dataAssignDivineWorkPublic.userReceive_FullName || null}
+                                        // value={dataAssignDivineWorkPublic.userReceive_FullName || null}
                                         options={listUserInDepartment}
                                         getOptionLabel={(option) => option.user_FullName}
                                         renderOption={(props, option, { selected }) => (

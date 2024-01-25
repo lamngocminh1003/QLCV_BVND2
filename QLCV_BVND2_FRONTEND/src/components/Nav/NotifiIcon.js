@@ -391,7 +391,7 @@ function NotifiIcon() {
                                       <>
                                         <span className="message-notifi" style={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }}>
                                           <span className="result-notification-title" style={{ fontSize: "15.5px", color: "rgb(5, 5, 5)", fontFamily: "Arimo, sans-serif", }}>
-                                            {`${itemValue.userSend_Fullname}`}
+                                            {`${itemValue.userSend_Fullname} `}
                                           </span>
                                           đã bình luận về một công việc
                                         </span>

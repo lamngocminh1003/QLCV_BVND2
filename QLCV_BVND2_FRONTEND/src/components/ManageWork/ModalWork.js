@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { ImageConfig } from '../../config/ImageConfig';
 import { UserContext } from '../../context/UserContext';
+import _, { assign, cloneDeep, forEach, set, debounce } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 //bs5
 import Modal from 'react-bootstrap/Modal';
@@ -23,7 +25,7 @@ import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 //css
 import "./SCSS/ModalWork.scss";
 //api
-import { getByTaskId, getListDiscussByTaskId } from '../../services/taskService';
+import { getByTaskId, getListDiscussByTaskId, createSendDiscuss, updateConfirmCompletionTask } from '../../services/taskService';
 
 function ModalWork(props) {
     const dataWorkDefault = {
@@ -72,8 +74,40 @@ function ModalWork(props) {
         setListDiscussTask(resultListDiscuss);
     }
 
-    const onSelectFile = () => {
+    const renderTaskTextColor = (taskStart, taskEnd, taskState) => {
+        let startDay = moment(taskStart);
+        let endDay = moment(taskEnd);
+        let today = moment();
 
+        if (taskState === 5) {
+            return 'task-text-completed';
+        }
+        else if (endDay.diff(today, 'days') < 0) {
+            //hết hạn
+            return 'task-text-expired';
+        }
+        else if (endDay.diff(today, 'days') === 0) {
+            //gần hết hạn
+            return 'task-text-due-date';
+        }
+        else {
+            //đang thực hiện
+            return 'task-text-processing';
+        }
+    }
+
+    const onSelectFile = (e) => {
+        let newListFile = e.target.files;
+        let newObjects = _.differenceBy(newListFile, fileListState, 'name');
+
+        if (newObjects.length !== 0) {
+            newObjects.forEach((object) => {
+                object.file_Id = `File-Clone ${uuidv4()}`;
+            })
+
+            let updatedList = [...fileListState, ...newObjects];
+            setFileListState(updatedList);
+        }
     }
 
     const onDeleteFile = () => {
@@ -84,16 +118,26 @@ function ModalWork(props) {
 
     }
 
-    const handleOnChangeDiscussContent = () => {
-
+    const handleOnChangeDiscussContent = (value) => {
+        setTask_DiscussContent(value);
     }
 
-    const handleOnKeyDownEnter = () => {
-
+    const handleOnKeyDownEnter = (event, task_Id) => {
+        if (event.which === 13 && event.code === "Enter") {
+            event.preventDefault();
+            handleSendDiscuss(task_Id);
+        }
     }
 
-    const handleSendDiscuss = () => {
-
+    const handleSendDiscuss = async (taskId) => {
+        let dataObj = { task_Id: taskId, task_DiscussContent: task_DiscussContent }
+        let result = await createSendDiscuss(dataObj);
+        if (result === 200) {
+            handleGetListDiscussTask(props.taskId);
+            setTask_DiscussContent('');
+            let inputAreaByTaskId = document.getElementById(`input-area ${taskId}`);
+            inputAreaByTaskId.textContent = '';
+        }
     }
 
     useEffect(() => {
@@ -114,25 +158,33 @@ function ModalWork(props) {
         <div>
             <Modal show={open} onHide={handleClose} size='lg' className='mt-3'>
                 <Modal.Header closeButton>
-                    <Modal.Title style={{ width: '100%' }}><div className='text-primary text-uppercase text-uppercase d-flex justify-content-center'>{`${dataWork.task.task_Title} (${moment(dataWork.task.task_DateStart).format('DD/MM/YYYY HH:mm')} - ${moment(dataWork.task.task_DateEnd).format('DD/MM/YYYY HH:mm')})`}</div></Modal.Title>
+                    <Modal.Title style={{ width: '100%' }}><div className='text-primary text-uppercase text-uppercase d-flex justify-content-center'>{`${dataWork.task.task_Title}`}</div></Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ height: '82vh', overflowY: 'auto' }}>
+                <Modal.Body style={{ height: '81vh', overflowY: 'auto' }}>
                     <div className="user-info-container col-xs-12">
                         <div className="row">
                             <div className='col-sm-12'>
-                                <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">{`Tên công việc: ${dataWork.task.task_Title}`}</Typography>
+                                <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">Tên công việc:
+                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task_State)}> {dataWork.task.task_Title}</span>
+                                </Typography>
                             </div>
 
                             <div className='col-sm-12 mt-2'>
-                                <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">{`Nội dung công việc: ${dataWork.task.task_Content}`}</Typography>
+                                <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">Nội dung công việc:
+                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task_State)}> {dataWork.task.task_Content}</span>
+                                </Typography>
                             </div>
 
                             <div className='col-sm-7 mt-2'>
-                                <Typography sx={{ color: '#black' }} variant="subtitle1" component="h2">{`Thời hạn xử lý: ${moment(dataWork.task.task_DateStart).format('DD/MM/YYYY HH:mm')} - ${moment(dataWork.task.task_DateEnd).format('DD/MM/YYYY HH:mm')}`}</Typography>
+                                <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">Thời hạn xử lý:
+                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task_State)}> {moment(dataWork.task.task_DateStart).format('DD/MM/YYYY HH:mm')} - {moment(dataWork.task.task_DateEnd).format('DD/MM/YYYY HH:mm')} </span>
+                                </Typography>
                             </div>
 
                             <div className='col-sm-5 mt-2'>
-                                <Typography sx={{ color: '#black' }} variant="subtitle1" component="h2">{`Loại công việc: ${dataWork.task.task_Catagory_Name}`}</Typography>
+                                <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">Loại công việc:
+                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task_State)}> {dataWork.task.task_Catagory_Name}</span>
+                                </Typography>
                             </div>
 
                             {dataWork.task.task_Person_Send !== dataWork.task.task_Person_Receive ?
@@ -147,7 +199,7 @@ function ModalWork(props) {
                                                                 <List sx={{ mt: 0, p: 0 }}>
                                                                     <ListItem sx={{ px: 0, paddingBottom: 0, overflowY: 'hidden' }}>
                                                                         <ListItemAvatar sx={{ minWidth: '48px' }}>
-                                                                            <Avatar sx={{ bgcolor: discuss.discuss_User === user.account.userId ? 'rgb(11, 229, 222)' : 'rgb(183, 96, 77)', width: 36, height: 36 }}></Avatar>
+                                                                            <Avatar sx={{ bgcolor: discuss.discuss_User === user.account.userId ? 'rgb(11, 229, 222)' : 'rgb(183, 96, 77)', width: 34, height: 34 }}></Avatar>
                                                                         </ListItemAvatar>
                                                                         <Box className='discuss-box'>
                                                                             <ListItemText className='dissucss-content'
@@ -155,7 +207,9 @@ function ModalWork(props) {
                                                                                 secondary={discuss.discuss_Content} />
                                                                         </Box>
                                                                     </ListItem>
-                                                                    <span className='discuss-time-send'>{moment(discuss.discuss_Time).startOf().fromNow()}</span>
+                                                                    <div className='comment-time'>
+                                                                        <span className='discuss-time-send'>{`${moment(discuss.discuss_Time).startOf().fromNow()} - ${moment(discuss.discuss_Time).format('LLLL')}`}</span>
+                                                                    </div>
                                                                 </List>
                                                             </div>
                                                         )
@@ -164,15 +218,15 @@ function ModalWork(props) {
 
                                             </div>
                                             :
-                                            <div className='empty-comment '>
-                                                <QuestionAnswerIcon sx={{ height: 70, width: 70, color: 'slategray' }} />
+                                            <div className='empty-comment'>
+                                                <QuestionAnswerIcon sx={{ height: 70, width: '100%', color: 'slategray' }} />
                                                 <Typography sx={{ color: "rgb(176, 179, 184", fontFamily: "Arimo, sans-serif" }}>Chưa có bình luận nào.</Typography>
                                             </div>
                                         }
-                                        <div className='task-discuss-input d-flex mb-1' contentEditable='true'>
+                                        <div className='task-discuss-input d-flex mb-1' suppressContentEditableWarning={true}>
                                             <div className='input-area'>
-                                                <div className={`child-1 comment-input`} contentEditable='true' aria-label='Viết bình luận...' onPaste={(e) => pasteAsPlainText(e)}
-                                                    onInput={(e) => handleOnChangeDiscussContent(dataWork.task.task_Id, e.currentTarget.textContent)} onKeyPress={(e) => handleOnKeyDownEnter(e, dataWork.task.task_Id)}>
+                                                <div className={`child-1 comment-input`} id={`input-area ${dataWork.task.task_Id}`} contentEditable='true' aria-label='Viết bình luận...' onPaste={(e) => pasteAsPlainText(e)}
+                                                    onInput={(e) => handleOnChangeDiscussContent(e.currentTarget.textContent)} onKeyPress={(e) => handleOnKeyDownEnter(e, dataWork.task.task_Id)}>
                                                 </div>
                                             </div>
                                             <div className='input-send-icon' style={task_DiscussContent === "" ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}>
@@ -191,7 +245,7 @@ function ModalWork(props) {
                             {dataWork.fileIds.length > 0 ?
                                 <div className='col-sm-12 mt-2'>
                                     <div className='wrap' style={{ width: '100%', margin: 'auto' }}>
-                                        <Typography sx={{ color: '#black' }} variant='subtitle1' component="h2" color='black'>File đính kèm</Typography>
+                                        <Typography sx={{ color: '#black' }} variant='subtitle1' component="h2" color='black'>File công việc đã đính kèm</Typography>
                                         <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.40rem' }}>
                                             {dataWork.fileIds.map((itemFile, index) => {
                                                 return (

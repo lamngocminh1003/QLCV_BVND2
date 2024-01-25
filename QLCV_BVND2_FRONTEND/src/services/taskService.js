@@ -141,8 +141,26 @@ const updateTaskStateSeen = async (taskId) => {
         })
 }
 
+const updateConfirmCompletionTask = async (taskId, fileCompleted, onUploadProgress) => {
+    const token = localStorage.getItem("jwt");
+    return await axios.put(`${backendURL}/api/Task/ConfirmCompletionTask?taskId=${taskId}`, fileCompleted,
+        {
+            headers: {
+                "content-type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            },
+            onUploadProgress,
+        })
+        .then(function (response) {
+            return response.status
+        })
+        .catch(function (error) {
+            return error.response.data
+        })
+}
+
 export {
     createTaskCategory, assignDivineWork, createSendDiscuss,
     getTaskCategory, getTaskReceiveNotification, getListTaskByDocSendId, getDocByDocId, getListDiscussByTaskId, getListTaskReceiveCurrentMonth, getByTaskId,
-    updateTaskStateSeen
+    updateTaskStateSeen, updateConfirmCompletionTask
 };
