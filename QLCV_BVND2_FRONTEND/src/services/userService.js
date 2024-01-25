@@ -45,7 +45,31 @@ const getTotalNotification = async () => {
     })
 }
 
+const getUserInDepartment = async () => {
+  const config = createConfig();
+  return await axios.get(`${backendURL}/api/Department/GetUserInDepartment`, config)
+    .then(function (response) {
+      return response.data
+    })
+    .catch(function (error) {
+      return error.response.status
+    })
+}
+
+const updateActiveUser = async (userId, newStatus) => {
+  const config = createConfig();
+  const data = { user_IsActive: newStatus }; 
+  try {
+    const response = await axios.put(`${backendURL}/api/Department/UpdateActiveUser?userId=${userId}`, data, config);
+    return response.status;
+  } catch (error) {
+    return error.response.status;
+  }
+};
+
+
 export {
   userLogin,
-  getUserAccount, getTotalNotification,
+  getUserAccount, getTotalNotification, getUserInDepartment,
+  updateActiveUser
 };
