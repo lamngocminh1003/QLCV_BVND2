@@ -63,19 +63,7 @@ const ListUser = () => {
         width:300,
         headerAlign:'center',
         align:'center',
-        renderCell: (params) => {
-        return(
-          <>
-            <h3 
-                style={{
-                cursor:'pointer',
-                fontSize:'20px'}}
-              >
-                <b>{params.row.user_FullName}</b>
-            </h3>
-          </>
-        )
-      }
+        renderCell: (params) =>params.row.user_FullName
     },
     {
         field: 'user_Email',
@@ -83,22 +71,7 @@ const ListUser = () => {
         width:300,
         headerAlign:'center',
         align:'center',
-        renderCell: (params) => {
-      
-        return(
-          <>
-            <h3
-                style={{ 
-                cursor:'pointer',
-                fontSize:'20px'}}
-              >
-                <b>{params.row.user_Email}</b>
-            </h3>
-            
-          </>
-        )
-        
-      }
+        renderCell: (params) => params.row.user_Email
     },
     {
         field:'user_Phone',
@@ -140,14 +113,10 @@ const ListUser = () => {
               <Switch 
               checked={params.row.user_IsActive}
               onChange={() => handleSwitchChange(params.row.user_Id, !params.row.user_IsActive)}/>
-            </>
-            
+            </>   
           )
-        
         },
-
     },
-    
   ]
 
 function CustomToolbar() {
@@ -174,12 +143,13 @@ return (
               <h3 className="text-primary text-uppercase text-center">Danh sách người dùng</h3>
               <Box>
               <Box
-                m="0px 100px 0 100px"
+                m="40px 100px 0 100px"
                 sx={{
-                  "& .MuiDataGrid-root": { border: "none" },
-                  "& .name-column--cell": { color: "#2e7c67" },
+                  "& .MuiDataGrid-root": { border: "none",fontSize:'15px',cursor:'pointer' },
+                  "& .name-column--cell": { color: "#2e7c67"},
                   "& .MuiDataGrid-columnHeaders": {
                     backgroundColor: "#61dafb",
+                    fontSize:'15px'
                   },
                   '.MuiDataGrid-columnHeaderTitle': { 
                       fontWeight: 'bold !important',
@@ -190,12 +160,14 @@ return (
                   },
                   "& .MuiTablePagination-root ": {
                     display: "none",
+                    
                   },
                   "& .MuiDataGrid-selectedRowCount ": {
                     display: "none",
                   },
                   "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
                     color: "#0f2922 !important",
+                    marginBottom: '10px'
                   },
                 }}
               >
@@ -206,6 +178,7 @@ return (
                             ...row,
                             id: index + 1,
                         }))}
+                            
                             columns={columns} 
                             getEstimatedRowHeight={() => 50}
                             getRowHeight={() => 'auto'}
@@ -220,10 +193,8 @@ return (
             </Box>  
           </div>
         </div>
-           
     </>
-     
-    
+
   )
 }
 
