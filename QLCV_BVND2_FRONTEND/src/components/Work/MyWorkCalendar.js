@@ -25,6 +25,7 @@ function MyWorkCalendar() {
     const [eventList, setEventList] = useState([]);
 
     const [tooltipEvent, setTooltipEvent] = useState();
+    const [doSomething, setDoSomething] = useState(false);
 
     //config Modal Work
     const [openModalWork, setOpenModalWork] = useState(false);
@@ -58,23 +59,21 @@ function MyWorkCalendar() {
     }
 
     const handleRenderColor = (end, start, state) => {
-        let startDay = moment(start);
-        let endDay = moment(end);
-        let today = moment();
+        let startDay = moment(start).startOf('day');
+        let endDay = moment(end).startOf('day');
+        let today = moment().startOf('day');
 
         if (state === 5) {
-            return '#66bb6a';
+            return '#66bb6a'; // Màu cho trạng thái 5
         }
         else if (endDay.diff(today, 'days') < 0) {
-            return '#ef5350';
+            return '#ef5350'; // Màu cho hết hạn
         }
         else if (endDay.diff(today, 'days') === 0) {
-            //gần hết hạn
-            return '#ffa726';
+            return '#ffa726'; // Màu cho gần hết hạn
         }
         else {
-            //đang thực hiện
-            return '#4fc3f7';
+            return '#4fc3f7'; // Màu cho đang thực hiện
         }
     }
 
@@ -109,8 +108,14 @@ function MyWorkCalendar() {
     }
 
     useEffect(() => {
-        handleGetTaskScheduleByUserId();
-    }, [])
+        if (doSomething === true) {
+            handleGetTaskScheduleByUserId();
+            setDoSomething(false);
+        }
+        else {
+            handleGetTaskScheduleByUserId();
+        }
+    }, [doSomething])
 
     return (
         <>
@@ -199,6 +204,8 @@ function MyWorkCalendar() {
                 taskId={taskId}
                 activeModalWork={openModalWork}
                 closeModalWork={setOpenModalWork}
+
+                makeMyWorkCalendarDo={setDoSomething}
             />
         </>
 

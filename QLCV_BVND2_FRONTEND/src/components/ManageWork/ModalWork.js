@@ -4,6 +4,8 @@ import { UserContext } from '../../context/UserContext';
 import _, { assign, cloneDeep, forEach, set, debounce } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
+//function component
+import CircularProgressWithBackdrop from '../FunctionComponents/ProgressBar/CircularProgressWithBackdrop';
 //bs5
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -24,8 +26,10 @@ import Avatar from "@mui/material/Avatar";
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 //css
 import "./SCSS/ModalWork.scss";
+import { toast } from 'react-toastify';
 //api
 import { getByTaskId, getListDiscussByTaskId, createSendDiscuss, updateConfirmCompletionTask } from '../../services/taskService';
+import { getFileById } from '../../services/fileService';
 
 function ModalWork(props) {
     const dataWorkDefault = {
@@ -55,12 +59,18 @@ function ModalWork(props) {
     const [fileListState, setFileListState] = useState([]);
     const [task_DiscussContent, setTask_DiscussContent] = useState("");
     const [listDiscussTask, setListDiscussTask] = useState([]);
+    const [doSomething, setDoSomething] = useState(false);
+
+    //config backdrop when submit
+    const [progress, setProgress] = useState(0);
+    const [openBackdrop, setOpenBackdrop] = useState();
 
     const { user } = useContext(UserContext);
 
     const handleClose = () => {
         props.closeModalWork(false);
         setTaskIdModalWork(props.taskId);
+        setFileListState([]);
         setOpen(false);
     }
 
@@ -74,10 +84,15 @@ function ModalWork(props) {
         setListDiscussTask(resultListDiscuss);
     }
 
+    const handleGetFileById = async (fileId) => {
+        let result = await getFileById(fileId);
+        console.log(result);
+    }
+
     const renderTaskTextColor = (taskStart, taskEnd, taskState) => {
-        let startDay = moment(taskStart);
-        let endDay = moment(taskEnd);
-        let today = moment();
+        let startDay = moment(taskStart).startOf('day');
+        let endDay = moment(taskEnd).startOf('day');
+        let today = moment().startOf('day');
 
         if (taskState === 5) {
             return 'task-text-completed';
@@ -140,11 +155,37 @@ function ModalWork(props) {
         }
     }
 
+    //tạo giá trị tiến trình trong quá trình gửi đề xuất
+    const handleOnUploadProgress = (progressEvent) => {
+        let percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setProgress(percentCompleted);
+    }
+
+    const handleCompleteTask = async () => {
+        setOpenBackdrop(true);
+        let formDataFileCompletedTask = new FormData();
+        let i;
+        for (i = 0; i < fileListState.length; i++) {
+            formDataFileCompletedTask.append('files', fileListState[i]);
+        }
+
+        let response = await updateConfirmCompletionTask(dataWork.task.task_Id, formDataFileCompletedTask, handleOnUploadProgress);
+        if (response === 200) {
+            toast.success('Đã xác nhận hoàn thành công việc!');
+            setOpenBackdrop(false);
+            setFileListState([]);
+            setDoSomething(true);
+            props.makeMyWorkCalendarDo(true);
+        }
+    }
+
     useEffect(() => {
         if (props.taskId !== null) {
             setOpen(true);
             handleGetByTaskId(props.taskId);
-            handleGetListDiscussTask(props.taskId)
+            if (dataWork.task.task_Person_Send !== dataWork.task.task_Person_Receive) {
+                handleGetListDiscussTask(props.taskId);
+            }
         }
     }, [props.taskId])
 
@@ -154,15 +195,38 @@ function ModalWork(props) {
         }
     }, [props.activeModalWork])
 
+    useEffect(() => {
+        if (doSomething === true) {
+            handleGetByTaskId(props.taskId);
+            if (dataWork.task.task_Person_Send !== dataWork.task.task_Person_Receive) {
+                handleGetListDiscussTask(props.taskId);
+            }
+            setDoSomething(false);
+        }
+    }, [doSomething])
+
     return (
         <div>
+            <CircularProgressWithBackdrop open={openBackdrop} setOpen={setOpenBackdrop} progressValue={progress} setProgressValue={setProgress} />
             <Modal show={open} onHide={handleClose} size='lg' className='mt-3'>
                 <Modal.Header closeButton>
                     <Modal.Title style={{ width: '100%' }}><div className='text-primary text-uppercase text-uppercase d-flex justify-content-center'>{`${dataWork.task.task_Title}`}</div></Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ height: '81vh', overflowY: 'auto' }}>
+                <Modal.Body style={dataWork.task.task_Person_Send !== dataWork.task.task_Person_Receive && listDiscussTask.length >= 4 ? { height: '81vh', overflowY: 'auto' } : {}}>
                     <div className="user-info-container col-xs-12">
                         <div className="row">
+                            {dataWork.task.task_State !== 5 ?
+                                moment() > moment(dataWork.task.task_DateEnd) ?
+                                    <div className='col-sm-12 mb-2'>
+                                        <div className='text-danger fw-bolder fs-5 text-uppercase text-uppercase d-flex justify-content-center'>Công việc đã hết hạn</div>
+                                    </div>
+                                    :
+                                    null
+                                :
+                                <div className='col-sm-12 mb-2'>
+                                    <div className='text-success fw-bolder fs-5 text-uppercase text-uppercase d-flex justify-content-center'>Công việc đã hoàn thành</div>
+                                </div>
+                            }
                             <div className='col-sm-12'>
                                 <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">Tên công việc:
                                     <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task_State)}> {dataWork.task.task_Title}</span>
@@ -250,7 +314,7 @@ function ModalWork(props) {
                                             {dataWork.fileIds.map((itemFile, index) => {
                                                 return (
                                                     <Tooltip TransitionComponent={Fade} arrow title={itemFile.file_Name} key={index}>
-                                                        <div className='selected-file-preview-item-info col-sm-5 mt-2'>
+                                                        <div className='selected-file-preview-item-info col-sm-5 mt-2' onClick={() => handleGetFileById(itemFile.file_Id)}>
                                                             <div className='selected-file-preview-item-info-img-type-file'>
                                                                 <img alt='' src={ImageConfig[itemFile.contentType] || ImageConfig['default']} />
                                                             </div>
@@ -269,53 +333,94 @@ function ModalWork(props) {
                                 :
                                 null
                             }
-                            <div className='col-sm-12 mt-3'>
-                                <Box sx={{ boxShadow: 'rgba(0, 0, 0, 0.20) 0px 5px 15px', height: 'auto', p: 1, m: 0, borderRadius: 2, textAlign: 'center' }}>
-                                    <div className='wrap' style={{ width: '100%', margin: 'auto' }}>
-                                        <Typography variant='body1' fontSize='1.1rem' color='black'>File hoàn thành công việc (nếu có)</Typography>
-                                        <div className='file-input-container'>
-                                            <div className='file-input-label'>
-                                                <CloudUploadIcon sx={{ color: 'darkturquoise', fontSize: '70px' }}></CloudUploadIcon>
-                                                <Typography variant='subtitle2' fontWeight='600' color='gray' fontSize='0.8rem'>Nhấn vào đây để chọn file</Typography>
+
+                            {dataWork.task.task_State !== 5 && moment() < moment(dataWork.task.task_DateEnd) ?
+                                <div className='col-sm-12 mt-3'>
+                                    <Box sx={{ boxShadow: 'rgba(0, 0, 0, 0.20) 0px 5px 15px', height: 'auto', p: 1, m: 0, borderRadius: 2, textAlign: 'center' }}>
+                                        <div className='wrap' style={{ width: '100%', margin: 'auto' }}>
+                                            <Typography variant='body1' fontSize='1.1rem' color='black'>File hoàn thành công việc (nếu có)</Typography>
+                                            <div className='file-input-container'>
+                                                <div className='file-input-label'>
+                                                    <CloudUploadIcon sx={{ color: 'darkturquoise', fontSize: '70px' }}></CloudUploadIcon>
+                                                    <Typography variant='subtitle2' fontWeight='600' color='gray' fontSize='0.8rem'>Nhấn vào đây để chọn file</Typography>
+                                                </div>
+                                                <div className='file-input'>
+                                                    <input type='file' accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple onChange={(e) => onSelectFile(e)}></input>
+                                                </div>
                                             </div>
-                                            <div className='file-input'>
-                                                <input type='file' accept=".xls,.xlsx,.doc,.docx,.pdf,.ppt,pptx,.jpg,.jpeg,.png" multiple onChange={(e) => onSelectFile(e)}></input>
+                                            {
+                                                fileListState.length > 0 ? (
+                                                    <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.70rem' }}>
+                                                        {
+                                                            fileListState.map((itemFile, index) => {
+                                                                return (
+                                                                    <Tooltip TransitionComponent={Fade} arrow title={itemFile.name} key={index}>
+                                                                        <div className='selected-file-preview-item-info col-sm-5 mt-2'>
+                                                                            <div className='selected-file-preview-item-info-img-type-file'>
+                                                                                <img alt='' src={ImageConfig[itemFile.type] || ImageConfig['default']} />
+                                                                            </div>
+                                                                            <div className='selected-file-preview-item-info-label'>
+                                                                                <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
+                                                                                    {itemFile.name}
+                                                                                </Typography><p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p>
+                                                                            </div>
+                                                                            <span className='selected-file-preview-delete-item fa fa-times-circle' onClick={() => onDeleteFile(itemFile)}></span>
+                                                                        </div>
+                                                                    </Tooltip>
+                                                                )
+                                                            })
+                                                        }
+                                                    </div>
+                                                ) : null
+                                            }
+                                        </div>
+                                    </Box>
+                                </div>
+                                :
+                                dataWork.fileComfirms.length > 0 ?
+                                    <div className='col-sm-12 mt-2'>
+                                        <div className='wrap' style={{ width: '100%', margin: 'auto' }}>
+                                            <Typography sx={{ color: '#black' }} variant='subtitle1' component="h2" color='black'>File công việc hoàn thành</Typography>
+                                            <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.40rem' }}>
+                                                {dataWork.fileComfirms.map((itemFile, index) => {
+                                                    return (
+                                                        <Tooltip TransitionComponent={Fade} arrow title={itemFile.file_Name} key={index}>
+                                                            <div className='selected-file-preview-item-info col-sm-5 mt-2'>
+                                                                <div className='selected-file-preview-item-info-img-type-file'>
+                                                                    <img alt='' src={ImageConfig[itemFile.contentType] || ImageConfig['default']} />
+                                                                </div>
+                                                                <div className='selected-file-preview-item-info-label'>
+                                                                    <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
+                                                                        {itemFile.file_Name}
+                                                                    </Typography>
+                                                                </div>
+                                                            </div>
+                                                        </Tooltip>
+                                                    )
+                                                })}
                                             </div>
                                         </div>
-                                        {
-                                            fileListState.length > 0 ? (
-                                                <div className='selected-file-preview-item col-sm-12 row' style={{ marginTop: '.70rem' }}>
-                                                    {
-                                                        fileListState.map((itemFile, index) => {
-                                                            return (
-                                                                <Tooltip TransitionComponent={Fade} arrow title={itemFile.name} key={index}>
-                                                                    <div className='selected-file-preview-item-info col-sm-5 mt-2'>
-                                                                        <div className='selected-file-preview-item-info-img-type-file'>
-                                                                            <img alt='' src={ImageConfig[itemFile.type] || ImageConfig['default']} />
-                                                                        </div>
-                                                                        <div className='selected-file-preview-item-info-label'>
-                                                                            <Typography className='selected-file-preview-item-info-label-file-name' component="span" variant="body1">
-                                                                                {itemFile.name}
-                                                                            </Typography><p className='selected-file-preview-item-info-label-file-size'>{itemFile.size} B</p>
-                                                                        </div>
-                                                                        <span className='selected-file-preview-delete-item fa fa-times-circle' onClick={() => onDeleteFile(itemFile)}></span>
-                                                                    </div>
-                                                                </Tooltip>
-                                                            )
-                                                        })
-                                                    }
-                                                </div>
-                                            ) : null
-                                        }
                                     </div>
-                                </Box>
-                            </div>
+                                    :
+                                    null
+                            }
+
                         </div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <ButtonMui variant="contained" color="success">Hoàn thành</ButtonMui>
-                    <Button variant="secondary" onClick={() => handleClose()}>Đóng</Button>
+                    {dataWork.task.task_State !== 5 ?
+                        moment() > moment(dataWork.task.task_DateEnd) ?
+                            <Button variant="secondary" onClick={() => handleClose()}>Đóng</Button>
+                            :
+                            <>
+                                <ButtonMui variant="contained" color="success" onClick={() => handleCompleteTask()}>Hoàn thành</ButtonMui>
+                                <Button variant="secondary" onClick={() => handleClose()}>Đóng</Button>
+                            </>
+                        :
+                        <Button variant="secondary" onClick={() => handleClose()}>Đóng</Button>
+                    }
+
                 </Modal.Footer>
             </Modal>
         </div>
