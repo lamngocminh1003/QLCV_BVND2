@@ -6,8 +6,9 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import viLocale from '@fullcalendar/core/locales/vi';
 import moment from 'moment';
+//bs5
+import * as bootstrap from "bootstrap";
 //mui theme
-import Tooltip from '@mui/material/Tooltip';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -24,7 +25,6 @@ function MyWorkCalendar() {
     const [workCalenderList, setWorkCalenderList] = useState([]);
     const [eventList, setEventList] = useState([]);
 
-    const [tooltipEvent, setTooltipEvent] = useState();
     const [doSomething, setDoSomething] = useState(false);
 
     //config Modal Work
@@ -78,23 +78,14 @@ function MyWorkCalendar() {
     }
 
     const handleMouseEnter = (info) => {
-        const start = info.event.start;
-        const end = info.event.end;
-        const title = info.event.title;
-        const description = info.event._def.extendedProps.description;
-
-        // Lấy vị trí của sự kiện
-        const rect = info.el.getBoundingClientRect();
-        const top = rect.top + window.scrollY + 33;
-        const left = rect.left + window.scrollX;
-        const right = rect.right + window.scrollX;
-
-        // Hiển thị Tooltip với vị trí tùy thuộc vào ngày và vị trí của sự kiện
-        setTooltipEvent({ eventDateStart: start, eventDateEnd: end, eventTitle: title, eventDescription: description, top, left, right });
-    }
-
-    const handleMouseLeave = () => {
-        setTooltipEvent(null);
+        return new bootstrap.Popover(info.el, {
+            title: info.event.title,
+            placement: "auto",
+            trigger: 'hover',
+            customClass: "popoverStyle",
+            content: `<p class='test'>${info.event._def.extendedProps.description}</p><p>${moment(info.event.start).format('DD/MM/YYYY HH:mm')} - ${moment(info.event.end).format('DD/MM/YYYY HH:mm')}</p>`,
+            html: true
+        });
     }
 
     const handleEventClick = (info) => {
@@ -119,84 +110,74 @@ function MyWorkCalendar() {
 
     return (
         <>
-            <div className='sm mt-3' style={{ marginLeft: '70px' }}>
-                <div className='d-flex'>
-                    <div className='instruction' style={{ padding: '0px', width: '10%' }} >
-                        <FormGroup>
-                            <Typography variant="body1" sx={{ color: '#e91e63', fontSize: '24px' }}>Bộ lọc</Typography>
-                            <FormControlLabel control={<Checkbox sx={{
+            <div className='mt-3 d-flex container-working-list-calendar'>
+                <div className='instruction'>
+                    <FormGroup>
+                        <Typography variant="body1" sx={{ color: '#e91e63', fontSize: '24px' }}>Bộ lọc</Typography>
+                        <FormControlLabel control={<Checkbox sx={{
+                            color: '#03a9f4',
+                            fill: '#03a9f4',
+                            '&.Mui-checked': {
                                 color: '#03a9f4',
-                                fill: '#03a9f4',
-                                '&.Mui-checked': {
-                                    color: '#03a9f4',
-                                },
-                            }} />} label="Đang thực hiện" />
+                            },
+                        }} />} label="Đang thực hiện" />
 
-                            <FormControlLabel control={<Checkbox sx={{
+                        <FormControlLabel control={<Checkbox sx={{
+                            color: '#ff9800',
+                            fill: '#ff9800',
+                            '&.Mui-checked': {
                                 color: '#ff9800',
-                                fill: '#ff9800',
-                                '&.Mui-checked': {
-                                    color: '#ff9800',
-                                },
-                            }} />} label="Gần hết hạn" />
+                            },
+                            fontSize: '10px'
+                        }} />} label="Gần hết hạn" />
 
-                            <FormControlLabel control={<Checkbox sx={{
+                        <FormControlLabel control={<Checkbox sx={{
+                            color: 'red',
+                            fill: 'red',
+                            '&.Mui-checked': {
                                 color: 'red',
-                                fill: 'red',
-                                '&.Mui-checked': {
-                                    color: 'red',
-                                },
-                            }} />} label="Hết hạn" />
+                            },
+                        }} />} label="Hết hạn" />
 
-                            <FormControlLabel control={<Checkbox sx={{
+                        <FormControlLabel control={<Checkbox sx={{
+                            color: '#4caf50',
+                            fill: '#4caf50',
+                            '&.Mui-checked': {
                                 color: '#4caf50',
-                                fill: '#4caf50',
-                                '&.Mui-checked': {
-                                    color: '#4caf50',
-                                },
-                            }} />} label="Hoàn thành" />
+                            },
+                        }} />} label="Hoàn thành" />
 
-                        </FormGroup>
-                    </div>
-                    <div className='schedule col-10' style={{ padding: '0px' }}>
-                        <FullCalendar
-                            plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
-                            initialView="dayGridMonth"
-                            headerToolbar={{
-                                start: 'today prev,next',
-                                center: 'title',
-                                right: 'dayGridDay,dayGridWeek,dayGridMonth,listWeek',
-                            }}
-                            views={
-                                {
-                                    dayGridMonth: { dayHeaderFormat: { weekday: 'long' }, dayMaxEvents: 6 },
-                                    dayGridWeek: { titleFormat: { year: 'numeric', month: 'long', day: 'numeric' } }
-                                }
+                    </FormGroup>
+                </div>
+                <div className='working-list-calendar' style={{ width: '85%' }}>
+                    <FullCalendar
+                        plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
+                        initialView="dayGridMonth"
+                        headerToolbar={{
+                            start: 'today prev,next',
+                            center: 'title',
+                            right: 'dayGridDay,dayGridWeek,dayGridMonth,listWeek',
+                        }}
+                        views={
+                            {
+                                dayGridMonth: { dayHeaderFormat: { weekday: 'long' }, dayMaxEvents: 6 },
+                                dayGridWeek: { titleFormat: { year: 'numeric', month: 'long', day: 'numeric' } }
                             }
-                            //showNonCurrentDates={false}
-                            fixedWeekCount={false}
-                            displayEventEnd={true}
-                            eventTimeFormat={{
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: false
-                            }}
-                            locale={viLocale}
-                            events={eventList}
-                            eventMouseEnter={handleMouseEnter}
-                            eventMouseLeave={handleMouseLeave}
-                            eventClick={handleEventClick}
-                            dateClick={handleDateClick}
-                        />
-                    </div>
-                    {tooltipEvent && (
-                        <Tooltip>
-                            <div className='tooltip-fake' style={{ top: tooltipEvent.top, left: tooltipEvent.left, position: 'absolute' }}>
-                                <Typography sx={{ color: '#fff', textAlign: 'center' }}>{tooltipEvent.eventDescription}</Typography>
-                                <Typography sx={{ color: '#fff' }}>{`${moment(tooltipEvent.eventDateStart).format('DD/MM/YYYY HH:mm')} - ${moment(tooltipEvent.eventDateEnd).format('DD/MM/YYYY HH:mm')}`}</Typography>
-                            </div>
-                        </Tooltip>
-                    )}
+                        }
+                        //showNonCurrentDates={false}
+                        fixedWeekCount={false}
+                        displayEventEnd={true}
+                        eventTimeFormat={{
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false
+                        }}
+                        locale={viLocale}
+                        events={eventList}
+                        eventClick={handleEventClick}
+                        dateClick={handleDateClick}
+                        eventDidMount={handleMouseEnter}
+                    />
                 </div>
             </div>
 
