@@ -84,9 +84,22 @@ function ModalWork(props) {
         setListDiscussTask(resultListDiscuss);
     }
 
-    const handleGetFileById = async (fileId) => {
-        let result = await getFileById(fileId);
+    const handleGetFileById = async (fileId, fileName) => {
+        const result = await getFileById(fileId);
         console.log(result);
+
+        const contentType = result.headers['content-type'];
+        const blob = new Blob([result.data], { type: contentType });
+
+        // Tạo một đường link để tải xuống tệp tin
+        const downloadLink = document.createElement('a');
+        const objectURL = URL.createObjectURL(blob);
+
+        downloadLink.href = objectURL;
+        downloadLink.download = fileName; // Tên tệp tin khi được tải về
+        downloadLink.click();
+
+        URL.revokeObjectURL(objectURL);
     }
 
     const renderTaskTextColor = (taskStart, taskEnd, taskState) => {
@@ -314,7 +327,7 @@ function ModalWork(props) {
                                             {dataWork.fileIds.map((itemFile, index) => {
                                                 return (
                                                     <Tooltip TransitionComponent={Fade} arrow title={itemFile.file_Name} key={index}>
-                                                        <div className='selected-file-preview-item-info col-sm-5 mt-2' onClick={() => handleGetFileById(itemFile.file_Id)}>
+                                                        <div className='selected-file-preview-item-info col-sm-5 mt-2' onClick={() => handleGetFileById(itemFile.file_Id, itemFile.file_Name)}>
                                                             <div className='selected-file-preview-item-info-img-type-file'>
                                                                 <img alt='' src={ImageConfig[itemFile.contentType] || ImageConfig['default']} />
                                                             </div>

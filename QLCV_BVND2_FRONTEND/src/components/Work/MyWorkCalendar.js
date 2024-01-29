@@ -30,6 +30,12 @@ function MyWorkCalendar() {
     //config Modal Work
     const [openModalWork, setOpenModalWork] = useState(false);
     const [taskId, setTaskId] = useState(null);
+    const [filterOptions, setFilterOptions] = useState({
+        completed: true,
+        nearingDeadline: true,
+        overdue: true,
+        unfinished: true,
+    });
 
     const handleEventAddDateTimeTask = () => {
 
@@ -50,6 +56,8 @@ function MyWorkCalendar() {
             description: task.task_Content,
             start: task.task_DateStart,
             end: task.task_DateEnd,
+            timeEnd: task.time_Update,
+            state: task.task_State,
             titleColor: 'black',
             backgroundColor: handleRenderColor(task.task_DateEnd, task.task_DateStart, task.task_State),
             borderColor: handleRenderColor(task.task_DateEnd, task.task_DateStart, task.task_State)
@@ -80,10 +88,10 @@ function MyWorkCalendar() {
     const handleMouseEnter = (info) => {
         return new bootstrap.Popover(info.el, {
             title: info.event.title,
-            placement: "auto",
+            placement: "right",
             trigger: 'hover',
             customClass: "popoverStyle",
-            content: `<p class='test'>${info.event._def.extendedProps.description}</p><p>${moment(info.event.start).format('DD/MM/YYYY HH:mm')} - ${moment(info.event.end).format('DD/MM/YYYY HH:mm')}</p>`,
+            content: `<p class='popoverContent'>${info.event._def.extendedProps.description}</p> <p class='popoverContent'>${moment(info.event.start).format('DD/MM/YYYY HH:mm')} - ${moment(info.event.end).format('DD/MM/YYYY HH:mm')}</p> <p class='popoverContent'>${info.event._def.extendedProps.state === 5 ? `Hoàn thành lúc: ${moment(info.event._def.extendedProps.timeEnd).format('DD/MM/YYYY HH:mm')}` : ''}</p>`,
             html: true
         });
     }
@@ -96,6 +104,15 @@ function MyWorkCalendar() {
     const handleDateClick = (info) => {
         const calendarApi = info.view.calendar;
         calendarApi.changeView('dayGridDay', info.date);
+    }
+
+    const handleCheckboxOnChange = (event, filterKey) => {
+        setFilterOptions((prevOptions) => ({
+            ...prevOptions,
+            [filterKey]: event.target.checked,
+        }))
+
+
     }
 
     useEffect(() => {
@@ -114,7 +131,7 @@ function MyWorkCalendar() {
                 <div className='instruction'>
                     <FormGroup>
                         <Typography variant="body1" sx={{ color: '#e91e63', fontSize: '24px' }}>Bộ lọc</Typography>
-                        <FormControlLabel control={<Checkbox sx={{
+                        <FormControlLabel control={<Checkbox checked={filterOptions.unfinished} onChange={(event) => handleCheckboxOnChange(event, 'unfinished')} sx={{
                             color: '#03a9f4',
                             fill: '#03a9f4',
                             '&.Mui-checked': {
@@ -122,7 +139,7 @@ function MyWorkCalendar() {
                             },
                         }} />} label="Đang thực hiện" />
 
-                        <FormControlLabel control={<Checkbox sx={{
+                        <FormControlLabel control={<Checkbox checked={filterOptions.nearingDeadline} onChange={(event) => handleCheckboxOnChange(event, 'nearingDeadline')} sx={{
                             color: '#ff9800',
                             fill: '#ff9800',
                             '&.Mui-checked': {
@@ -131,7 +148,7 @@ function MyWorkCalendar() {
                             fontSize: '10px'
                         }} />} label="Gần hết hạn" />
 
-                        <FormControlLabel control={<Checkbox sx={{
+                        <FormControlLabel control={<Checkbox checked={filterOptions.overdue} onChange={(event) => handleCheckboxOnChange(event, 'overdue')} sx={{
                             color: 'red',
                             fill: 'red',
                             '&.Mui-checked': {
@@ -139,7 +156,7 @@ function MyWorkCalendar() {
                             },
                         }} />} label="Hết hạn" />
 
-                        <FormControlLabel control={<Checkbox sx={{
+                        <FormControlLabel control={<Checkbox checked={filterOptions.completed} onChange={(event) => handleCheckboxOnChange(event, 'completed')} sx={{
                             color: '#4caf50',
                             fill: '#4caf50',
                             '&.Mui-checked': {
@@ -149,7 +166,7 @@ function MyWorkCalendar() {
 
                     </FormGroup>
                 </div>
-                <div className='working-list-calendar' style={{ width: '85%' }}>
+                <div className='working-list-calendar pl-3 pr-3' style={{ width: '85%' }}>
                     <FullCalendar
                         plugins={[dayGridPlugin, listPlugin, interactionPlugin]}
                         initialView="dayGridMonth"
