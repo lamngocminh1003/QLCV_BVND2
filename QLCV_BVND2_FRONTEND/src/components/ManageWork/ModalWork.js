@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 //function component
 import CircularProgressWithBackdrop from '../FunctionComponents/ProgressBar/CircularProgressWithBackdrop';
+import PreviewFile from '../FunctionComponents/PreviewFile/PreviewFile';
 //bs5
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -61,6 +62,11 @@ function ModalWork(props) {
     const [listDiscussTask, setListDiscussTask] = useState([]);
     const [doSomething, setDoSomething] = useState(false);
 
+    const [uri, setUri] = useState();
+    const [fileName, setFileName] = useState();
+    const [fileType, setFileType] = useState();
+    const [show, setShow] = useState(false);
+
     //config backdrop when submit
     const [progress, setProgress] = useState(0);
     const [openBackdrop, setOpenBackdrop] = useState();
@@ -86,20 +92,27 @@ function ModalWork(props) {
 
     const handleGetFileById = async (fileId, fileName) => {
         const result = await getFileById(fileId);
-        console.log(result);
+        console.log(fileName);
+        //console.log(result);
 
         const contentType = result.headers['content-type'];
         const blob = new Blob([result.data], { type: contentType });
-
+        const type = fileName.split('.');
         // Tạo một đường link để tải xuống tệp tin
         const downloadLink = document.createElement('a');
         const objectURL = URL.createObjectURL(blob);
+        //console.log(objectURL);
+        console.log(type[1]);
 
-        downloadLink.href = objectURL;
-        downloadLink.download = fileName; // Tên tệp tin khi được tải về
-        downloadLink.click();
+        setUri(objectURL);
+        setFileName(fileName);
+        setFileType(type[1]);
+        setShow(true);
+        // downloadLink.href = objectURL;
+        // downloadLink.download = fileName; // Tên tệp tin khi được tải về
+        // downloadLink.click();
 
-        URL.revokeObjectURL(objectURL);
+        // URL.revokeObjectURL(objectURL);
     }
 
     const renderTaskTextColor = (taskStart, taskEnd, taskState) => {
@@ -436,6 +449,13 @@ function ModalWork(props) {
 
                 </Modal.Footer>
             </Modal>
+
+            <PreviewFile
+                uri={uri}
+                fileName={fileName}
+                fileType={fileType}
+                show={show}
+            />
         </div>
     )
 }

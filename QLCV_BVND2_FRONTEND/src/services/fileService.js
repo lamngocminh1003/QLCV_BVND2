@@ -15,7 +15,7 @@ const createConfig = () => {
 
 const getFileById = async (fileId) => {
     const config = createConfig();
-    return await axios.get(`${backendURL}/api/File/GetFileById/${fileId}`, { ...config, responseType: 'arraybuffer' })
+    return await axios.get(`${backendURL}/api/File/GetFileById/${fileId}`, { ...config, responseType: 'blob' })
         .then(function (response) {
             return response
         })
