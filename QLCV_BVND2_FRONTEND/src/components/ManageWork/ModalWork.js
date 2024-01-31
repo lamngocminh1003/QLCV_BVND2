@@ -92,22 +92,31 @@ function ModalWork(props) {
 
     const handleGetFileById = async (fileId, fileName) => {
         const result = await getFileById(fileId);
-        console.log(fileName);
-        //console.log(result);
+
+        // const buffer = Buffer.from(result.data, 'utf-8');
+        // console.log('buffer: ', buffer);
+        // const base64Data = buffer.toString('base64');
+        // console.log('base64: ', base64Data);
+
+        console.log(result)
 
         const contentType = result.headers['content-type'];
         const blob = new Blob([result.data], { type: contentType });
-        const type = fileName.split('.');
-        // Tạo một đường link để tải xuống tệp tin
-        const downloadLink = document.createElement('a');
+        // const type = fileName.split('.');
+        // // Tạo một đường link để tải xuống tệp tin
+        // const downloadLink = document.createElement('a');
         const objectURL = URL.createObjectURL(blob);
-        //console.log(objectURL);
-        console.log(type[1]);
+        // console.log(type[1]);
 
-        setUri(objectURL);
-        setFileName(fileName);
-        setFileType(type[1]);
-        setShow(true);
+        // let a = objectURL.split('blob:');
+        // let b = a[1] + '.xls';
+        //console.log(b)
+        // objectURL = a[1] + '.xls';
+        // console.log(objectURL);
+        //setUri(b);
+        // setFileName(fileName);
+        // setFileType(type[1]);
+        //setShow(true);
         // downloadLink.href = objectURL;
         // downloadLink.download = fileName; // Tên tệp tin khi được tải về
         // downloadLink.click();
@@ -255,25 +264,25 @@ function ModalWork(props) {
                             }
                             <div className='col-sm-12'>
                                 <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">Tên công việc:
-                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task_State)}> {dataWork.task.task_Title}</span>
+                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task.task_State)}> {dataWork.task.task_Title}</span>
                                 </Typography>
                             </div>
 
                             <div className='col-sm-12 mt-2'>
                                 <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">Nội dung công việc:
-                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task_State)}> {dataWork.task.task_Content}</span>
+                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task.task_State)}> {dataWork.task.task_Content}</span>
                                 </Typography>
                             </div>
 
                             <div className='col-sm-7 mt-2'>
                                 <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">Thời hạn xử lý:
-                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task_State)}> {moment(dataWork.task.task_DateStart).format('DD/MM/YYYY HH:mm')} - {moment(dataWork.task.task_DateEnd).format('DD/MM/YYYY HH:mm')} </span>
+                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task.task_State)}> {moment(dataWork.task.task_DateStart).format('DD/MM/YYYY HH:mm')} - {moment(dataWork.task.task_DateEnd).format('DD/MM/YYYY HH:mm')} </span>
                                 </Typography>
                             </div>
 
                             <div className='col-sm-5 mt-2'>
                                 <Typography sx={{ color: 'black' }} variant="subtitle1" component="h2">Loại công việc:
-                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task_State)}> {dataWork.task.task_Catagory_Name}</span>
+                                    <span className={renderTaskTextColor(dataWork.task.task_DateStart, dataWork.task.task_DateEnd, dataWork.task.task_State)}> {dataWork.task.task_Catagory_Name}</span>
                                 </Typography>
                             </div>
 

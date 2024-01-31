@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import FileViewer from 'react-file-viewer';
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import Preview from 'preview-office-docs'
 import Modal from 'react-bootstrap/Modal';
 
 function PreviewFile(props) {
@@ -21,13 +22,14 @@ function PreviewFile(props) {
     useEffect(() => {
         if (props.show === true) {
             setShow(true);
+            console.log(props.uri)
         }
     }, [props.show])
 
     return (
         <Modal fullscreen={true} show={show} onHide={handleClose}>
-            <Modal.Body style={{ height: '100%' }}>
-                <FileViewer fileType={props.fileType} filePath={props.uri} />
+            <Modal.Body>
+                <Preview url={props.uri} height='700px' width='800px' />
             </Modal.Body>
         </Modal>
     )
