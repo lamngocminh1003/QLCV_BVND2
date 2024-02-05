@@ -7,6 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import { ImageConfig } from '../../../config/ImageConfig.js';
 //function component
 import CircularProgressWithBackdrop from '../../FunctionComponents/ProgressBar/CircularProgressWithBackdrop.js';
+import PreviewFile from '../../FunctionComponents/PreviewFile/PreviewFile.js';
 //import some theme from mui
 import Typography from '@mui/material/Typography';
 import Box from "@mui/material/Box";
@@ -65,6 +66,10 @@ const ModalProposeSent_Delete = (props) => {
     const [progress, setProgress] = useState(0);
     const [openBackdrop, setOpenBackdrop] = useState();
 
+    //config preview file
+    const [dataFilePreview, setdataFilePreview] = useState();
+    const [show, setShow] = useState(false);
+
     const handleHideModal = () => {
         props.closeModalProposeSent(false)
         setDataModalProposeSent(dataProposeSentDefault);
@@ -98,6 +103,10 @@ const ModalProposeSent_Delete = (props) => {
         //tìm vị trí của itemFile trong mảng updatedList, trả về vị trí chỉ mục, splice để xóa phần tử mà có vị trí chỉ mục đã trả về, 1 là chỉ xóa 1 phần tử khỏi mảng
         updatedList.splice(fileListState.indexOf(itemFile), 1);
         setFileListState(updatedList);
+    }
+
+    const onPreviewFile = (itemFile) => {
+        console.log(itemFile);
     }
 
     const handleChangeSelectedDepartment = (e, value) => {
@@ -256,7 +265,7 @@ const ModalProposeSent_Delete = (props) => {
                                                                 fileListState.map((itemFile, index) => {
                                                                     return (
                                                                         <Tooltip TransitionComponent={Fade} arrow slotProps={slotPropsPopper} title={itemFile.name} key={index}>
-                                                                            <div className='selected-file-preview-item-info col-sm-5 mt-2'>
+                                                                            <div className='selected-file-preview-item-info col-sm-5 mt-2' onClick={() => onPreviewFile(itemFile)}>
                                                                                 <div className='selected-file-preview-item-info-img-type-file'>
                                                                                     <img alt='' src={ImageConfig[itemFile.type] || ImageConfig['default']} />
                                                                                 </div>

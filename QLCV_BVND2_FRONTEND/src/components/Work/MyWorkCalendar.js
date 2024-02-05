@@ -111,8 +111,6 @@ function MyWorkCalendar() {
             ...prevOptions,
             [filterKey]: event.target.checked,
         }))
-
-
     }
 
     useEffect(() => {
@@ -194,6 +192,7 @@ function MyWorkCalendar() {
                         eventClick={handleEventClick}
                         dateClick={handleDateClick}
                         eventDidMount={handleMouseEnter}
+                        navLinkDayClick={(e) => console.log(e)}
                     />
                 </div>
             </div>
