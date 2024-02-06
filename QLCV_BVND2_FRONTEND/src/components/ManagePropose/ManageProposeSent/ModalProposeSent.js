@@ -67,8 +67,8 @@ const ModalProposeSent_Delete = (props) => {
     const [openBackdrop, setOpenBackdrop] = useState();
 
     //config preview file
-    const [dataFilePreview, setdataFilePreview] = useState();
-    const [show, setShow] = useState(false);
+    const [fileDetails, setFileDetails] = useState();
+    const [showModalPreviewFile, setModalPreviewFile] = useState(false);
 
     const handleHideModal = () => {
         props.closeModalProposeSent(false)
@@ -84,10 +84,8 @@ const ModalProposeSent_Delete = (props) => {
 
     const onSelectFile = (e) => {
         let newListFile = e.target.files;
-
         // Lọc ra những object mới từ mảng data mới, khác với object trong mảng của state
         let newObjects = _.differenceBy(newListFile, fileListState, 'name');
-
         if (newObjects.length !== 0) {
             let updatedList = [...fileListState, ...newObjects];
             setFileListState(updatedList);
@@ -106,7 +104,35 @@ const ModalProposeSent_Delete = (props) => {
     }
 
     const onPreviewFile = (itemFile) => {
-        console.log(itemFile);
+        setFileDetails(itemFile);
+        setModalPreviewFile(true);
+        //console.log(itemFile);
+        // let objectURL = URL.createObjectURL(itemFile);
+
+
+
+
+
+
+
+
+        // console.log(objectURL);
+        //let fileName = itemFile.name;
+        // setType(fileName.split('.').pop());
+        // setUri(objectURL);
+        // setShow(true);
+        //console.log(objectURL);
+        // let base64DataFile = await readFile(itemFile);
+        // let objectURL = URL.createObjectURL();
+    }
+
+    const readFile = async (file) => {
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        })
     }
 
     const handleChangeSelectedDepartment = (e, value) => {
@@ -299,6 +325,12 @@ const ModalProposeSent_Delete = (props) => {
                     <Button variant="secondary" onClick={() => handleHideModal()}>Đóng</Button>
                 </Modal.Footer>
             </Modal>
+
+            <PreviewFile
+                active={showModalPreviewFile}
+                close={setModalPreviewFile}
+                fileDetails={fileDetails}
+            />
         </>
     )
 }
